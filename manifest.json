@@ -1,0 +1,24 @@
+{
+  "id": "/",
+  "name": "Kitaplığım",
+  "short_name": "Kitaplığım",
+  "description": "Okuduğun kitapları takip et, barkodla ekle, puanla, yorum yaz ve sesli kitap dinle.",
+  "lang": "tr",
+  "dir": "ltr",
+  "start_url": "/#/kitaplik",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#131312",
+  "theme_color": "#131312",
+  "categories": ["books", "education", "entertainment"],
+  "icons": [
+    { "src": "/ikon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/ikon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/ikon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Barkod okut", "url": "/?tara=1#/kitaplik", "icons": [{ "src": "/ikon-192.png", "sizes": "192x192" }] },
+    { "name": "Sesli Kitaplar", "url": "/#/sesli", "icons": [{ "src": "/ikon-192.png", "sizes": "192x192" }] }
+  ]
+}

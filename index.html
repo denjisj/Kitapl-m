@@ -8,6 +8,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Kitaplığım</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Kitaplığım">
 <style>
 :root{
   --bg:#f6f3ee;--card:#fffdfa;--ink:#1c1b19;--ink2:#3d3a35;--mu:#7b766e;--mu2:#a8a299;--line:#e6e0d6;--fill:#efebe4;
@@ -1294,7 +1299,11 @@ async function onUser(u){S.me=u?{id:u.id,email:u.email}:null;S.libLoaded=false;r
   if(u&&!S.dbErr){await ensureProfile(u);if(S.sheet==='login')closeSheet()}else if(!u)S.profile=null;
   S.USERS={};S.feed=null;await Promise.all([loadLib(),loadProg(),loadFollowing()]);render();
   let later=false;try{later=!!sessionStorage.getItem('kv.kadiSonra')}catch(e){}
-  if(u&&!LOCAL&&!S.dbErr&&S.profile&&('kullanici_adi' in S.profile)&&!S.profile.kullanici_adi&&!later&&!S.sheet)askKadi()}
+  if(u&&!LOCAL&&!S.dbErr&&S.profile&&('kullanici_adi' in S.profile)&&!S.profile.kullanici_adi&&!later&&!S.sheet)askKadi()
+  if(window.__tara&&!S.sheet){window.__tara=false;scanOpen()}}
+window.__tara=new URLSearchParams(location.search).has('tara');
+if(window.__tara)history.replaceState(null,'',location.pathname+location.hash);
+if('serviceWorker' in navigator&&location.protocol==='https:')addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
 start();
 </script>
 </body>
