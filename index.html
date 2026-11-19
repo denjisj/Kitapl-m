@@ -305,9 +305,7 @@ const fmtT=s=>{s=Math.max(0,Math.floor(s||0));const h=Math.floor(s/3600),m=Math.
 const fmtDur=s=>{s=Math.round(s||0);const h=Math.floor(s/3600),m=Math.round(s%3600/60);return h?`${h} sa ${m} dk`:`${m} dk`};
 const fmtD=d=>d?new Date(String(d).slice(0,10)+'T12:00').toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'}):'';
 const ago=d=>{const s=(Date.now()-new Date(d))/1000;if(s<3600)return Math.max(1,Math.round(s/60))+' dk önce';if(s<86400)return Math.round(s/3600)+' sa önce';if(s<2592000)return Math.round(s/86400)+' gün önce';return fmtD(d)};
-const BLOBURL={};
-const keepUrl=u=>/^(https:\/\/|idb:)/.test(u||'')?u:'';
-const safeUrl=u=>{u=u||'';if(u.startsWith('idb:'))return BLOBURL[u.slice(4)]||'';return /^https:\/\//.test(u)?u:''};
+const safeUrl=u=>/^https:\/\//.test(u||'')?u:'';
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 let tT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('on'),2600)}
 const rate1=v=>(Math.round((+v||0)*10)/10).toLocaleString('tr-TR',{minimumFractionDigits:1,maximumFractionDigits:1});
@@ -407,7 +405,7 @@ async function saveRow(b,patch){
 async function addRow(x,durum){
   if(!S.me){openLogin('Kitap eklemek için giriş yap');return null}
   const k=keyOf(x.baslik,x.yazar);const ex=inLib(k);if(ex){toast('Bu kitap zaten kitaplığında');return ex}
-  const row={anahtar:k,isbn:x.isbn||null,baslik:x.baslik,yazar:x.yazar||null,yayinevi:x.yayinevi||null,yil:x.yil||null,sayfa:parseInt(x.sayfa)||null,kapak:keepUrl(x.kapak)||null,aciklama:x.aciklama||null,tur:x.tur||null,durum:durum||'okuyacagim',puan:0,
+  const row={anahtar:k,isbn:x.isbn||null,baslik:x.baslik,yazar:x.yazar||null,yayinevi:x.yayinevi||null,yil:x.yil||null,sayfa:parseInt(x.sayfa)||null,kapak:safeUrl(x.kapak)||null,aciklama:x.aciklama||null,tur:x.tur||null,durum:durum||'okuyacagim',puan:0,
     bitis:durum==='okudum'?today():null,baslama:durum==='okuyorum'?today():null};
   const{data,error}=await sb.from('kitaplik').insert(row).select().single();
   if(error){toast('Eklenemedi');console.error(error);return null}
@@ -504,13 +502,12 @@ function vProf(){
   const M=['O','Ş','M','N','M','H','T','A','E','E','K','A'],mc=M.map((_,i)=>yr.filter(b=>+String(b.bitis).slice(5,7)===i+1).length),mx=Math.max(1,...mc);
   const au={};read.forEach(b=>{const k=(b.yazar||'').split(',')[0].trim();if(k)au[k]=(au[k]||0)+1});const ta=Object.entries(au).sort((a,b)=>b[1]-a[1]).slice(0,5);
   const p=S.profile||{};
-  return `<div class="prof">${p.avatar?`<img class="avatar" src="${esc(safeUrl(p.avatar))}" alt="">`:`<span class="avatar">${esc((p.ad||'?')[0].toUpperCase())}</span>`}<div><h2>${esc(LOCAL?'Kitaplığım':p.ad||'')}</h2><div class="small muted">${LOCAL?'Bu cihazda':esc(S.me.email)+(isAdmin()?' · Yönetici':'')}</div></div></div>
+  return `<div class="prof">${p.avatar?`<img class="avatar" src="${esc(safeUrl(p.avatar))}" alt="">`:`<span class="avatar">${esc((p.ad||'?')[0].toUpperCase())}</span>`}<div><h2>${esc(p.ad||'')}</h2><div class="small muted">${esc(S.me.email)}${isAdmin()?' · Yönetici':''}</div></div></div>
   <div class="group"><div class="gh">${y} okuma hedefi</div><div class="gb"><div class="row" style="justify-content:space-between"><span><b style="font:600 24px var(--serif)">${yr.length}</b> <span class="muted">/ ${goal} kitap</span></span><span class="row"><button class="btn sm" data-act="goal" data-d="-1">−</button><button class="btn sm" data-act="goal" data-d="1">+</button></span></div><div class="goalbar"><i style="width:${Math.min(100,yr.length/goal*100)}%"></i></div><div class="small muted">${yr.length>=goal?'Hedefini tamamladın.':`Hedefe ${goal-yr.length} kitap kaldı.`}</div></div></div>
   <div class="kp"><div><b>${S.lib.length}</b><span>Kitaplıktaki kitap</span></div><div><b>${read.length}</b><span>Okunan</span></div><div><b>${pages.toLocaleString('tr-TR')}</b><span>Okunan sayfa</span></div><div><b>${avg}</b><span>Ortalama puanım</span></div></div>
   <div class="group"><div class="gh">${y} · aylara göre</div><div class="gb"><div class="mbars">${mc.map((n,i)=>`<div><em>${n||''}</em><i style="height:${n/mx*78}%"></i><span>${M[i]}</span></div>`).join('')}</div></div></div>
   ${ta.length?`<div class="group"><div class="gh">En çok okuduğun yazarlar</div><div class="gb">${ta.map(([a,n])=>`<div class="row" style="justify-content:space-between;padding:6px 0"><span>${esc(a)}</span><span class="muted">${n}</span></div>`).join('')}</div></div>`:''}
-  <div class="group"><button class="opt" data-act="bulk">${I.list}<span class="d">Listeden toplu ekle<small>Başka uygulamadaki kitaplarını taşı</small></span>${I.chev}</button>${isAdmin()?`<button class="opt" data-act="audioNew">${I.upload}<span class="d">Sesli kitap yükle<small>Herkese açık olarak yayınlanır</small></span>${I.chev}</button>`:''}${LOCAL?'':`<button class="opt" data-act="logout"><span class="d" style="color:var(--red);padding-left:36px">Çıkış yap</span></button>`}</div>
-  ${LOCAL?`<div class="group"><div class="gh">Yerel mod</div><div class="gb small muted">Supabase bağlı olmadığı için kitapların, puanların ve sesli kitaplar sadece bu tarayıcıda saklanıyor. Dosyanın başındaki <b>AYAR</b> kısmına Supabase bilgilerini girince hesaplar, herkese açık sesli kitaplar ve okur yorumları devreye girer.</div></div>`:''}`;
+  <div class="group"><button class="opt" data-act="bulk">${I.list}<span class="d">Listeden toplu ekle<small>Başka uygulamadaki kitaplarını taşı</small></span>${I.chev}</button>${isAdmin()?`<button class="opt" data-act="audioNew">${I.upload}<span class="d">Sesli kitap yükle<small>Herkese açık olarak yayınlanır</small></span>${I.chev}</button>`:''}<button class="opt" data-act="logout"><span class="d" style="color:var(--red);padding-left:36px">Çıkış yap</span></button></div>`;
 }
 
 /* ==================== alt sayfa ==================== */
@@ -659,7 +656,7 @@ async function audioSave(btn){
   if(!id&&!FORM.files.length){toast('En az bir ses dosyası seç');btn.disabled=false;return}
   try{
     if(FORM.coverFile){log('Kapak yükleniyor');const p=`kapaklar/${Date.now().toString(36)}-${safeName(FORM.coverFile.name)}`;const u=await sb.storage.from(BUCKET).upload(p,FORM.coverFile,{contentType:FORM.coverFile.type});if(!u.error)FORM.kapak=sb.storage.from(BUCKET).getPublicUrl(p).data.publicUrl}
-    row.kapak=keepUrl(FORM.kapak)||null;
+    row.kapak=safeUrl(FORM.kapak)||null;
     let kid=id;
     if(id){const{error}=await sb.from('sesli_kitaplar').update(row).eq('id',id);if(error)throw error}
     else{const{data,error}=await sb.from('sesli_kitaplar').insert(row).select().single();if(error)throw error;kid=data.id;await uploadChapters(kid,FORM.files,0,log)}
@@ -676,10 +673,10 @@ function playA(id,ch,fromStart){const a=S.audio.find(x=>x.id===id);if(!a||!a.bol
   const p=S.prog[id];if(ch==null)ch=p&&!p.bitti?Math.min(p.bolum,a.bolumler.length-1):0;
   if(P.id&&(P.id!==id||P.ch!==ch))persistPos();
   const same=P.id===id&&P.ch===ch&&audio.src;P.id=id;P.ch=ch;
-  if(!same){audio.src=safeUrl(a.bolumler[ch].dosya_url)||a.bolumler[ch].dosya_url;const st=fromStart?0:(p&&!p.bitti&&p.bolum===ch?p.saniye:0);
+  if(!same){audio.src=a.bolumler[ch].dosya_url;const st=fromStart?0:(p&&!p.bitti&&p.bolum===ch?p.saniye:0);
     audio.addEventListener('loadedmetadata',function f(){audio.removeEventListener('loadedmetadata',f);if(st&&st<audio.duration-3)audio.currentTime=st},{once:true})}
   audio.playbackRate=P.rate;audio.play().catch(()=>toast('Oynatmak için tekrar dokun'));
-  try{if('mediaSession' in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:a.bolumler[ch].baslik||a.baslik,artist:a.yazar||'',album:a.baslik,artwork:safeUrl(a.kapak)?[{src:safeUrl(a.kapak),sizes:'480x720'}]:[]});
+  try{if('mediaSession' in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:a.bolumler[ch].baslik||a.baslik,artist:a.yazar||'',album:a.baslik,artwork:a.kapak?[{src:a.kapak,sizes:'480x720'}]:[]});
     navigator.mediaSession.setActionHandler('play',()=>audio.play());navigator.mediaSession.setActionHandler('pause',()=>audio.pause());
     navigator.mediaSession.setActionHandler('seekbackward',()=>skip(-15));navigator.mediaSession.setActionHandler('seekforward',()=>skip(30));
     navigator.mediaSession.setActionHandler('nexttrack',()=>P.ch<a.bolumler.length-1&&playA(id,P.ch+1,true));navigator.mediaSession.setActionHandler('previoustrack',()=>P.ch>0&&playA(id,P.ch-1,true))}}catch(e){}
@@ -793,57 +790,14 @@ $('#audioFiles').addEventListener('change',async e=>{const fs=[...e.target.files
   FORM.files=fs;$('#aFiles').textContent=`${fs.length} dosya: ${fs.map(f=>f.name).join(', ')}`;const t=$('#a_baslik');if(t&&!t.value)t.value=fs[0].name.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ').replace(/\s*\d+\s*$/,'').trim()});
 
 /* ==================== başlat ==================== */
-let LOCAL=false;
 async function start(){
-  const cfg=AYAR.SUPABASE_URL&&AYAR.SUPABASE_ANON_KEY&&window.supabase;
-  if(cfg)sb=supabase.createClient(AYAR.SUPABASE_URL,AYAR.SUPABASE_ANON_KEY);
-  else{LOCAL=true;await preloadBlobs();sb=localClient()}
+  if(!AYAR.SUPABASE_URL||!AYAR.SUPABASE_ANON_KEY||!window.supabase){
+    $('#tabs').classList.add('hide');$('#hAct').classList.add('hide');
+    $('#view').innerHTML=`<div class="setup"><h2 style="font:600 24px var(--serif)">Kurulum gerekli</h2><ol style="line-height:1.8"><li>supabase.com’da yeni bir proje aç.</li><li>SQL Editor’de <code>kurulum.sql</code> dosyasının tamamını çalıştır.</li><li>Authentication › Providers › Google’ı aç; Site URL ve Redirect URL’ye sitenin adresini ekle.</li><li>Project Settings › API’den URL ve anon key’i bu dosyanın başındaki <code>AYAR</code> bölümüne yapıştır.</li><li>Vercel’e yükle.</li></ol></div>`;return}
+  sb=supabase.createClient(AYAR.SUPABASE_URL,AYAR.SUPABASE_ANON_KEY);
   const{data:{session}}=await sb.auth.getSession();
   await onUser(session&&session.user);
   sb.auth.onAuthStateChange((ev,s)=>{const u=s&&s.user;if((u&&u.id)!==(S.me&&S.me.id))onUser(u)});
-}
-
-/* ==================== YEREL MOD (Supabase yokken) ====================
-   Supabase ayarı girilmemişse aynı uygulama tarayıcıda çalışır:
-   veriler localStorage'da, ses ve kapak dosyaları IndexedDB'de durur. */
-function idbOpen(){return new Promise((res,rej)=>{const r=indexedDB.open('kitapligim-yerel',1);r.onupgradeneeded=()=>r.result.createObjectStore('f');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
-async function idbDo(mode,fn){const d=await idbOpen();return new Promise((res,rej)=>{const t=d.transaction('f',mode);const out=fn(t.objectStore('f'));t.oncomplete=()=>res(out&&out.result);t.onerror=()=>rej(t.error)})}
-async function preloadBlobs(){try{const d=await idbOpen();await new Promise(res=>{const c=d.transaction('f').objectStore('f').openCursor();c.onsuccess=()=>{const cur=c.result;if(!cur)return res();BLOBURL[cur.key]=URL.createObjectURL(cur.value);cur.continue()};c.onerror=()=>res()})}catch(e){}}
-function localClient(){
-  const K='kv.yerel.',uid=()=>(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));
-  const load=t=>{try{return JSON.parse(localStorage.getItem(K+t)||'[]')}catch(e){return[]}};
-  const save=(t,a)=>{try{localStorage.setItem(K+t,JSON.stringify(a))}catch(e){toast('Tarayıcı depolama alanı doldu')}};
-  const now=()=>new Date().toISOString();
-  const USER={id:'yerel',email:AYAR.ADMIN_EMAIL,user_metadata:{full_name:'Ben'}};
-  function stats(){const g={};load('kitaplik').forEach(r=>{const x=g[r.anahtar]||(g[r.anahtar]={anahtar:r.anahtar,baslik:r.baslik,yazar:r.yazar,kapak:r.kapak,isbn:r.isbn,okuyan:0,toplam:0,_s:0,puan_sayisi:0});
-    x.toplam++;if(r.durum==='okudum')x.okuyan++;if(r.puan>0){x._s+= +r.puan;x.puan_sayisi++}if(!x.kapak&&r.kapak)x.kapak=r.kapak});
-    return Object.values(g).map(x=>({...x,ort_puan:x.puan_sayisi?Math.round(x._s/x.puan_sayisi*100)/100:null}))}
-  function qb(t){let op='select',pay=null,sel='*',single=false,lim=null;const F=[],O=[];
-    const o={select(x){if(op==='select')sel=x||'*';return o},eq(c,v){F.push(r=>r[c]===v);return o},neq(c,v){F.push(r=>r[c]!==v);return o},gt(c,v){F.push(r=>(+r[c]||0)>v);return o},
-      not(c){F.push(r=>r[c]!=null);return o},order(c,p){O.push([c,p&&p.ascending===false?-1:1]);return o},limit(n){lim=n;return o},maybeSingle(){single=true;return o},single(){single=true;return o},
-      insert(r){op='insert';pay=r;return o},update(r){op='update';pay=r;return o},delete(){op='delete';return o},upsert(r){op='upsert';pay=r;return o},
-      then(res){let out;try{out=run()}catch(e){console.error(e);out={data:null,error:{message:String(e)}}}res(out)}};
-    const match=r=>F.every(f=>f(r));
-    function run(){
-      if(t==='kitap_istatistik'){let a=stats().filter(match);a=sortLim(a);return{data:single?(a[0]||null):a,error:null}}
-      let a=load(t);
-      if(op==='insert'){const row={id:uid(),created_at:now(),updated_at:now(),...(t==='kitaplik'?{user_id:'yerel',yorum_acik:true,favori:false,mevcut_sayfa:0}:{}),...pay};if(t==='profiller')row.id=pay.id;a.push(row);save(t,a);return{data:single?row:[row],error:null}}
-      if(op==='update'){a.forEach(r=>{if(match(r))Object.assign(r,pay)});save(t,a);return{data:null,error:null}}
-      if(op==='delete'){const gone=a.filter(match).map(r=>r.id);save(t,a.filter(r=>!match(r)));
-        if(t==='sesli_kitaplar'){save('sesli_bolumler',load('sesli_bolumler').filter(b=>!gone.includes(b.kitap_id)));save('dinleme',load('dinleme').filter(b=>!gone.includes(b.kitap_id)))}return{data:null,error:null}}
-      if(op==='upsert'){const kf=t==='dinleme'?(r=>r.user_id===pay.user_id&&r.kitap_id===pay.kitap_id):(r=>r.id===pay.id);const ex=a.find(kf);if(ex)Object.assign(ex,pay);else a.push({...pay});save(t,a);return{data:null,error:null}}
-      a=sortLim(a.filter(match)).map(r=>({...r}));
-      if(sel.includes('sesli_bolumler')){const B=load('sesli_bolumler');a.forEach(r=>r.sesli_bolumler=B.filter(b=>b.kitap_id===r.id))}
-      if(sel.includes('profiller')){const P=load('profiller');a.forEach(r=>r.profiller=P.find(p=>p.id===r.user_id)||null)}
-      return{data:single?(a[0]||null):a,error:null}}
-    function sortLim(a){if(O.length)a.sort((x,y)=>{for(const[c,d]of O){const p=x[c]??'',q=y[c]??'';if(p<q)return -d;if(p>q)return d}return 0});return lim?a.slice(0,lim):a}
-    return o}
-  return{from:qb,
-    auth:{getSession:async()=>({data:{session:{user:USER}}}),onAuthStateChange(){},signOut:async()=>({}),signInWithOAuth:async()=>({error:{message:'yerel'}}),signInWithOtp:async()=>({error:{message:'yerel'}})},
-    storage:{from:b=>({
-      upload:async(path,file)=>{const k=b+'/'+path;try{await idbDo('readwrite',s=>s.put(file,k));BLOBURL[k]=URL.createObjectURL(file);return{data:{path},error:null}}catch(e){return{data:null,error:{message:'Cihazda yer yok'}}}},
-      getPublicUrl:path=>({data:{publicUrl:'idb:'+b+'/'+path}}),
-      remove:async paths=>{for(const p of paths){const k=b+'/'+p;try{await idbDo('readwrite',s=>s.delete(k))}catch(e){}if(BLOBURL[k])URL.revokeObjectURL(BLOBURL[k]);delete BLOBURL[k]}return{error:null}}})}};
 }
 async function onUser(u){S.me=u?{id:u.id,email:u.email}:null;S.libLoaded=false;render();
   if(u){await ensureProfile(u);if(S.sheet==='login')closeSheet()}else S.profile=null;
