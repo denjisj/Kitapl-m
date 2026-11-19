@@ -322,7 +322,7 @@ const AYAR = {
 
 <div id="scan" hidden>
   <video id="scanVideo" playsinline muted autoplay></video>
-  <div class="top"><button data-act="scanDone">Kapat</button><span style="font-weight:600" id="scanTitle">Barkod Tara</span><button data-act="scanTorch" id="torchBtn" class="hide">Fener</button></div>
+  <div class="top"><button data-act="scanDone">Kapat</button><span style="font-weight:600" id="scanTitle">Barkod Tara</span><span class="row" style="gap:14px"><button data-act="scanZoom" id="zoomBtn" class="hide">1×</button><button data-act="scanTorch" id="torchBtn" class="hide">Fener</button></span></div>
   <div class="win"><div class="laser"></div></div>
   <div class="bot"><p id="scanMsg">Kitabın arkasındaki barkodu çerçevenin içine getir</p>
     <div class="sst" id="scanSt"></div>
@@ -340,7 +340,8 @@ const AYAR = {
 <input type="file" id="audioFiles" accept="audio/*,.mp3,.m4a,.m4b,.aac,.ogg,.wav" multiple hidden>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/barcode-detector@3.2.4/dist/iife/ponyfill.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js" defer></script>
 <script>
 /* ==================== yardımcılar ==================== */
 const $=s=>document.querySelector(s);
@@ -466,13 +467,26 @@ async function searchBooks(q){
   return L}
 async function olIsbn(isbn){try{const r=await fetch(`https://openlibrary.org/api/books?bibkeys=ISBN:${isbn}&format=json&jscmd=data`);const j=await r.json();const d=j['ISBN:'+isbn];if(!d)return null;
   return{baslik:d.title||'',yazar:(d.authors||[]).map(a=>a.name).join(', '),yayinevi:((d.publishers||[])[0]||{}).name||'',yil:((d.publish_date||'').match(/\d{4}/)||[''])[0],sayfa:d.number_of_pages||null,kapak:(d.cover&&(d.cover.large||d.cover.medium))||'',aciklama:'',tur:((d.subjects||[])[0]||{}).name||'',isbn}}catch(e){return null}}
+function isbn10(i13){if(!/^978\d{10}$/.test(i13))return null;const c=i13.slice(3,12);let t=0;for(let i=0;i<9;i++)t+=(10-i)*+c[i];const d=(11-t%11)%11;return c+(d===10?'X':String(d))}
+async function crowdIsbn(isbn,i10){if(LOCAL||!sb)return null;
+  try{const{data}=await sb.from('kitaplik').select('baslik,yazar,yayinevi,yil,sayfa,kapak,aciklama,tur,isbn').in('isbn',[isbn,i10].filter(Boolean)).limit(5);
+    const L=(data||[]).filter(x=>x.baslik);if(!L.length)return null;return L.sort((a,b)=>(!!b.kapak-!!a.kapak)||((b.sayfa||0)?1:0)-((a.sayfa||0)?1:0))[0]}catch(e){return null}}
+const ISBNC={};
 async function lookupIsbn(isbn){
-  let a=null;try{a=(await gbSearch('isbn:'+isbn,1))[0]||null}catch(e){}
-  if(!a){try{a=(await gbSearch(isbn,3)).find(x=>x.isbn===isbn)||null}catch(e){}}
-  if(!a){try{a=(await olSearch('isbn='+isbn,1))[0]||null}catch(e){}}
-  if(!a||!a.sayfa||!a.kapak||a.kapak.includes('openlibrary')){const o=await olIsbn(isbn);
-    if(!a)a=o;else if(o){a.sayfa=a.sayfa||o.sayfa;a.yayinevi=a.yayinevi||o.yayinevi;if(o.kapak&&!a.kapak.includes('books.google'))a.kapak=o.kapak}}
-  if(a){a.isbn=isbn;if(!a.kapak)a.kapak=`https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg?default=false`}
+  if(ISBNC[isbn])return ISBNC[isbn];
+  const i10=isbn10(isbn);const safe=p=>p.catch(()=>null);
+  const own=S.lib.find(b=>b.isbn===isbn||(i10&&b.isbn===i10));if(own)return own;
+  const[cr,g13,g10,o13,o10]=await Promise.all([
+    safe(crowdIsbn(isbn,i10)),
+    safe(gbSearch('isbn:'+isbn,2).then(r=>r[0]||null)),
+    i10?safe(gbSearch('isbn:'+i10,2).then(r=>r[0]||null)):null,
+    safe(olIsbn(isbn)),
+    i10?safe(olIsbn(i10)):null]);
+  let a=cr||g13||g10||null;
+  if(!a){try{a=(await gbSearch(isbn,5)).find(x=>x.isbn===isbn||x.isbn===i10)||null}catch(e){}}
+  const o=o13||o10;if(!a&&!o){try{a=(await olSearch('isbn='+isbn,1))[0]||null}catch(e){}}
+  if(!a)a=o;else if(o){a.sayfa=a.sayfa||o.sayfa;a.yayinevi=a.yayinevi||o.yayinevi;if(o.kapak&&!(a.kapak||'').includes('books.google'))a.kapak=a.kapak||o.kapak}
+  if(a){a={...a,isbn};if(!a.kapak)a.kapak=`https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg?default=false`;ISBNC[isbn]=a}
   return a;
 }
 const COVERS=(()=>{try{return JSON.parse(localStorage.getItem('kv.covers')||'{}')}catch(e){return{}}})();
@@ -808,6 +822,7 @@ function openAdd(){if(!S.me){openLogin('Kitap eklemek için giriş yap');return}
   sheet(`<div class="group" style="margin-top:4px"><button class="opt" data-act="scanOpen">${I.barcode}<span class="d">Barkod tara<small>Kamerayı barkoda tut, kitap kendiliğinden bulunsun</small></span>${I.chev}</button><button class="opt" data-act="searchOpen">${I.search.replace('<svg','<svg class="ic"')}<span class="d">Kitap ara<small>Ad, yazar veya ISBN ile</small></span>${I.chev}</button><button class="opt" data-act="manual">${I.pen}<span class="d">Elle ekle<small>Bulunamayan kitaplar için</small></span>${I.chev}</button><button class="opt" data-act="bulk">${I.list}<span class="d">Toplu ekle<small>Listeyi yapıştır, kapaklar otomatik gelsin</small></span>${I.chev}</button></div>`,'add','Kitap ekle')}
 function openSearch(q){go('#/ara/'+encodeURIComponent(q||''))}
 function vSearch(q){$('#view').innerHTML=`<form class="search" id="sForm">${I.search}<input id="sIn" placeholder="Kitap adı, yazar veya ISBN" value="${esc(q||'')}" autocomplete="off" enterkeyhint="search"></form><div id="sRes">${q?'':`<div class="empty small">Aradığın kitabın adını, yazarını ya da barkodun altındaki ISBN numarasını yaz.</div>`}</div>`;
+  if(S.pendIsbn)$('#view').insertAdjacentHTML('afterbegin',`<div class="group" style="margin-top:0;border-color:var(--ac)"><div class="gb small">Barkod <b>${esc(S.pendIsbn)}</b> için kitabın adını yaz ve doğru baskıyı seç. Eklediğinde bu barkodla eşleşecek. <button data-act="pendCancel" style="color:var(--ac)">Vazgeç</button></div></div>`);
   if(q)doSearch(q);else setTimeout(()=>$('#sIn')&&$('#sIn').focus(),250)}
 async function doSearch(q){const el=$('#sRes');if(!el)return;
   const digits=q.replace(/[^0-9X]/gi,'');
@@ -847,6 +862,18 @@ let zxReader=null;
 function zx(){if(zxReader)return zxReader;const h=new Map();h.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[ZXing.BarcodeFormat.EAN_13]);h.set(ZXing.DecodeHintType.TRY_HARDER,true);zxReader=new ZXing.MultiFormatReader();zxReader.setHints(h);return zxReader}
 function zxDecodeCanvas(c){try{const t=zx().decode(new ZXing.BinaryBitmap(new ZXing.HybridBinarizer(new ZXing.HTMLCanvasElementLuminanceSource(c)))).getText();return validIsbn(t)?t:null}catch(e){return null}}
 const scanCv=document.createElement('canvas');const scanCtx=scanCv.getContext('2d',{willReadFrequently:true});
+let DET=null;
+async function getDetector(){if(DET)return DET;
+  try{if('BarcodeDetector' in window&&(await BarcodeDetector.getSupportedFormats()).includes('ean_13')){DET={d:new BarcodeDetector({formats:['ean_13']}),kind:'native'};return DET}}catch(e){}
+  try{if(window.BarcodeDetectionAPI){const d=new BarcodeDetectionAPI.BarcodeDetector({formats:['ean_13','ean_8','upc_a']});await d.detect(new ImageData(16,16));DET={d,kind:'wasm'};return DET}}catch(e){console.warn('wasm okuyucu',e)}
+  DET={d:null,kind:'js'};return DET}
+const bandCv=document.createElement('canvas');const bandCtx=bandCv.getContext('2d',{willReadFrequently:true});
+function grabBand(video,mode){const vw=video.videoWidth,vh=video.videoHeight;if(!vw)return null;
+  let sx=0,sy=0,sw=vw,sh=vh;
+  if(mode===1){sh=vh*.5;sy=(vh-sh)/2}
+  else if(mode===2){sw=vw*.5;sh=vh*.4;sx=(vw-sw)/2;sy=(vh-sh)/2}
+  const sc=mode===2?Math.min(2,1200/sw):Math.min(1,1920/sw);bandCv.width=Math.round(sw*sc);bandCv.height=Math.round(sh*sc);
+  bandCtx.drawImage(video,sx,sy,sw,sh,0,0,bandCv.width,bandCv.height);return bandCv}
 function grabWindow(video,full){
   const vw=video.videoWidth,vh=video.videoHeight;if(!vw)return null;
   if(full){const sc=Math.min(1,1000/vw);scanCv.width=vw*sc;scanCv.height=vh*sc;scanCtx.drawImage(video,0,0,scanCv.width,scanCv.height);return scanCv}
@@ -864,23 +891,27 @@ async function scanOpen(){
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){$('#scanMsg').textContent='Bu tarayıcı kameraya erişemiyor. Fotoğraftan okuyabilir ya da ISBN yazabilirsin.';return}
   const video=$('#scanVideo');
   try{
-    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}},audio:false});
+    const D=await getDetector();
+    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});
     if(!scanning){stream.getTracks().forEach(t=>t.stop());return}
     video.srcObject=stream;await video.play().catch(()=>{});track=stream.getVideoTracks()[0];torchUi();
     try{await track.applyConstraints({advanced:[{focusMode:'continuous'}]})}catch(e){}
-    let det=null;try{if('BarcodeDetector' in window&&(await BarcodeDetector.getSupportedFormats()).includes('ean_13'))det=new BarcodeDetector({formats:['ean_13']})}catch(e){}
+    zoomUi();
     let n=0,last='',hits=0;
-    const accept=c=>{if(c===last)hits++;else{last=c;hits=1}if(hits>=2||det)onCode(c)};
+    const accept=c=>{if(c===last)hits++;else{last=c;hits=1}if(hits>=2)onCode(c)};
     const loop=async()=>{if(!scanning)return;n++;
       try{let c=null;
-        if(det){const r=await det.detect(video);c=(r.map(x=>x.rawValue).find(validIsbn))||null}
+        if(D.kind==='native'){const r=await D.d.detect(video);c=(r.map(x=>x.rawValue).find(validIsbn))||null}
+        else if(D.kind==='wasm'){const cv=grabBand(video,n%3);if(cv){const r=await D.d.detect(cv);c=(r.map(x=>x.rawValue).find(validIsbn))||null}}
         else if(window.ZXing){const cv=grabWindow(video,n%6===0);if(cv)c=zxDecodeCanvas(cv)}
-        if(c)accept(c)}catch(e){}
-      if(scanning)setTimeout(loop,det?120:60)};
+        if(c)D.kind==='js'?accept(c):onCode(c)}catch(e){}
+      if(scanning)setTimeout(loop,D.kind==='js'?60:D.kind==='wasm'?30:90)};
     loop();
     setTimeout(()=>{if(scanning&&!BATCH.items.length)scanMsg('Okumadıysa telefonu biraz uzaklaştır, barkod net ve düz görünsün. Gerekirse fener aç.')},9000);
   }catch(e){console.warn(e);$('#scanMsg').textContent=e&&e.name==='NotAllowedError'?'Kamera izni verilmedi. Ayarlar › Safari › Kamera’dan izin ver ya da fotoğraftan oku.':'Kamera açılamadı. Fotoğraftan okuyabilir ya da ISBN yazabilirsin.'}
 }
+function zoomUi(){try{const c=track&&track.getCapabilities&&track.getCapabilities();const z=c&&c.zoom;const b=$('#zoomBtn');
+  if(z&&z.max>=1.5){BATCH.zooms=[z.min||1,Math.min(2,z.max),Math.min(3,z.max)].filter((v,i,a)=>a.indexOf(v)===i);BATCH.zi=0;b.textContent='1×';b.classList.remove('hide')}else b.classList.add('hide')}catch(e){}}
 function torchUi(){try{const c=track&&track.getCapabilities&&track.getCapabilities();$('#torchBtn').classList.toggle('hide',!(c&&c.torch))}catch(e){}}
 function scanStop(){scanning=false;const v=$('#scanVideo');if(v.srcObject){v.srcObject.getTracks().forEach(t=>t.stop());v.srcObject=null}track=null;$('#scan').hidden=true}
 /* ---------- toplu tarama: kamera açık kalır, her okunan kitap rafa eklenir ---------- */
@@ -921,8 +952,8 @@ async function trayItem(i){const it=BATCH.items[i];if(!it)return;
   if(it.st==='iptal'){const row=await addRowQuiet(it.info,BATCH.durum);if(row){it.row=row;it.st='ok';drawBatch();scanMsg(`✓ ${it.info.baslik} geri eklendi`,'ok')}return}
   if(it.st==='var')scanMsg(`“${(it.info||{}).baslik||''}” zaten kitaplığında`,'warn');
   if(it.st==='yok')scanMsg(`ISBN ${it.isbn} bulunamadı. Bitti’ye basınca elle ekleyebilirsin.`,'warn')}
-function scanDone(){const ok=BATCH.items.filter(x=>x.st==='ok'),yok=BATCH.items.filter(x=>x.st==='yok');scanStop();
-  if(yok.length){sheet(`<p class="small muted" style="margin-top:0">${ok.length?`${ok.length} kitap kitaplığına eklendi. `:''}Şu barkodlar kitap veritabanlarında bulunamadı:</p><div class="list">${yok.map(it=>`<div class="li"><div class="bd"><div class="t">ISBN ${esc(it.isbn)}</div>${it.err?`<div class="a">${esc(BATCH.lastErr||'')}</div>`:''}</div><button class="btn sm pri" data-act="manualIsbn" data-isbn="${it.isbn}">Elle ekle</button></div>`).join('')}</div><button class="btn out full" style="margin-top:14px" data-act="close">Tamam</button>`,'scanres','Bulunamayanlar','Kapat');render();return}
+function scanDone(){const ok=BATCH.items.filter(x=>x.st==='ok'),yok=BATCH.items.filter(x=>x.st==='yok');scanStop();BATCH.pend=yok.map(x=>x.isbn);
+  if(yok.length){sheet(`<p class="small muted" style="margin-top:0">${ok.length?`${ok.length} kitap kitaplığına eklendi. `:''}Şu barkodlar kitap veritabanlarında bulunamadı:</p><div class="list">${yok.map(it=>`<div class="li"><div class="bd"><div class="t">ISBN ${esc(it.isbn)}</div>${it.err?`<div class="a">${esc(BATCH.lastErr||'')}</div>`:''}</div><div class="row" style="gap:6px"><button class="btn sm pri" data-act="pendFind" data-isbn="${it.isbn}">Adıyla bul</button><button class="btn sm" data-act="manualIsbn" data-isbn="${it.isbn}">Elle</button></div></div>`).join('')}</div><p class="small muted">Adıyla bulup eklediğin kitap bu barkodla eşleşir; bir dahaki sefere sen ya da başka bir okur okuttuğunda anında bulunur.</p><button class="btn out full" style="margin-top:6px" data-act="close">Tamam</button>`,'scanres','Bulunamayanlar','Kapat');render();return}
   if(ok.length===1){openBook(ok[0].row);return}
   if(ok.length){go('#/kitaplik');toast(`${ok.length} kitap kitaplığına eklendi`);return}
   render()}
@@ -933,7 +964,8 @@ async function isbnFound(isbn){
   if(r&&r.baslik)openBook(r);
   else sheet(`<div class="empty" style="padding-top:20px"><h3>Kitap veritabanında bulunamadı</h3><p>ISBN ${esc(isbn)}. Bazı yerli baskılar kayıtlı olmayabiliyor; adıyla arayabilir ya da elle ekleyebilirsin.</p><div class="row" style="justify-content:center;margin-top:10px"><button class="btn pri" data-act="manualIsbn" data-isbn="${isbn}">Elle ekle</button><button class="btn" data-act="searchOpen">Adıyla ara</button></div></div>`,'scanres','Barkod okundu')}
 async function decodePhoto(file){const url=URL.createObjectURL(file);try{const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=url});
-  if('BarcodeDetector' in window){try{const r=await new BarcodeDetector({formats:['ean_13']}).detect(img);const c=r.map(x=>x.rawValue).find(validIsbn);if(c)return c}catch(e){}}
+  const D=await getDetector();if(D.d){try{const r=await D.d.detect(img);const c=r.map(x=>x.rawValue).find(validIsbn);if(c)return c}catch(e){}}
+  if(!window.ZXing)return null;
   for(const max of[1400,900,2200,640])for(const rot of[0,1]){const W=img.naturalWidth,H=img.naturalHeight,sc=Math.min(1,max/Math.max(W,H)),w=Math.round(W*sc),h=Math.round(H*sc);const c=document.createElement('canvas');c.width=rot?h:w;c.height=rot?w:h;const x=c.getContext('2d');if(rot){x.translate(h,0);x.rotate(Math.PI/2)}x.drawImage(img,0,0,w,h);
     const t=zxDecodeCanvas(c);if(t)return t}return null}finally{URL.revokeObjectURL(url)}}
 
@@ -1043,13 +1075,16 @@ const A={
   scanOpen:()=>scanOpen(),scanClose:()=>scanStop(),
   scanPhoto:()=>$('#photoFile').click(),
   scanManual:()=>{const f=$('#scanIsbnForm');f.classList.toggle('hide');if(!f.classList.contains('hide'))setTimeout(()=>$('#scanIsbnIn').focus(),50)},
+  scanZoom:async el=>{if(!track||!BATCH.zooms)return;BATCH.zi=(BATCH.zi+1)%BATCH.zooms.length;const z=BATCH.zooms[BATCH.zi];try{await track.applyConstraints({advanced:[{zoom:z}]});el.textContent=(Math.round(z*10)/10)+'×'}catch(e){}},
   scanSt:el=>{BATCH.durum=el.dataset.s;try{localStorage.setItem('kv.scanDurum',BATCH.durum)}catch(e){}drawBatch();scanMsg(`Bundan sonra okutulanlar “${DURUM[BATCH.durum]}” olarak eklenecek`)},
   trayItem:el=>trayItem(+el.dataset.i),
   scanDone:()=>scanDone(),
   scanManualOld:()=>{scanStop();sheet(`<form id="isbnForm"><input class="inp" id="isbnIn" inputmode="numeric" placeholder="978…" autocomplete="off" style="font-size:20px;letter-spacing:.06em;text-align:center"><button class="btn pri full" style="margin-top:12px">Kitabı bul</button></form><p class="small muted" style="text-align:center">Numara barkodun hemen altında yazar.</p>`,'isbn','ISBN ile bul','Vazgeç');setTimeout(()=>$('#isbnIn').focus(),200)},
   scanTorch:async()=>{try{const on=!track._t;await track.applyConstraints({advanced:[{torch:on}]});track._t=on}catch(e){}},
   searchOpen:el=>openSearch(el&&el.dataset.q),
-  pickRes:el=>openBook(window._res[+el.dataset.i]),
+  pickRes:el=>{const x=window._res[+el.dataset.i];openBook(S.pendIsbn?{...x,isbn:S.pendIsbn}:x)},
+  pendFind:el=>{S.pendIsbn=el.dataset.isbn;S.sres=null;openSearch('')},
+  pendCancel:()=>{S.pendIsbn=null;render()},
   openAuth:el=>openBook(window._auth[+el.dataset.i]),
   user:(el,e)=>{if(e.target.closest('[data-act=follow]'))return;go('#/kullanici/'+el.dataset.id)},
   follow:(el,e)=>{e.stopPropagation();toggleFollow(el.dataset.id)},
@@ -1058,7 +1093,10 @@ const A={
   editProfile:()=>editProfile(),saveProfile:el=>saveProfile(el),
   askKadi:()=>askKadi(),saveKadi:el=>saveKadi(el),
   pickAvatar:()=>{if(!S.me||LOCAL)return;$('#avatarFile').click()},
-  addCand:async el=>{const x=window._cand;el.disabled=true;const r=await addRow(x,el.dataset.s);if(r){toast('Kitaplığına eklendi');openBook(r)}else el.disabled=false},
+  addCand:async el=>{const x=window._cand;el.disabled=true;const r=await addRow(x,el.dataset.s);if(!r){el.disabled=false;return}
+    if(S.pendIsbn){const done=S.pendIsbn;S.pendIsbn=null;delete ISBNC[done];BATCH.pend=(BATCH.pend||[]).filter(i=>i!==done);
+      if(BATCH.pend.length){toast('Eklendi, barkod eşleşti');S.pendIsbn=BATCH.pend[0];S.sres=null;openSearch('');return}}
+    toast('Kitaplığına eklendi');openBook(r)},
   manual:el=>openForm({baslik:el&&el.dataset.q||''},true),
   manualIsbn:el=>openForm({isbn:el.dataset.isbn},true),
   fSt:el=>{FORM.durum=el.dataset.s;el.parentNode.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===el))},
