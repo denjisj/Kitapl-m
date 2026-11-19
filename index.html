@@ -288,6 +288,17 @@ input[type=range]{width:100%;accent-color:var(--ac)}
 .kadi:focus-within{border-color:var(--ac)}.kadi span{color:var(--mu);font-size:16px}
 .kadi .inp{border:0;background:none;padding-left:2px}
 .handle{font-size:14px;color:var(--mu);margin-top:1px}
+.chx{display:flex;align-items:center;gap:6px;padding:9px 0;border-top:1px solid var(--line);font-size:15px}
+.chx .n{width:24px;color:var(--mu);font-variant-numeric:tabular-nums;flex:none}
+.chx .bt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chx .bt small{display:block;color:var(--mu);font-size:12px}
+.chx button.ib{width:34px;height:34px;border-radius:9px;background:var(--fill);display:grid;place-items:center;flex:none;color:var(--ink)}
+.chx button.ib:disabled{opacity:.3}
+.chx button.ib svg{width:17px;height:17px}
+.chx button.ib.del{color:var(--red)}
+.ins{display:block;width:100%;text-align:center;font-size:13px;color:var(--ac);padding:5px 0;border:1px dashed transparent;border-radius:8px;margin:2px 0}
+.ins:active,.ins:hover{border-color:var(--ac)}
+.busy{position:relative;pointer-events:none;opacity:.55}
 .toast{position:fixed;left:50%;bottom:calc(140px + var(--sb));transform:translate(-50%,10px);z-index:90;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14.5px;font-weight:500;opacity:0;pointer-events:none;transition:.22s;max-width:86vw;text-align:center}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .setup{max-width:560px;margin:40px auto;padding:0 20px}
@@ -1005,7 +1016,9 @@ function vAudioPage(id){const v=$('#view');
   <button class="btn pri full" style="margin:16px 0 4px" data-act="playA" data-id="${a.id}">${I.play.replace('<svg','<svg width="18" height="18"')} ${p&&!p.bitti&&(p.saniye>5||p.bolum)?`Devam et · Bölüm ${p.bolum+1}`:'Dinle'}</button>
   ${aPct(a)?`<div class="bar"><i style="width:${aPct(a)}%"></i></div>`:''}
   ${a.aciklama?`<div class="group"><div class="gh">Hakkında</div><div class="gb"><div class="desc">${esc(a.aciklama)}</div></div></div>`:''}
-  <div class="group"><div class="gh">Bölümler</div><div class="gb" style="padding-top:4px">${a.bolumler.map((b,i)=>`<button class="ch ${p&&p.bolum===i&&!p.bitti?'on':''}" data-act="playCh" data-id="${a.id}" data-i="${i}"><span class="n">${i+1}</span><span>${esc(b.baslik||'Bölüm '+(i+1))}</span><small>${b.sure?fmtT(b.sure):''}</small></button>`).join('')||'<div class="small muted">Bölüm yok.</div>'}</div></div>
+  <div class="group ${S.chBusy?'busy':''}"><div class="gh row" style="justify-content:space-between;padding-right:12px"><span>Bölümler</span>${isAdmin()&&a.bolumler.length?`<button class="btn sm ${S.chEdit===a.id?'pri':''}" style="height:30px;text-transform:none;letter-spacing:0" data-act="chEdit" data-id="${a.id}">${S.chEdit===a.id?'Bitti':'Düzenle'}</button>`:''}</div><div class="gb" style="padding-top:4px">
+  ${S.chEdit===a.id?chEditList(a):a.bolumler.map((b,i)=>`<button class="ch ${p&&p.bolum===i&&!p.bitti?'on':''}" data-act="playCh" data-id="${a.id}" data-i="${i}"><span class="n">${i+1}</span><span>${esc(b.baslik||'Bölüm '+(i+1))}</span><small>${b.sure?fmtT(b.sure):''}</small></button>`).join('')||'<div class="small muted">Bölüm yok.</div>'}
+  ${S.chBusy?`<div class="loading" style="padding:10px"><span class="spin"></span> ${esc(S.chBusy)}</div>`:''}</div></div>
   ${isAdmin()?`<div class="group"><div class="gh">Yönetici</div><div class="gb row" style="flex-wrap:wrap;gap:8px"><button class="btn sm" data-act="audioAddCh" data-id="${a.id}">Bölüm ekle</button><button class="btn sm" data-act="audioEdit" data-id="${a.id}">Düzenle</button><button class="btn sm red" data-act="audioDelAsk" data-id="${a.id}">Sil</button></div><div id="aDel" class="gb" style="padding-top:0"></div></div>`:''}`}
 function openAudioForm(a){if(!isAdmin())return;const isNew=!a;a=a||{};FORM={kapak:a.kapak||'',files:[],coverFile:null};
   sheet(`<div class="row" style="gap:16px;align-items:flex-end"><span id="fCv">${cover(a,80)}</span><div><button class="btn sm" data-act="fCoverFind">Kapağı bul</button> <button class="btn sm" data-act="fCoverUp">Görsel yükle</button></div></div>
@@ -1018,6 +1031,23 @@ function openAudioForm(a){if(!isAdmin())return;const isNew=!a;a=a||{};FORM={kapa
 const BUCKET='sesli-kitaplar';
 const safeName=n=>n.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ı/g,'i').replace(/[^A-Za-z0-9._-]+/g,'_').slice(-80);
 function fileDur(f){return new Promise(res=>{const a=document.createElement('audio');const u=URL.createObjectURL(f);a.preload='metadata';a.onloadedmetadata=()=>{const d=a.duration;URL.revokeObjectURL(u);res(isFinite(d)?Math.round(d):null)};a.onerror=()=>{URL.revokeObjectURL(u);res(null)};a.src=u})}
+/* ---------- bölüm düzenleme (yönetici) ---------- */
+const IC={up:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg>',
+  down:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
+  pen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>',
+  del:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>'};
+function chEditList(a){const n=a.bolumler.length,id=a.id;
+  const ins=i=>`<button class="ins" data-act="chIns" data-id="${id}" data-i="${i}">+ ${i<0?'En başa':i>=n-1?'Sona':'Buraya'} bölüm ekle</button>`;
+  return ins(-1)+a.bolumler.map((b,i)=>`<div class="chx"><span class="n">${i+1}</span><span class="bt">${esc(b.baslik||'Bölüm '+(i+1))}<small>${b.sure?fmtT(b.sure):''}${P.id===id&&P.ch===i?' · çalıyor':''}</small></span>
+    <button class="ib" data-act="chMove" data-id="${id}" data-i="${i}" data-d="-1" ${i===0?'disabled':''} aria-label="Yukarı">${IC.up}</button><button class="ib" data-act="chMove" data-id="${id}" data-i="${i}" data-d="1" ${i===n-1?'disabled':''} aria-label="Aşağı">${IC.down}</button><button class="ib" data-act="chRen" data-id="${id}" data-i="${i}" aria-label="Adını değiştir">${IC.pen}</button><button class="ib del" data-act="chDel" data-id="${id}" data-i="${i}" aria-label="Sil">${IC.del}</button></div>${ins(i)}`).join('')}
+async function setOrder(list){for(let i=0;i<list.length;i++){const b=list[i];const want=b._yeniSira!=null?b._yeniSira:i;if(b.sira!==want){const{error}=await sb.from('sesli_bolumler').update({sira:want}).eq('id',b.id);if(error)throw error;b.sira=want}}}
+async function chOp(kid,label,fn,done){if(S.chBusy)return;S.chBusy=label;render();
+  const a0=S.audio.find(x=>x.id===kid);const playingId=P.id===kid&&a0&&a0.bolumler[P.ch]?a0.bolumler[P.ch].id:null;
+  try{await fn(a0);await loadAudio();const a=S.audio.find(x=>x.id===kid);await setOrder(a.bolumler);
+    if(playingId){const ni=a.bolumler.findIndex(b=>b.id===playingId);if(ni>=0)P.ch=ni;else{audio.pause();audio.removeAttribute('src');P.id=null}}
+    if(done)toast(done)}
+  catch(e){console.error(e);alertBox('İşlem yapılamadı',dbMsg(e)||String(e.message||e))}
+  S.chBusy=false;render()}
 async function uploadChapters(kid,files,start,log){
   for(let i=0;i<files.length;i++){const f=files[i];log(`Yükleniyor ${i+1}/${files.length}: ${f.name}`);
     const path=`${kid}/${String(start+i+1).padStart(3,'0')}-${Date.now().toString(36)}-${safeName(f.name)}`;
@@ -1160,6 +1190,16 @@ const A={
   pickAudio:()=>$('#audioFiles').click(),
   audioSave:el=>audioSave(el),
   audioAddCh:el=>{FORM={addTo:el.dataset.id};$('#audioFiles').click()},
+  chEdit:el=>{S.chEdit=S.chEdit===el.dataset.id?null:el.dataset.id;render()},
+  chIns:el=>{FORM={addTo:el.dataset.id,after:+el.dataset.i};$('#audioFiles').click()},
+  chMove:el=>{const kid=el.dataset.id,i=+el.dataset.i,j=i+ +el.dataset.d;chOp(kid,'Sıralanıyor…',async a=>{const L=a.bolumler.slice();if(j<0||j>=L.length)return;[L[i],L[j]]=[L[j],L[i]];await setOrder(L)})},
+  chRen:el=>{const a=S.audio.find(x=>x.id===el.dataset.id),b=a&&a.bolumler[+el.dataset.i];if(!b)return;FORM={chId:b.id,kid:a.id};
+    sheet(`<label class="f" style="margin-top:0">Bölüm ${+el.dataset.i+1} adı</label><input class="inp" id="chName" maxlength="120" value="${esc(b.baslik||'')}"><button class="btn pri full" style="margin-top:14px" data-act="chRenSave">Kaydet</button>`,'chren','Bölüm adı','Vazgeç');setTimeout(()=>{const x=$('#chName');x.focus();x.select()},250)},
+  chRenSave:async()=>{const v=$('#chName').value.trim();if(!v){toast('Ad boş olamaz');return}const{chId,kid}=FORM;closeSheet();
+    chOp(kid,'Kaydediliyor…',async()=>{const{error}=await sb.from('sesli_bolumler').update({baslik:v}).eq('id',chId);if(error)throw error},'Bölüm adı değişti')},
+  chDel:el=>{const a=S.audio.find(x=>x.id===el.dataset.id),i=+el.dataset.i,b=a&&a.bolumler[i];if(!b)return;FORM={chId:b.id,kid:a.id,path:b.dosya_yolu};
+    sheet(`<div class="empty" style="padding:16px 4px"><h3>Bölüm ${i+1} silinsin mi?</h3><p>“${esc(b.baslik||'Bölüm '+(i+1))}” ve ses dosyası herkes için silinir. Sonraki bölümlerin numarası bir azalır.</p><div class="row" style="justify-content:center;gap:8px"><button class="btn" style="background:var(--red);color:#fff" data-act="chDelOk">Sil</button><button class="btn" data-act="close">Vazgeç</button></div></div>`,'chdel','')},
+  chDelOk:()=>{const{chId,kid,path}=FORM;closeSheet();chOp(kid,'Siliniyor…',async()=>{if(path)await sb.storage.from(BUCKET).remove([path]);const{error}=await sb.from('sesli_bolumler').delete().eq('id',chId);if(error)throw error},'Bölüm silindi')},
   audioDelAsk:el=>{$('#aDel').innerHTML=`<div class="small" style="margin:8px 0">Bu sesli kitap ve tüm ses dosyaları herkes için silinecek.</div><button class="btn sm" style="background:var(--red);color:#fff" data-act="audioDel" data-id="${el.dataset.id}">Evet, sil</button>`},
   audioDel:el=>audioDelete(el.dataset.id),
 };
@@ -1188,7 +1228,11 @@ $('#coverFile').addEventListener('change',async e=>{const f=e.target.files[0];e.
   c.toBlob(async blob=>{if(!S.me)return;const p=`kapak-${S.me.id}-${Date.now().toString(36)}.jpg`;const up=await sb.storage.from('kapaklar').upload(p,blob,{contentType:'image/jpeg'});
     if(up.error){toast('Kapak yüklenemedi');return}FORM.kapak=sb.storage.from('kapaklar').getPublicUrl(p).data.publicUrl;$('#fCv').innerHTML=cover({kapak:FORM.kapak},80)},'image/jpeg',.82)});
 $('#audioFiles').addEventListener('change',async e=>{const fs=[...e.target.files].sort((a,b)=>a.name.localeCompare(b.name,'tr',{numeric:true}));e.target.value='';if(!fs.length)return;
-  if(FORM.addTo){const a=S.audio.find(x=>x.id===FORM.addTo);toast('Bölümler yükleniyor…');await uploadChapters(a.id,fs,a.bolumler.length,m=>toast(m));await loadAudio();toast('Bölümler eklendi');render();return}
+  if(FORM.addTo){const kid=FORM.addTo,after=FORM.after==null?null:FORM.after;FORM={};
+    await chOp(kid,'Bölümler yükleniyor…',async a=>{const n=fs.length,pos=after==null?a.bolumler.length:after+1;
+      a.bolumler.forEach((b,i)=>{b._yeniSira=i<pos?i:i+n});await setOrder(a.bolumler);
+      await uploadChapters(kid,fs,pos,m=>{S.chBusy=m;const l=document.querySelector('.group.busy .loading');if(l)l.lastChild.textContent=' '+m})},
+      fs.length>1?`${fs.length} bölüm eklendi`:'Bölüm eklendi');return}
   FORM.files=fs;$('#aFiles').textContent=`${fs.length} dosya: ${fs.map(f=>f.name).join(', ')}`;const t=$('#a_baslik');if(t&&!t.value)t.value=fs[0].name.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ').replace(/\s*\d+\s*$/,'').trim()});
 
 /* ==================== başlat ==================== */
