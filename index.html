@@ -302,7 +302,8 @@ const AYAR = {
   SUPABASE_URL: "https://pnnukgjkthoiqbutxsuu.supabase.co",
   SUPABASE_ANON_KEY: "sb_publishable_aM1geHHmhjKoHpFOOs9Z1Q_MVOAV7MT",
   ADMIN_EMAIL: "erenats13@gmail.com",  // sesli kitap ekleyebilecek hesap (kurulum.sql ile aynı olmalı)
-  GOOGLE_BOOKS_KEY: "AIzaSyAi1THGbieuXPPd1grKb0rpJzWW4DS5tMw"
+  GOOGLE_BOOKS_KEY: "AIzaSyAi1THGbieuXPPd1grKb0rpJzWW4DS5tMw",
+  TR_ARAMA: "/api/kitap-ara"   // Türk kitapçılarında arama (Vercel fonksiyonu, EXA_API_KEY gerekir)
 };
 </script>
 
@@ -464,14 +465,27 @@ const isTr=x=>x.dil==='tr'||x.kaynak==='site'||/[çğıöşüİı]/i.test((x.bas
 async function crowdSearch(q){if(LOCAL||!sb)return[];const t=q.replace(/[,()%*\\]/g,' ').trim();if(t.length<2)return[];
   try{const{data}=await sb.from('kitaplik').select('anahtar,baslik,yazar,yayinevi,yil,sayfa,kapak,aciklama,tur,isbn').or(`baslik.ilike.%${t}%,yazar.ilike.%${t}%`).limit(40);
     const seen={};(data||[]).forEach(x=>{const o=seen[x.anahtar];if(!o||(!o.kapak&&x.kapak)||(!o.sayfa&&x.sayfa))seen[x.anahtar]={...x,kaynak:'site',dil:'tr'}});return Object.values(seen)}catch(e){return[]}}
+let TR_OFF='';const TRC={};
+function trSearch(params){if(!TRC[params])TRC[params]=trSearch0(params).then(r=>{if(!r.length)setTimeout(()=>delete TRC[params],60000);return r});return TRC[params]}
+async function trSearch0(params){if(TR_OFF||!AYAR.TR_ARAMA||location.protocol==='file:')return[];
+  try{const r=await fetch(`${AYAR.TR_ARAMA}?${params}`);if(r.status===501||r.status===404){TR_OFF=r.status===501?'anahtar':'yok';return[]}
+    if(!r.ok)return[];const j=await r.json();return(j.sonuclar||[]).map(x=>({...x,dil:'tr',kapak:safeUrl(x.kapak)}))}catch(e){return[]}}
+const baseT=t=>norm(String(t||'').split(/\s[\/(:]/)[0]);
+function mergeSame(L){const out=[];
+  for(const x of L){const bt=baseT(x.baslik),sx=surname(x.yazar);
+    const m=out.find(o=>baseT(o.baslik)===bt&&(!sx||!surname(o.yazar)||surname(o.yazar)===sx)&&(o.kaynak===x.kaynak?false:true)&&(!x.isbn||!o.isbn||x.isbn===o.isbn)&&(isTr(o)===isTr(x)));
+    if(m){for(const k of['yazar','yayinevi','yil','sayfa','kapak','aciklama','isbn','tur'])if(!m[k]&&x[k])m[k]=x[k];if(x.kaynak&&m.kaynak&&!m.kaynaklar)m.kaynaklar=[m.kaynak];if(x.kaynak&&m.kaynaklar&&!m.kaynaklar.includes(x.kaynak))m.kaynaklar.push(x.kaynak)}
+    else out.push({...x})}
+  for(const o of out)if(!o.yazar){const d=out.find(z=>z!==o&&z.yazar&&baseT(z.baslik)===baseT(o.baslik));if(d)o.yazar=d.yazar}
+  return out}
 async function searchBooks(q){
   const safe=p=>p.then(r=>({ok:true,r})).catch(()=>({ok:false,r:[]}));
-  const[cr,tr,all]=await Promise.all([safe(crowdSearch(q)),safe(gbSearch(q,20,'&langRestrict=tr')),safe(gbSearch(q,20))]);
-  let L=[...cr.r,...tr.r.map(x=>({...x,dil:x.dil||'tr'})),...all.r];let ok=cr.ok||tr.ok||all.ok;
+  const[cr,tk,tr,all]=await Promise.all([safe(crowdSearch(q)),safe(trSearch('q='+encodeURIComponent(q))),safe(gbSearch(q,20,'&langRestrict=tr')),safe(gbSearch(q,20))]);
+  let L=[...cr.r,...tk.r,...tr.r.map(x=>({...x,dil:x.dil||'tr'})),...all.r];let ok=cr.ok||tk.r.length>0||tr.ok||all.ok;
   if(L.length<4){const o=await safe(olSearch('q='+encodeURIComponent(q),20));L=L.concat(o.r);ok=ok||o.ok}
   if(!ok)throw new Error('ag');
-  const seen=new Set();L=L.filter(x=>{const k=keyOf(x.baslik,x.yazar)+'|'+(x.isbn||'');if(seen.has(k))return false;seen.add(k);return true});
-  const nq=norm(q);const score=x=>(x.kaynak==='site'?100:0)+(isTr(x)?50:0)+(norm(x.baslik).startsWith(nq.split(' ')[0]||'~')?10:0)+(x.kapak?3:0)+(x.sayfa?1:0);
+  L=mergeSame(L);
+  const nq=norm(q);const score=x=>(x.kaynak==='site'?100:0)+(x.kaynak&&x.kaynak!=='site'?80:0)+(isTr(x)?50:0)+(norm(x.baslik).startsWith(nq.split(' ')[0]||'~')?10:0)+(x.kapak?3:0)+(x.sayfa?1:0);
   return L.map((x,i)=>({x,i,s:score(x)})).sort((a,b)=>b.s-a.s||a.i-b.i).map(o=>o.x)}
 async function olIsbn(isbn){try{const r=await fetch(`https://openlibrary.org/api/books?bibkeys=ISBN:${isbn}&format=json&jscmd=data`);const j=await r.json();const d=j['ISBN:'+isbn];if(!d)return null;
   return{baslik:d.title||'',yazar:(d.authors||[]).map(a=>a.name).join(', '),yayinevi:((d.publishers||[])[0]||{}).name||'',yil:((d.publish_date||'').match(/\d{4}/)||[''])[0],sayfa:d.number_of_pages||null,kapak:(d.cover&&(d.cover.large||d.cover.medium))||'',aciklama:'',tur:((d.subjects||[])[0]||{}).name||'',isbn}}catch(e){return null}}
@@ -493,6 +507,7 @@ async function lookupIsbn(isbn){
   let a=cr||g13||g10||null;
   if(!a){try{a=(await gbSearch(isbn,5)).find(x=>x.isbn===isbn||x.isbn===i10)||null}catch(e){}}
   const o=o13||o10;if(!a&&!o){try{a=(await olSearch('isbn='+isbn,1))[0]||null}catch(e){}}
+  if(!a&&!o){const t=(await trSearch('isbn='+isbn)).filter(x=>x.baslik);a=t.find(x=>x.isbn===isbn)||t[0]||null}
   if(!a)a=o;else if(o){a.sayfa=a.sayfa||o.sayfa;a.yayinevi=a.yayinevi||o.yayinevi;if(o.kapak&&!(a.kapak||'').includes('books.google'))a.kapak=a.kapak||o.kapak}
   if(a){a={...a,isbn};if(!a.kapak)a.kapak=`https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg?default=false`;ISBNC[isbn]=a}
   return a;
@@ -503,6 +518,7 @@ async function findCover(t,a){const k=keyOf(t,a);const c=COVERS[k];
   let url='',answered=false;
   try{const r=await gbSearch(`intitle:${t}${a?' inauthor:'+surname(a):''}`,5);answered=true;const hit=r.find(x=>x.kapak&&x.kapak.includes('books.google'));url=hit?hit.kapak:''}catch(e){}
   if(!url){try{const r=await olSearch(`title=${encodeURIComponent(t)}${a?'&author='+encodeURIComponent(surname(a)):''}`,5);answered=true;const hit=r.find(x=>x.kapak);url=hit?hit.kapak:''}catch(e){}}
+  if(!url){const tk=await trSearch('q='+encodeURIComponent(`${t} ${a||''}`.trim()));const h=tk.find(x=>x.kapak&&baseT(x.baslik)===baseT(t))||tk.find(x=>x.kapak);if(h){url=h.kapak;answered=true}}
   if(answered){COVERS[k]={u:url,t:Date.now()};try{localStorage.setItem('kv.covers',JSON.stringify(COVERS))}catch(e){}}
   return url}
 const coverObs=new IntersectionObserver(es=>es.forEach(async e=>{if(!e.isIntersecting)return;coverObs.unobserve(e.target);const el=e.target;const u=await findCover(el.dataset.t,el.dataset.a);
@@ -838,9 +854,9 @@ async function doSearch(q){const el=$('#sRes');if(!el)return;
     if(digits.length===13||digits.length===10){const r=await lookupIsbn(digits);L=r?[r]:[]}else L=await searchBooks(q);S.sres={q,L}}
     const seen=new Set();L=L.filter(x=>{const k=keyOf(x.baslik,x.yazar);if(seen.has(k))return false;seen.add(k);return true});
     window._res=L;if(!$('#sRes'))return;
-    const anyTr=L.some(isTr);
-    $('#sRes').innerHTML=L.length?`${anyTr?'':`<div class="group" style="margin-top:0"><div class="gb small">Bu kitabın <b>Türkçe baskısı</b> kitap veritabanlarında kayıtlı değil, aşağıdakiler yabancı baskılar. Yazarı doğruysa birine dokunup <b>“Türkçe baskı olarak ekle”</b> de; Türkçe adını yazıp kapağın fotoğrafını çekmen yeterli. Eklediğin kitap sitedeki diğer okurlar için de Türkçe adıyla bulunur hale gelir.</div></div>`}
-    <div class="list">${L.map((x,i)=>{const have=inLib(keyOf(x.baslik,x.yazar));const tr=isTr(x);return `<div class="li" style="cursor:pointer" data-act="pickRes" data-i="${i}">${cover(x,48)}<div class="bd"><div class="t">${esc(x.baslik)}</div><div class="a">${esc(x.yazar)}</div><div class="m"><span class="tag" style="margin:0;${tr?'color:var(--read)':''}">${x.kaynak==='site'?'Sitede':tr?'Türkçe':'Yabancı baskı'}</span>${[x.yayinevi,x.yil,x.sayfa?x.sayfa+' s.':''].filter(Boolean).map(esc).join(' · ')}${have?` <span class="st" style="color:var(--read)">· Kitaplığında</span>`:''}</div>${tr?'':`<button class="btn sm out" style="margin-top:8px;height:30px" data-act="trEd" data-i="${i}">Türkçe baskı olarak ekle</button>`}</div>${I.chev}</div>`}).join('')}</div><button class="btn out full" style="margin-top:14px" data-act="manual" data-q="${esc(q)}">Aradığını bulamadın mı? Elle ekle</button>`
+    const anyTr=L.some(isTr);const trNote=TR_OFF==='anahtar'&&isAdmin()?`<div class="small muted" style="margin:-4px 2px 10px">Türk kitapçılarında arama kapalı: Vercel’de EXA_API_KEY tanımlı değil.</div>`:'';
+    $('#sRes').innerHTML=L.length?`${trNote}${anyTr?'':`<div class="group" style="margin-top:0"><div class="gb small">Bu kitabın <b>Türkçe baskısı</b> kitap veritabanlarında kayıtlı değil, aşağıdakiler yabancı baskılar. Yazarı doğruysa birine dokunup <b>“Türkçe baskı olarak ekle”</b> de; Türkçe adını yazıp kapağın fotoğrafını çekmen yeterli. Eklediğin kitap sitedeki diğer okurlar için de Türkçe adıyla bulunur hale gelir.</div></div>`}
+    <div class="list">${L.map((x,i)=>{const have=inLib(keyOf(x.baslik,x.yazar));const tr=isTr(x);return `<div class="li" style="cursor:pointer" data-act="pickRes" data-i="${i}">${cover(x,48)}<div class="bd"><div class="t">${esc(x.baslik)}</div><div class="a">${esc(x.yazar)}</div><div class="m"><span class="tag" style="margin:0;${tr?'color:var(--read)':''}">${x.kaynak==='site'?'Sitede':x.kaynak?esc((x.kaynaklar||[x.kaynak]).join(' · ')):tr?'Türkçe':'Yabancı baskı'}</span>${[x.yayinevi,x.yil,x.sayfa?x.sayfa+' s.':''].filter(Boolean).map(esc).join(' · ')}${have?` <span class="st" style="color:var(--read)">· Kitaplığında</span>`:''}</div>${tr?'':`<button class="btn sm out" style="margin-top:8px;height:30px" data-act="trEd" data-i="${i}">Türkçe baskı olarak ekle</button>`}</div>${I.chev}</div>`}).join('')}</div><button class="btn out full" style="margin-top:14px" data-act="manual" data-q="${esc(q)}">Aradığını bulamadın mı? Elle ekle</button>`
       :`<div class="empty">Sonuç bulunamadı.<br><button class="btn pri" style="margin-top:14px" data-act="manual" data-q="${esc(q)}">Elle ekle</button></div>`}
   catch(e){if($('#sRes'))$('#sRes').innerHTML=`<div class="empty">Kitap kaynaklarına ulaşılamadı. İnternet bağlantını kontrol edip tekrar dene.<br><button class="btn pri" style="margin-top:14px" data-act="manual" data-q="${esc(q)}">Elle ekle</button></div>`}}
 
