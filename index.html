@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f6f3ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131312" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Kitaplığım</title>
+<style>
+:root{
+  --bg:#f6f3ee;--card:#fffdfa;--ink:#1c1b19;--ink2:#3d3a35;--mu:#7b766e;--mu2:#a8a299;--line:#e6e0d6;--fill:#efebe4;
+  --ac:#1f5f4e;--ac-ink:#fff;--ac-soft:#e2ece8;--star:#e3a417;--red:#b03a2e;
+  --read:#2f7d4f;--reading:#b7791f;--want:#3b5fa8;
+  --shadow:0 1px 2px rgba(40,30,10,.08),0 6px 18px rgba(40,30,10,.08);
+  --sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#131312;--card:#1c1b19;--ink:#efebe4;--ink2:#cfc9bf;--mu:#99938a;--mu2:#6e6961;--line:#2c2a27;--fill:#252421;
+  --ac:#6cbfa3;--ac-ink:#0d1f19;--ac-soft:#1c2c27;--read:#6cbf8a;--reading:#e0a64a;--want:#86a6ea;--red:#e2685b;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 20px rgba(0,0,0,.35)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--sans);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0}
+a{color:var(--ac)}
+img{display:block}
+.hide{display:none!important}
+
+/* --- üst ve sekmeler --- */
+header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:saturate(1.6) blur(14px);-webkit-backdrop-filter:saturate(1.6) blur(14px);padding:calc(10px + var(--st)) 20px 8px;border-bottom:1px solid transparent;transition:border-color .2s}
+header.sc{border-color:var(--line)}
+.hrow{display:flex;align-items:center;gap:10px;max-width:760px;margin:0 auto}
+header h1{font:700 30px/1.1 var(--sans);letter-spacing:-.02em;margin:0;flex:1}
+.hbtn{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:var(--ink)}
+.hbtn:active{background:var(--fill)}
+.avatar{width:32px;height:32px;border-radius:50%;object-fit:cover;background:var(--fill);display:grid;place-items:center;font-size:13px;font-weight:600;color:var(--mu)}
+main{max-width:760px;margin:0 auto;padding:4px 20px calc(140px + var(--sb))}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:saturate(1.6) blur(16px);-webkit-backdrop-filter:saturate(1.6) blur(16px);border-top:1px solid var(--line);padding:6px 0 calc(4px + var(--sb))}
+nav.tabs button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;font-weight:500;color:var(--mu2);padding:4px 0}
+nav.tabs svg{width:25px;height:25px}
+nav.tabs button.on{color:var(--ac)}
+
+/* --- genel --- */
+.ic{width:22px;height:22px;flex:none}
+.seg{display:flex;background:var(--fill);border-radius:10px;padding:2px;margin:6px 0 16px}
+.seg button{flex:1;padding:7px 4px;border-radius:8px;font-size:13.5px;font-weight:500;color:var(--ink2)}
+.seg button.on{background:var(--card);color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.search{display:flex;align-items:center;gap:8px;background:var(--fill);border-radius:11px;padding:0 12px;height:40px;margin:4px 0 12px}
+.search svg{width:18px;height:18px;color:var(--mu);flex:none}
+.search input{flex:1;min-width:0;border:0;background:none;outline:none;font-size:16px}
+.filters{display:flex;gap:6px;overflow-x:auto;margin:0 -20px 14px;padding:0 20px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.filters button{flex:none;font-size:14px;padding:6px 13px;border-radius:99px;border:1px solid var(--line);color:var(--ink2);background:var(--card)}
+.filters button.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.filters button span{color:var(--mu);margin-left:3px}
+.filters button.on span{color:var(--mu2)}
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin:-4px 0 10px;color:var(--mu);font-size:13px}
+.toolbar select{border:0;background:none;color:var(--ac);font-weight:500;font-size:13px;-webkit-appearance:none;appearance:none;text-align:right}
+.tgl{display:flex;gap:2px}
+.tgl button{width:30px;height:28px;border-radius:7px;display:grid;place-items:center;color:var(--mu2)}
+.tgl button.on{color:var(--ink);background:var(--fill)}
+.tgl svg{width:18px;height:18px}
+h2.sec{font:700 21px/1.2 var(--sans);letter-spacing:-.01em;margin:22px 0 12px;display:flex;align-items:baseline;justify-content:space-between}
+h2.sec small{font:400 14px var(--sans);color:var(--mu)}
+.muted{color:var(--mu)}
+.small{font-size:13px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:44px;padding:0 18px;border-radius:12px;background:var(--fill);font-weight:600;font-size:15px;color:var(--ink)}
+.btn.pri{background:var(--ac);color:var(--ac-ink)}
+.btn.out{background:transparent;border:1px solid var(--line)}
+.btn.red{color:var(--red)}
+.btn.sm{height:34px;padding:0 13px;font-size:14px;border-radius:9px}
+.btn.full{width:100%}
+.btn:disabled{opacity:.5}
+.btn svg{width:18px;height:18px}
+label.f{display:block;font-size:13px;color:var(--mu);margin:14px 0 5px}
+.inp{width:100%;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:11px 12px;outline:none;font-size:16px}
+.inp:focus{border-color:var(--ac)}
+textarea.inp{min-height:110px;resize:vertical;line-height:1.5}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+.empty{text-align:center;padding:48px 24px;color:var(--mu)}
+.empty h3{font:600 19px var(--sans);color:var(--ink);margin:12px 0 6px}
+.empty svg{width:46px;height:46px;color:var(--mu2)}
+.spin{width:20px;height:20px;border:2.2px solid var(--line);border-top-color:var(--ac);border-radius:50%;animation:sp .7s linear infinite;display:inline-block;vertical-align:middle}
+@keyframes sp{to{transform:rotate(360deg)}}
+.loading{display:flex;align-items:center;justify-content:center;gap:10px;padding:30px;color:var(--mu);font-size:14px}
+
+/* --- kapak --- */
+.cv{position:relative;flex:none;border-radius:3px;overflow:hidden;background:var(--fill);box-shadow:var(--shadow)}
+.cv img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cv .ph{position:absolute;inset:0;padding:12% 10%;display:flex;flex-direction:column;justify-content:space-between;color:rgba(255,255,255,.93);border-left:4px solid rgba(0,0,0,.18)}
+.cv .ph b{font:600 1em/1.12 var(--serif);display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+.cv .ph i{font-style:normal;font-size:.72em;opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cv .ph:after{content:"";position:absolute;left:10%;right:10%;top:52%;height:1px;background:rgba(255,255,255,.35)}
+.cv:before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.14),rgba(255,255,255,.06) 4%,transparent 7%);}
+
+/* --- ızgara ve liste --- */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px 16px}
+@media(min-width:560px){.grid{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:720px){.grid{grid-template-columns:repeat(5,1fr)}}
+.gi{text-align:left;min-width:0}
+.gi .cv{width:100%!important;height:auto!important;aspect-ratio:2/3}
+.gi .t{font-size:13.5px;font-weight:600;line-height:1.25;margin-top:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.gi .a{font-size:12.5px;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.gi .m{margin-top:3px;display:flex;align-items:center;gap:5px;font-size:12px;color:var(--mu)}
+.dot{width:7px;height:7px;border-radius:50%;flex:none}
+.d-okudum{background:var(--read)}.d-okuyorum{background:var(--reading)}.d-okuyacagim{background:var(--want)}
+.list{background:var(--card);border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+.li{display:flex;gap:14px;align-items:center;padding:12px 14px;width:100%;text-align:left;position:relative}
+.li+.li:before{content:"";position:absolute;top:0;right:0;left:82px;height:1px;background:var(--line)}
+.li:active{background:var(--fill)}
+.li .bd{flex:1;min-width:0}
+.li .t{font-weight:600;font-size:15.5px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.li .a{color:var(--mu);font-size:14px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li .m{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;font-size:12.5px;color:var(--mu);margin-top:5px}
+.li .r{flex:none;color:var(--mu2)}
+.li .num{width:26px;flex:none;text-align:center;font:600 17px var(--serif);color:var(--mu)}
+.chev{width:16px;height:16px;color:var(--mu2);flex:none}
+.st{display:inline-flex;align-items:center;gap:5px}
+.bar{height:3px;background:var(--fill);border-radius:3px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--ac)}
+.shelf{display:flex;gap:14px;overflow-x:auto;margin:0 -20px;padding:2px 20px 8px;scrollbar-width:none}
+.shelf::-webkit-scrollbar{display:none}
+.shelf .gi{flex:none;width:104px}
+
+/* --- yıldızlar --- */
+.stars{position:relative;display:inline-block;line-height:1;letter-spacing:1px;color:var(--line);white-space:nowrap}
+.stars .on{position:absolute;left:0;top:0;overflow:hidden;color:var(--star)}
+.rater{display:flex;align-items:center;gap:14px}
+.rater .stars{font-size:38px;letter-spacing:4px;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
+.rater .val{font:600 26px var(--serif);min-width:46px}
+
+/* --- alt sayfa --- */
+.sw{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center}
+.sw[hidden]{display:none}
+.sw .bk{position:absolute;inset:0;background:rgba(0,0,0,.38);animation:fd .2s}
+.sheet{position:relative;width:100%;max-width:640px;max-height:93vh;overflow-y:auto;background:var(--bg);border-radius:14px 14px 0 0;padding:6px 20px calc(28px + var(--sb));animation:up .28s cubic-bezier(.2,.8,.2,1);overscroll-behavior:contain}
+.sheet .grab{width:36px;height:5px;border-radius:3px;background:var(--line);margin:4px auto 8px}
+.shd{display:flex;align-items:center;justify-content:space-between;margin:2px 0 10px;min-height:36px}
+.shd h3{font:600 17px var(--sans);margin:0}
+.shd .x{color:var(--ac);font-weight:500;font-size:16px;padding:6px 2px}
+@keyframes up{from{transform:translateY(100%)}}
+@keyframes fd{from{opacity:0}}
+.group{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:14px 0;overflow:hidden}
+.group .gh{font-size:12.5px;color:var(--mu);text-transform:uppercase;letter-spacing:.04em;padding:12px 16px 0}
+.group .gb{padding:10px 16px 14px}
+.row{display:flex;align-items:center;gap:10px}
+.opt{display:flex;align-items:center;gap:14px;padding:14px 16px;width:100%;text-align:left;position:relative;font-size:16px}
+.opt+.opt:before{content:"";position:absolute;top:0;right:0;left:56px;height:1px;background:var(--line)}
+.opt svg.ic{color:var(--ac)}
+.opt .d{flex:1}
+.opt .d small{display:block;color:var(--mu);font-size:13px;margin-top:1px}
+.opt:active{background:var(--fill)}
+
+/* --- kitap detay --- */
+.dh{display:flex;flex-direction:column;align-items:center;text-align:center;padding:6px 0 4px}
+.dh h2{font:600 24px/1.2 var(--serif);margin:16px 0 4px;letter-spacing:-.005em}
+.dh .au{color:var(--ink2);font-size:16px}
+.facts{display:flex;justify-content:center;gap:0;margin:16px 0 4px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.facts div{flex:1;padding:10px 4px;text-align:center}
+.facts div+div{border-left:1px solid var(--line)}
+.facts b{display:block;font-size:15px;font-weight:600}
+.facts span{font-size:11.5px;color:var(--mu)}
+.status3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.status3 button{padding:10px 4px;border-radius:10px;background:var(--card);border:1px solid var(--line);font-size:14px;font-weight:500;color:var(--ink2)}
+.status3 button.on{color:#fff;border-color:transparent}
+.status3 button.on.okudum{background:var(--read)}.status3 button.on.okuyorum{background:var(--reading)}.status3 button.on.okuyacagim{background:var(--want)}
+@media (prefers-color-scheme:dark){.status3 button.on{color:#111}}
+.desc{font:15.5px/1.6 var(--serif);color:var(--ink2);position:relative}
+.desc.cl{max-height:7.6em;overflow:hidden}
+.desc.cl:after{content:"";position:absolute;left:0;right:0;bottom:0;height:2.4em;background:linear-gradient(transparent,var(--card))}
+.rev{padding:12px 0;border-top:1px solid var(--line)}
+.rev:first-child{border:0;padding-top:2px}
+.rev .who{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:600}
+.rev .who .avatar{width:28px;height:28px}
+.rev .who small{font-weight:400;color:var(--mu);margin-left:auto}
+.rev p{margin:7px 0 0;font:15px/1.55 var(--serif);color:var(--ink2);white-space:pre-wrap}
+.sw2{position:relative;width:46px;height:28px;flex:none}
+.sw2 input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer;z-index:1}
+.sw2 span{position:absolute;inset:0;border-radius:99px;background:var(--line);transition:.2s}
+.sw2 span:after{content:"";position:absolute;left:2px;top:2px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:.2s}
+.sw2 input:checked+span{background:var(--ac)}
+.sw2 input:checked+span:after{transform:translateX(18px)}
+input[type=range]{width:100%;accent-color:var(--ac)}
+
+/* --- tarayıcı --- */
+#scan{position:fixed;inset:0;z-index:80;background:#000;color:#fff;display:flex;flex-direction:column}
+#scan[hidden]{display:none}
+#scan video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#scan .top{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:calc(14px + var(--st)) 18px 14px;background:linear-gradient(rgba(0,0,0,.6),transparent)}
+#scan .top button{color:#fff;font-size:16px;font-weight:500}
+#scan .win{position:relative;z-index:1;margin:auto;width:78%;max-width:360px;aspect-ratio:1.7;border-radius:14px;box-shadow:0 0 0 100vmax rgba(0,0,0,.5)}
+#scan .win:before,#scan .win:after{content:"";position:absolute;inset:-2px;border-radius:16px;border:3px solid #fff;-webkit-mask:linear-gradient(#000 0 0) top/100% 26% no-repeat,linear-gradient(#000 0 0) bottom/100% 26% no-repeat;mask:linear-gradient(#000 0 0) top/100% 26% no-repeat,linear-gradient(#000 0 0) bottom/100% 26% no-repeat}
+#scan .win:after{-webkit-mask:linear-gradient(#000 0 0) left/14% 100% no-repeat,linear-gradient(#000 0 0) right/14% 100% no-repeat;mask:linear-gradient(#000 0 0) left/14% 100% no-repeat,linear-gradient(#000 0 0) right/14% 100% no-repeat}
+#scan .laser{position:absolute;left:8%;right:8%;top:50%;height:2px;background:#ff4d3d;box-shadow:0 0 12px #ff4d3d;animation:ls 1.6s ease-in-out infinite}
+@keyframes ls{50%{top:20%}}
+#scan .bot{position:relative;z-index:2;padding:18px 20px calc(22px + var(--sb));text-align:center;background:linear-gradient(transparent,rgba(0,0,0,.75))}
+#scan .bot p{margin:0 0 14px;font-size:15px;opacity:.9}
+#scan .bot .row{justify-content:center}
+#scan .bot .btn{background:rgba(255,255,255,.16);color:#fff;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+#scan .flash{position:absolute;inset:0;z-index:3;background:#fff;opacity:0;pointer-events:none;transition:opacity .25s}
+
+/* --- oynatıcı --- */
+.mini{position:fixed;left:8px;right:8px;bottom:calc(64px + var(--sb));z-index:29;max-width:744px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:8px 10px 8px 8px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);text-align:left;overflow:hidden}
+.mini[hidden]{display:none}
+.mini .bd{flex:1;min-width:0}
+.mini b{display:block;font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini span{font-size:12.5px;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.mini .pg{position:absolute;left:0;bottom:0;height:2px;background:var(--ac)}
+.pp{width:40px;height:40px;display:grid;place-items:center;color:var(--ink);flex:none}
+.pp svg{width:26px;height:26px}
+.player{text-align:center}
+.player .cvw{display:flex;justify-content:center;margin:10px 0 18px}
+.player h2{font:600 22px/1.2 var(--serif);margin:0}
+.player .ctl{display:flex;justify-content:center;align-items:center;gap:34px;margin:12px 0 18px}
+.player .big{width:72px;height:72px;border-radius:50%;background:var(--ink);color:var(--bg);display:grid;place-items:center}
+.player .big svg{width:34px;height:34px}
+.player .skp{color:var(--ink);position:relative;width:44px;height:44px;display:grid;place-items:center}
+.player .skp svg{width:38px;height:38px}
+.player .skp em{position:absolute;font-style:normal;font-size:10.5px;font-weight:700;top:16px}
+.times{display:flex;justify-content:space-between;font-size:12px;color:var(--mu);font-variant-numeric:tabular-nums;margin-top:2px}
+.chip2{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:99px;background:var(--fill);font-size:13.5px;font-weight:500}
+.ch{display:flex;gap:12px;align-items:center;padding:12px 2px;border-top:1px solid var(--line);width:100%;text-align:left;font-size:15px}
+.ch .n{width:24px;color:var(--mu);font-variant-numeric:tabular-nums}
+.ch.on{color:var(--ac);font-weight:600}
+.ch small{margin-left:auto;color:var(--mu);font-variant-numeric:tabular-nums}
+
+/* --- istatistik --- */
+.prof{display:flex;align-items:center;gap:14px;margin:6px 0 4px}
+.prof .avatar{width:58px;height:58px;font-size:20px}
+.prof h2{font:600 20px var(--sans);margin:0}
+.kp{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:14px 0}
+.kp div{background:var(--card);padding:14px 16px}
+.kp b{display:block;font:600 26px/1.1 var(--serif)}
+.kp span{font-size:13px;color:var(--mu)}
+.goalbar{height:10px;border-radius:5px;background:var(--fill);overflow:hidden;margin:10px 0 6px}
+.goalbar i{display:block;height:100%;background:var(--ac);border-radius:5px}
+.mbars{display:flex;align-items:flex-end;gap:6px;height:110px}
+.mbars div{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px}
+.mbars i{width:100%;background:var(--ac);border-radius:3px 3px 1px 1px;min-height:2px}
+.mbars span{font-size:10px;color:var(--mu)}
+.mbars em{font-style:normal;font-size:10px;color:var(--ink2);min-height:12px}
+
+.toast{position:fixed;left:50%;bottom:calc(140px + var(--sb));transform:translate(-50%,10px);z-index:90;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14.5px;font-weight:500;opacity:0;pointer-events:none;transition:.22s;max-width:86vw;text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.setup{max-width:560px;margin:40px auto;padding:0 20px}
+.setup code{background:var(--fill);padding:2px 6px;border-radius:5px;font-size:13px}
+</style>
+</head>
+<body>
+
+<!-- ==================== AYARLAR ==================== -->
+<script>
+const AYAR = {
+  SUPABASE_URL: "",          // ör. https://abcdxyz.supabase.co
+  SUPABASE_ANON_KEY: "",     // Supabase > Project Settings > API > anon public
+  ADMIN_EMAIL: "erenats13@gmail.com",  // sesli kitap ekleyebilecek hesap (kurulum.sql ile aynı olmalı)
+  GOOGLE_BOOKS_KEY: ""       // isteğe bağlı; boşsa da çalışır
+};
+</script>
+
+<header id="hdr"><div class="hrow"><h1 id="ttl">Kitaplığım</h1><button class="hbtn" id="hAct" data-act="hAct"></button></div></header>
+<main id="view"></main>
+
+<button class="mini" id="mini" hidden data-act="openPlayer">
+  <span id="miniCv"></span>
+  <span class="bd"><b id="miniT"></b><span id="miniS"></span></span>
+  <span class="pp" id="miniBtn" data-act="toggle"></span>
+  <span class="pg" id="miniPg"></span>
+</button>
+
+<nav class="tabs" id="tabs"></nav>
+
+<div class="sw" id="sw" hidden><div class="bk" data-act="close"></div><div class="sheet" id="sheet"></div></div>
+
+<div id="scan" hidden>
+  <video id="scanVideo" playsinline muted autoplay></video>
+  <div class="top"><button data-act="scanClose">Vazgeç</button><span style="font-weight:600">Barkod Tara</span><button data-act="scanTorch" id="torchBtn" class="hide">Fener</button></div>
+  <div class="win"><div class="laser"></div></div>
+  <div class="bot"><p id="scanMsg">Kitabın arkasındaki barkodu çerçevenin içine getir</p>
+    <div class="row"><button class="btn sm" data-act="scanPhoto">Fotoğraftan oku</button><button class="btn sm" data-act="scanManual">ISBN yaz</button></div></div>
+  <div class="flash" id="scanFlash"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<audio id="audio" preload="metadata" playsinline></audio>
+<input type="file" id="photoFile" accept="image/*" hidden>
+<input type="file" id="coverFile" accept="image/*" hidden>
+<input type="file" id="audioFiles" accept="audio/*,.mp3,.m4a,.m4b,.aac,.ogg,.wav" multiple hidden>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js"></script>
+<script>
+/* ==================== yardımcılar ==================== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=s=>String(s||'').toLocaleLowerCase('tr').replace(/ı/g,'i').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+const surname=a=>norm(String(a||'').split(',')[0]).split(' ').pop()||'';
+const keyOf=(t,a)=>norm(t).replace(/^(the|bir) /,'')+'|'+surname(a);
+const today=()=>new Date().toISOString().slice(0,10);
+const fmtT=s=>{s=Math.max(0,Math.floor(s||0));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return(h?h+':'+String(m).padStart(2,'0'):m)+':'+String(x).padStart(2,'0')};
+const fmtDur=s=>{s=Math.round(s||0);const h=Math.floor(s/3600),m=Math.round(s%3600/60);return h?`${h} sa ${m} dk`:`${m} dk`};
+const fmtD=d=>d?new Date(String(d).slice(0,10)+'T12:00').toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'}):'';
+const ago=d=>{const s=(Date.now()-new Date(d))/1000;if(s<3600)return Math.max(1,Math.round(s/60))+' dk önce';if(s<86400)return Math.round(s/3600)+' sa önce';if(s<2592000)return Math.round(s/86400)+' gün önce';return fmtD(d)};
+const BLOBURL={};
+const keepUrl=u=>/^(https:\/\/|idb:)/.test(u||'')?u:'';
+const safeUrl=u=>{u=u||'';if(u.startsWith('idb:'))return BLOBURL[u.slice(4)]||'';return /^https:\/\//.test(u)?u:''};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let tT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('on'),2600)}
+const rate1=v=>(Math.round((+v||0)*10)/10).toLocaleString('tr-TR',{minimumFractionDigits:1,maximumFractionDigits:1});
+
+const I={
+  lib:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="4" height="16" rx="1"/><rect x="8.5" y="4" width="4" height="16" rx="1"/><path d="M14.6 5.2l3.8-1 3.1 15.6-3.8 1z"/></svg>',
+  comp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>',
+  head:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15v-3a8 8 0 0116 0v3"/><path d="M4 15a2 2 0 012-2h1v7H6a2 2 0 01-2-2zM20 15a2 2 0 00-2-2h-1v7h1a2 2 0 002-2z"/></svg>',
+  user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>',
+  barcode:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2M7 8v8M10 8v8M13.5 8v8M17 8v8"/></svg>',
+  pen:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>',
+  list:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg>',
+  grid:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1"/></svg>',
+  rows:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>',
+  chev:'<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>',
+  play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.8v14.4a1 1 0 001.5.86l12-7.2a1 1 0 000-1.72l-12-7.2A1 1 0 007 4.8z"/></svg>',
+  pause:'<svg viewBox="0 0 24 24" fill="currentColor"><rect x="5.5" y="4.5" width="4.5" height="15" rx="1.3"/><rect x="14" y="4.5" width="4.5" height="15" rx="1.3"/></svg>',
+  rew:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 12a8 8 0 108-8H8"/><path d="M10.5 1.5L8 4l2.5 2.5"/></svg>',
+  ffw:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M20 12a8 8 0 11-8-8h4"/><path d="M13.5 1.5L16 4l-2.5 2.5"/></svg>',
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10 5 7 4.5 3.5 5v13c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5zM12 6.5v13"/></svg>',
+  upload:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>',
+  heart:'<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 20.5s-7.5-4.5-9.4-9.1C1.2 8 3.5 4.5 7 4.5c2 0 3.6 1 5 2.9 1.4-1.9 3-2.9 5-2.9 3.5 0 5.8 3.5 4.4 6.9-1.9 4.6-9.4 9.1-9.4 9.1z"/></svg>',
+  heartO:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20.5s-7.5-4.5-9.4-9.1C1.2 8 3.5 4.5 7 4.5c2 0 3.6 1 5 2.9 1.4-1.9 3-2.9 5-2.9 3.5 0 5.8 3.5 4.4 6.9-1.9 4.6-9.4 9.1-9.4 9.1z"/></svg>',
+};
+
+/* ==================== sabit listeler ==================== */
+const TOP100=[["Suç ve Ceza","Fyodor Dostoyevski"],["Sefiller","Victor Hugo"],["1984","George Orwell"],["Kürk Mantolu Madonna","Sabahattin Ali"],["Tutunamayanlar","Oğuz Atay"],["Yüzyıllık Yalnızlık","Gabriel García Márquez"],["Karamazov Kardeşler","Fyodor Dostoyevski"],["Saatleri Ayarlama Enstitüsü","Ahmet Hamdi Tanpınar"],["Anna Karenina","Lev Tolstoy"],["Küçük Prens","Antoine de Saint-Exupéry"],
+["Hayvan Çiftliği","George Orwell"],["İnce Memed","Yaşar Kemal"],["Savaş ve Barış","Lev Tolstoy"],["Dönüşüm","Franz Kafka"],["Yabancı","Albert Camus"],["Huzur","Ahmet Hamdi Tanpınar"],["Simyacı","Paulo Coelho"],["Bülbülü Öldürmek","Harper Lee"],["Budala","Fyodor Dostoyevski"],["Benim Adım Kırmızı","Orhan Pamuk"],
+["Fareler ve İnsanlar","John Steinbeck"],["Cesur Yeni Dünya","Aldous Huxley"],["İçimizdeki Şeytan","Sabahattin Ali"],["Kuyucaklı Yusuf","Sabahattin Ali"],["Çalıkuşu","Reşat Nuri Güntekin"],["Aşk-ı Memnu","Halit Ziya Uşaklıgil"],["Muhteşem Gatsby","F. Scott Fitzgerald"],["Gurur ve Önyargı","Jane Austen"],["Don Kişot","Miguel de Cervantes"],["Usta ile Margarita","Mihail Bulgakov"],
+["Yeraltından Notlar","Fyodor Dostoyevski"],["Beyaz Geceler","Fyodor Dostoyevski"],["İvan İlyiç'in Ölümü","Lev Tolstoy"],["Dava","Franz Kafka"],["Veba","Albert Camus"],["Gazap Üzümleri","John Steinbeck"],["Fahrenheit 451","Ray Bradbury"],["Çavdar Tarlasında Çocuklar","J. D. Salinger"],["Uğultulu Tepeler","Emily Brontë"],["Jane Eyre","Charlotte Brontë"],
+["Madame Bovary","Gustave Flaubert"],["Kırmızı ve Siyah","Stendhal"],["Monte Kristo Kontu","Alexandre Dumas"],["Notre Dame'ın Kamburu","Victor Hugo"],["Faust","Johann Wolfgang von Goethe"],["Genç Werther'in Acıları","Johann Wolfgang von Goethe"],["Martin Eden","Jack London"],["Goriot Baba","Honoré de Balzac"],["Satranç","Stefan Zweig"],["Yaşlı Adam ve Deniz","Ernest Hemingway"],
+["Mai ve Siyah","Halit Ziya Uşaklıgil"],["Yaban","Yakup Kadri Karaosmanoğlu"],["Sinekli Bakkal","Halide Edib Adıvar"],["Masumiyet Müzesi","Orhan Pamuk"],["Kar","Orhan Pamuk"],["Kolera Günlerinde Aşk","Gabriel García Márquez"],["Tehlikeli Oyunlar","Oğuz Atay"],["Aylak Adam","Yusuf Atılgan"],["Anayurt Oteli","Yusuf Atılgan"],["Yaprak Dökümü","Reşat Nuri Güntekin"],
+["Dokuzuncu Hariciye Koğuşu","Peyami Safa"],["Fatih-Harbiye","Peyami Safa"],["Kiralık Konak","Yakup Kadri Karaosmanoğlu"],["Devlet Ana","Kemal Tahir"],["Yorgun Savaşçı","Kemal Tahir"],["Semaver","Sait Faik Abasıyanık"],["Araba Sevdası","Recaizade Mahmut Ekrem"],["Eylül","Mehmet Rauf"],["Kuyruklu Yıldız Altında Bir İzdivaç","Hüseyin Rahmi Gürpınar"],["Şeker Portakalı","José Mauro de Vasconcelos"],
+["Bilinmeyen Bir Kadının Mektubu","Stefan Zweig"],["Silahlara Veda","Ernest Hemingway"],["Beyaz Diş","Jack London"],["Vadideki Zambak","Honoré de Balzac"],["Otomatik Portakal","Anthony Burgess"],["Körlük","José Saramago"],["Gülün Adı","Umberto Eco"],["Koku","Patrick Süskind"],["Böyle Buyurdu Zerdüşt","Friedrich Nietzsche"],["Sofie'nin Dünyası","Jostein Gaarder"],
+["İnsan Ne İle Yaşar","Lev Tolstoy"],["İnsanın Anlam Arayışı","Viktor E. Frankl"],["Sapiens","Yuval Noah Harari"],["Uçurtma Avcısı","Khaled Hosseini"],["Bin Muhteşem Güneş","Khaled Hosseini"],["Swann'ların Tarafı","Marcel Proust"],["Ulysses","James Joyce"],["Ölü Canlar","Nikolay Gogol"],["Babalar ve Oğullar","İvan Turgenyev"],["Oblomov","İvan Gonçarov"],
+["Ana","Maksim Gorki"],["Momo","Michael Ende"],["Bitmeyecek Öykü","Michael Ende"],["Hobbit","J. R. R. Tolkien"],["Yüzüklerin Efendisi","J. R. R. Tolkien"],["Harry Potter ve Felsefe Taşı","J. K. Rowling"],["Dune","Frank Herbert"],["Vakıf","Isaac Asimov"],["Otostopçunun Galaksi Rehberi","Douglas Adams"],["Sol Ayağım","Christy Brown"]];
+const DURUM={okudum:'Okudum',okuyorum:'Okuyorum',okuyacagim:'Okuyacağım'};
+
+/* ==================== durum ==================== */
+const S={tab:'kitaplik',filter:'hepsi',sort:'yeni',q:'',view:localStorage.getItem('kv.view')||'grid',disc:'top',
+  me:null,profile:null,lib:[],libLoaded:false,audio:[],audioLoaded:false,prog:{},stats:null,sheet:null,openKey:null};
+let sb=null;
+const isAdmin=()=>!!(S.me&&S.me.email&&S.me.email.toLowerCase()===AYAR.ADMIN_EMAIL.toLowerCase());
+const inLib=k=>S.lib.find(b=>b.anahtar===k);
+
+/* ==================== kapak ==================== */
+const PAL=['#6b2d2a','#264b5d','#3e3560','#2f4f3a','#6a4a24','#1f3a5c','#5a2c4c','#44474f','#6b5a1e','#24504b','#7a3b1f','#33415c'];
+function hsh(s){let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))|0;return Math.abs(h)}
+function cover(b,w){
+  const h=Math.round(w*1.5),t=b.baslik||'',a=b.yazar||'',src=safeUrl(b.kapak);
+  return `<div class="cv" style="width:${w}px;height:${h}px;font-size:${Math.max(9,Math.round(w/7))}px"><div class="ph" style="background:${PAL[hsh(t+a)%PAL.length]}"><b>${esc(t)}</b><i>${esc(a)}</i></div>${src?`<img src="${esc(src)}" alt="" loading="lazy" onerror="this.remove()">`:''}</div>`}
+function stars(r,size){r=+r||0;return `<span class="stars" style="font-size:${size||13}px">★★★★★<span class="on" style="width:${r/5*100}%">★★★★★</span></span>`}
+
+/* ==================== kitap verisi (Google Books + Open Library) ==================== */
+const GB='https://www.googleapis.com/books/v1/volumes';
+const gbKey=()=>AYAR.GOOGLE_BOOKS_KEY?'&key='+AYAR.GOOGLE_BOOKS_KEY:'';
+function stripHtml(s){const d=document.createElement('div');d.innerHTML=s||'';return d.textContent.trim()}
+function gbMap(it){const v=it.volumeInfo||{};const ids=v.industryIdentifiers||[];
+  const isbn=((ids.find(x=>x.type==='ISBN_13')||ids.find(x=>x.type==='ISBN_10')||{}).identifier)||'';
+  let img=v.imageLinks&&(v.imageLinks.thumbnail||v.imageLinks.smallThumbnail)||'';
+  if(img)img=img.replace(/^http:/,'https:').replace('&edge=curl','')+'&fife=w480-h720';
+  else if(isbn)img=`https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg?default=false`;
+  return{baslik:v.title||'',yazar:(v.authors||[]).join(', '),yayinevi:v.publisher||'',yil:(v.publishedDate||'').slice(0,4),sayfa:v.pageCount||null,kapak:img,aciklama:stripHtml(v.description),tur:(v.categories||[])[0]||'',isbn}}
+async function gbSearch(q,max=20){const r=await fetch(`${GB}?q=${encodeURIComponent(q)}&maxResults=${max}&printType=books${gbKey()}`);if(!r.ok)throw new Error('gb '+r.status);const j=await r.json();return(j.items||[]).map(gbMap).filter(x=>x.baslik)}
+async function olIsbn(isbn){try{const r=await fetch(`https://openlibrary.org/api/books?bibkeys=ISBN:${isbn}&format=json&jscmd=data`);const j=await r.json();const d=j['ISBN:'+isbn];if(!d)return null;
+  return{baslik:d.title||'',yazar:(d.authors||[]).map(a=>a.name).join(', '),yayinevi:((d.publishers||[])[0]||{}).name||'',yil:((d.publish_date||'').match(/\d{4}/)||[''])[0],sayfa:d.number_of_pages||null,kapak:(d.cover&&(d.cover.large||d.cover.medium))||'',aciklama:'',tur:((d.subjects||[])[0]||{}).name||'',isbn}}catch(e){return null}}
+async function lookupIsbn(isbn){
+  let a=null;try{a=(await gbSearch('isbn:'+isbn,1))[0]||null}catch(e){}
+  if(!a||!a.sayfa||!a.kapak||a.kapak.includes('openlibrary')){const o=await olIsbn(isbn);
+    if(!a)a=o;else if(o){a.sayfa=a.sayfa||o.sayfa;a.yayinevi=a.yayinevi||o.yayinevi;if(o.kapak&&!a.kapak.includes('books.google'))a.kapak=o.kapak}}
+  if(a){a.isbn=isbn;if(!a.kapak)a.kapak=`https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg?default=false`}
+  return a;
+}
+const COVERS=(()=>{try{return JSON.parse(localStorage.getItem('kv.covers')||'{}')}catch(e){return{}}})();
+async function findCover(t,a){const k=keyOf(t,a);if(k in COVERS)return COVERS[k];
+  let url='';try{const r=await gbSearch(`intitle:${t}${a?' inauthor:'+surname(a):''}`,5);const hit=r.find(x=>x.kapak&&x.kapak.includes('books.google'))||r.find(x=>x.kapak);url=hit?hit.kapak:''}catch(e){return ''}
+  COVERS[k]=url;try{localStorage.setItem('kv.covers',JSON.stringify(COVERS))}catch(e){}return url}
+const coverObs=new IntersectionObserver(es=>es.forEach(async e=>{if(!e.isIntersecting)return;coverObs.unobserve(e.target);const el=e.target;const u=await findCover(el.dataset.t,el.dataset.a);
+  if(u){const cv=el.querySelector('.cv');if(cv&&!cv.querySelector('img')){const im=new Image();im.loading='lazy';im.alt='';im.onerror=()=>im.remove();im.src=u;cv.appendChild(im)}}}),{rootMargin:'300px'});
+function lazyCovers(){document.querySelectorAll('[data-lazy]').forEach(el=>{el.removeAttribute('data-lazy');coverObs.observe(el)})}
+
+/* ==================== Supabase: veri katmanı ==================== */
+async function loadLib(){if(!S.me){S.lib=[];S.libLoaded=true;return}
+  const{data,error}=await sb.from('kitaplik').select('*').eq('user_id',S.me.id).order('created_at',{ascending:false});
+  if(error){toast('Kitaplık yüklenemedi');console.error(error)}S.lib=data||[];S.libLoaded=true}
+async function ensureProfile(u){const meta=u.user_metadata||{};
+  let{data}=await sb.from('profiller').select('*').eq('id',u.id).maybeSingle();
+  if(!data){const r=await sb.from('profiller').insert({id:u.id,ad:meta.full_name||meta.name||u.email.split('@')[0],avatar:meta.avatar_url||null}).select().single();data=r.data}
+  S.profile=data||{id:u.id,ad:u.email,hedef:24}}
+async function saveRow(b,patch){
+  Object.assign(b,patch,{updated_at:new Date().toISOString()});
+  const{id,...row}=b;const{error}=await sb.from('kitaplik').update(row).eq('id',id);
+  if(error){toast('Kaydedilemedi');console.error(error)}
+}
+async function addRow(x,durum){
+  if(!S.me){openLogin('Kitap eklemek için giriş yap');return null}
+  const k=keyOf(x.baslik,x.yazar);const ex=inLib(k);if(ex){toast('Bu kitap zaten kitaplığında');return ex}
+  const row={anahtar:k,isbn:x.isbn||null,baslik:x.baslik,yazar:x.yazar||null,yayinevi:x.yayinevi||null,yil:x.yil||null,sayfa:parseInt(x.sayfa)||null,kapak:keepUrl(x.kapak)||null,aciklama:x.aciklama||null,tur:x.tur||null,durum:durum||'okuyacagim',puan:0,
+    bitis:durum==='okudum'?today():null,baslama:durum==='okuyorum'?today():null};
+  const{data,error}=await sb.from('kitaplik').insert(row).select().single();
+  if(error){toast('Eklenemedi');console.error(error);return null}
+  S.lib.unshift(data);S.stats=null;return data}
+async function delRow(b){const{error}=await sb.from('kitaplik').delete().eq('id',b.id);if(error){toast('Silinemedi');return}S.lib=S.lib.filter(x=>x.id!==b.id);S.stats=null}
+
+async function loadAudio(){const{data,error}=await sb.from('sesli_kitaplar').select('*, sesli_bolumler(*)').order('created_at',{ascending:false});
+  if(error)console.error(error);S.audio=(data||[]).map(a=>({...a,bolumler:(a.sesli_bolumler||[]).sort((x,y)=>x.sira-y.sira)}));S.audioLoaded=true}
+async function loadProg(){try{S.prog=JSON.parse(localStorage.getItem('kv.prog')||'{}')}catch(e){S.prog={}}
+  if(!S.me)return;const{data}=await sb.from('dinleme').select('*').eq('user_id',S.me.id);(data||[]).forEach(d=>S.prog[d.kitap_id]={bolum:d.bolum,saniye:d.saniye,bitti:d.bitti,t:+new Date(d.updated_at)})}
+let progT=null;
+function saveProg(id,bolum,saniye,bitti){S.prog[id]={bolum,saniye,bitti:!!bitti,t:Date.now()};try{localStorage.setItem('kv.prog',JSON.stringify(S.prog))}catch(e){}
+  if(S.me)sb.from('dinleme').upsert({user_id:S.me.id,kitap_id:id,bolum,saniye:Math.floor(saniye),bitti:!!bitti,updated_at:new Date().toISOString()}).then(({error})=>error&&console.warn(error))}
+
+async function loadStats(){const[a,b]=await Promise.all([
+  sb.from('kitap_istatistik').select('*').gt('okuyan',0).order('okuyan',{ascending:false}).limit(50),
+  sb.from('kitap_istatistik').select('*').gt('puan_sayisi',0).order('ort_puan',{ascending:false}).order('puan_sayisi',{ascending:false}).limit(50)]);
+  S.stats={pop:a.data||[],top:b.data||[]}}
+
+/* ==================== çizim ==================== */
+const TABS=[['kitaplik','Kitaplığım',I.lib],['kesfet','Keşfet',I.comp],['sesli','Sesli Kitap',I.head],['profil','Profil',I.user]];
+$('#tabs').innerHTML=TABS.map(([k,t,i])=>`<button data-act="tab" data-t="${k}">${i}<span>${t}</span></button>`).join('');
+function render(){
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===S.tab));
+  $('#ttl').textContent={kitaplik:'Kitaplığım',kesfet:'Keşfet',sesli:'Sesli Kitaplar',profil:'Profil'}[S.tab];
+  const h=$('#hAct');
+  if(S.tab==='kitaplik'||(S.tab==='sesli'&&isAdmin())){h.innerHTML=I.plus;h.classList.remove('hide')}
+  else if(S.tab==='kesfet'){h.innerHTML=I.barcode.replace('class="ic"','width="24" height="24"');h.classList.remove('hide')}
+  else h.classList.add('hide');
+  const v=$('#view');
+  if(S.tab==='kitaplik')v.innerHTML=vLib();
+  else if(S.tab==='kesfet')v.innerHTML=vDisc();
+  else if(S.tab==='sesli')v.innerHTML=vAudio();
+  else v.innerHTML=vProf();
+  if(S.tab==='kitaplik')renderLibItems();
+  lazyCovers();updateMini();
+}
+function needLogin(msg){return `<div class="empty">${I.book}<h3>${esc(msg)}</h3><p>Kitaplığın, puanların ve yorumların hesabında saklanır; her cihazdan erişirsin.</p><button class="btn pri" style="margin-top:8px" data-act="login">Giriş yap</button></div>`}
+
+function vLib(){
+  if(!S.me)return needLogin('Kitaplığını oluştur');
+  if(!S.libLoaded)return `<div class="loading"><span class="spin"></span> Yükleniyor</div>`;
+  const c={hepsi:S.lib.length,okudum:0,okuyorum:0,okuyacagim:0,favori:0};S.lib.forEach(b=>{c[b.durum]++;if(b.favori)c.favori++});
+  const reading=S.lib.filter(b=>b.durum==='okuyorum');
+  return `${reading.length&&S.filter==='hepsi'&&!S.q?`<h2 class="sec" style="margin-top:6px">Şu an okuyorum <small>${reading.length}</small></h2><div class="shelf">${reading.map(b=>`<button class="gi" data-act="openLib" data-id="${b.id}">${cover(b,104)}<div class="t">${esc(b.baslik)}</div>${b.sayfa?`<div class="bar"><i style="width:${Math.min(100,Math.round((b.mevcut_sayfa||0)/b.sayfa*100))}%"></i></div>`:''}</button>`).join('')}</div>`:''}
+  <div class="search">${I.search}<input id="q" data-inp="q" placeholder="Kitaplığında ara" value="${esc(S.q)}" autocomplete="off"></div>
+  <div class="filters">${[['hepsi','Tümü'],['okudum','Okudum'],['okuyorum','Okuyorum'],['okuyacagim','Okuyacağım'],['favori','Favoriler']].map(([k,t])=>`<button class="${S.filter===k?'on':''}" data-act="filter" data-f="${k}">${t}<span>${c[k]}</span></button>`).join('')}</div>
+  <div class="toolbar"><select data-chg="sort">${[['yeni','Son eklenen'],['baslik','Başlık'],['yazar','Yazar'],['puan','Puanım'],['bitis','Bitirme tarihi']].map(([k,t])=>`<option value="${k}" ${S.sort===k?'selected':''}>${t}</option>`).join('')}</select><div class="tgl"><button class="${S.view==='grid'?'on':''}" data-act="view" data-v="grid">${I.grid}</button><button class="${S.view==='list'?'on':''}" data-act="view" data-v="list">${I.rows}</button></div></div>
+  <div id="items"></div>`;
+}
+function renderLibItems(){const el=$('#items');if(!el)return;
+  if(!S.lib.length){el.innerHTML=`<div class="empty">${I.book}<h3>Rafların boş</h3><p>Barkodu tarat ya da kitap adıyla ara; kapak ve bilgiler otomatik gelir.</p><div class="row" style="justify-content:center;margin-top:10px"><button class="btn pri" data-act="scanOpen">Barkod tara</button><button class="btn" data-act="searchOpen">Kitap ara</button></div></div>`;return}
+  const q=norm(S.q);const tr=(a,b)=>String(a||'').localeCompare(String(b||''),'tr');
+  let l=S.lib.filter(b=>S.filter==='hepsi'||(S.filter==='favori'?b.favori:b.durum===S.filter)).filter(b=>!q||norm(`${b.baslik} ${b.yazar} ${b.isbn||''}`).includes(q));
+  l.sort({yeni:(a,b)=>tr(b.created_at,a.created_at),baslik:(a,b)=>tr(a.baslik,b.baslik),yazar:(a,b)=>tr(surname(a.yazar),surname(b.yazar)),puan:(a,b)=>(b.puan||0)-(a.puan||0),bitis:(a,b)=>tr(b.bitis,a.bitis)}[S.sort]);
+  if(!l.length){el.innerHTML=`<div class="empty">Eşleşen kitap yok.</div>`;return}
+  el.innerHTML=S.view==='grid'?`<div class="grid">${l.map(b=>`<button class="gi" data-act="openLib" data-id="${b.id}">${cover(b,110)}<div class="t">${esc(b.baslik)}</div><div class="a">${esc(b.yazar||'')}</div><div class="m">${b.puan>0?stars(b.puan,11):`<span class="dot d-${b.durum}"></span>${DURUM[b.durum]}`}</div></button>`).join('')}</div>`
+   :`<div class="list">${l.map(b=>`<button class="li" data-act="openLib" data-id="${b.id}">${cover(b,52)}<div class="bd"><div class="t">${b.favori?'<span style="color:var(--red)">♥</span> ':''}${esc(b.baslik)}</div><div class="a">${esc(b.yazar||'')}</div><div class="m"><span class="st"><span class="dot d-${b.durum}"></span>${DURUM[b.durum]}</span>${b.sayfa?`<span>${b.sayfa} sayfa</span>`:''}${b.puan>0?`<span class="st">${stars(b.puan,12)} ${rate1(b.puan)}</span>`:''}</div></div>${I.chev}</button>`).join('')}</div>`;
+}
+
+function vDisc(){
+  const seg=`<div class="seg">${[['top','Top 100'],['pop','En çok okunan'],['puan','En yüksek puan']].map(([k,t])=>`<button class="${S.disc===k?'on':''}" data-act="disc" data-d="${k}">${t}</button>`).join('')}</div>`;
+  const srch=`<form class="search" id="discForm">${I.search}<input id="discQ" placeholder="Kitap, yazar veya ISBN ara" autocomplete="off" enterkeyhint="search"></form>`;
+  let body='';
+  if(S.disc==='top'){
+    const done=TOP100.filter(([t,a])=>{const b=inLib(keyOf(t,a));return b&&b.durum==='okudum'}).length;
+    body=`${S.me?`<div class="group" style="margin-top:0"><div class="gb"><div class="row" style="justify-content:space-between"><b>Okunması gereken 100 kitap</b><span class="muted">${done} / 100</span></div><div class="goalbar"><i style="width:${done}%"></i></div></div></div>`:''}
+    <div class="list">${TOP100.map(([t,a],i)=>{const b=inLib(keyOf(t,a));const o=b||{baslik:t,yazar:a};return `<button class="li" ${b?'':`data-lazy data-t="${esc(t)}" data-a="${esc(a)}"`} data-act="openCand" data-t="${esc(t)}" data-a="${esc(a)}"><span class="num">${i+1}</span>${cover(o,44)}<div class="bd"><div class="t">${esc(t)}</div><div class="a">${esc(a)}</div>${b?`<div class="m"><span class="st"><span class="dot d-${b.durum}"></span>${DURUM[b.durum]}</span>${b.puan>0?stars(b.puan,11):''}</div>`:''}</div>${I.chev}</button>`}).join('')}</div>`;
+  }else{
+    if(!S.stats){loadStats().then(()=>S.tab==='kesfet'&&render());body=`<div class="loading"><span class="spin"></span> Yükleniyor</div>`}
+    else{const L=S.disc==='pop'?S.stats.pop:S.stats.top;
+      body=L.length?`<p class="small muted" style="margin:-4px 2px 12px">${S.disc==='pop'?'Bu sitedeki okurların en çok bitirdiği kitaplar.':'Okurların verdiği puanların ortalamasına göre.'}</p><div class="list">${L.map((x,i)=>`<button class="li" ${x.kapak?'':`data-lazy data-t="${esc(x.baslik)}" data-a="${esc(x.yazar||'')}"`} data-act="openKey" data-k="${esc(x.anahtar)}"><span class="num">${i+1}</span>${cover(x,44)}<div class="bd"><div class="t">${esc(x.baslik)}</div><div class="a">${esc(x.yazar||'')}</div><div class="m">${x.ort_puan?`<span class="st">${stars(x.ort_puan,12)} ${rate1(x.ort_puan)} <span>(${x.puan_sayisi})</span></span>`:''}<span>${x.okuyan} okur</span></div></div>${I.chev}</button>`).join('')}</div>`
+       :`<div class="empty">Henüz yeterli veri yok.<br>Okurlar kitap ekleyip puan verdikçe bu liste dolacak.</div>`}
+  }
+  return srch+seg+body;
+}
+
+function vAudio(){
+  if(!S.audioLoaded){loadAudio().then(()=>S.tab==='sesli'&&render());return `<div class="loading"><span class="spin"></span> Yükleniyor</div>`}
+  if(!S.audio.length)return `<div class="empty">${I.head.replace('<svg','<svg width="46" height="46"')}<h3>Henüz sesli kitap yok</h3><p>${isAdmin()?'Sağ üstteki + ile ilk sesli kitabı yükle. Yüklediğin kitapları herkes dinleyebilir.':'Yeni sesli kitaplar eklendiğinde burada görünecek.'}</p>${isAdmin()?`<button class="btn pri" data-act="audioNew">Sesli kitap yükle</button>`:''}</div>`;
+  const cont=S.audio.filter(a=>{const p=S.prog[a.id];return p&&!p.bitti&&(p.saniye>5||p.bolum>0)}).sort((a,b)=>S.prog[b.id].t-S.prog[a.id].t);
+  return `${cont.length?`<h2 class="sec" style="margin-top:6px">Dinlemeye devam et</h2><div class="shelf">${cont.map(a=>`<button class="gi" data-act="playA" data-id="${a.id}">${cover(a,104)}<div class="t">${esc(a.baslik)}</div><div class="bar"><i style="width:${aPct(a)}%"></i></div></button>`).join('')}</div>`:''}
+  <h2 class="sec">Tümü <small>${S.audio.length} kitap</small></h2>
+  <div class="grid">${S.audio.map(a=>`<button class="gi" data-act="openA" data-id="${a.id}" ${a.kapak?'':`data-lazy data-t="${esc(a.baslik)}" data-a="${esc(a.yazar||'')}"`}>${cover(a,110)}<div class="t">${esc(a.baslik)}</div><div class="a">${esc(a.yazar||'')}</div><div class="m">${a.bolumler.length} bölüm${aTotal(a)?' · '+fmtDur(aTotal(a)):''}</div></button>`).join('')}</div>`;
+}
+const aTotal=a=>a.bolumler.reduce((s,b)=>s+(b.sure||0),0);
+function aPct(a){const p=S.prog[a.id];const tot=aTotal(a);if(!p||!tot)return 0;if(p.bitti)return 100;let d=0;for(let i=0;i<p.bolum&&i<a.bolumler.length;i++)d+=a.bolumler[i].sure||0;return Math.min(100,Math.round((d+p.saniye)/tot*100))}
+
+function vProf(){
+  if(!S.me)return needLogin('Hesabına giriş yap');
+  const y=String(new Date().getFullYear()),read=S.lib.filter(b=>b.durum==='okudum'),yr=read.filter(b=>String(b.bitis||'').startsWith(y));
+  const goal=S.profile&&S.profile.hedef||24,pages=read.reduce((s,b)=>s+(b.sayfa||0),0),rated=S.lib.filter(b=>b.puan>0);
+  const avg=rated.length?rate1(rated.reduce((s,b)=>s+ +b.puan,0)/rated.length):'–';
+  const M=['O','Ş','M','N','M','H','T','A','E','E','K','A'],mc=M.map((_,i)=>yr.filter(b=>+String(b.bitis).slice(5,7)===i+1).length),mx=Math.max(1,...mc);
+  const au={};read.forEach(b=>{const k=(b.yazar||'').split(',')[0].trim();if(k)au[k]=(au[k]||0)+1});const ta=Object.entries(au).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const p=S.profile||{};
+  return `<div class="prof">${p.avatar?`<img class="avatar" src="${esc(safeUrl(p.avatar))}" alt="">`:`<span class="avatar">${esc((p.ad||'?')[0].toUpperCase())}</span>`}<div><h2>${esc(LOCAL?'Kitaplığım':p.ad||'')}</h2><div class="small muted">${LOCAL?'Bu cihazda':esc(S.me.email)+(isAdmin()?' · Yönetici':'')}</div></div></div>
+  <div class="group"><div class="gh">${y} okuma hedefi</div><div class="gb"><div class="row" style="justify-content:space-between"><span><b style="font:600 24px var(--serif)">${yr.length}</b> <span class="muted">/ ${goal} kitap</span></span><span class="row"><button class="btn sm" data-act="goal" data-d="-1">−</button><button class="btn sm" data-act="goal" data-d="1">+</button></span></div><div class="goalbar"><i style="width:${Math.min(100,yr.length/goal*100)}%"></i></div><div class="small muted">${yr.length>=goal?'Hedefini tamamladın.':`Hedefe ${goal-yr.length} kitap kaldı.`}</div></div></div>
+  <div class="kp"><div><b>${S.lib.length}</b><span>Kitaplıktaki kitap</span></div><div><b>${read.length}</b><span>Okunan</span></div><div><b>${pages.toLocaleString('tr-TR')}</b><span>Okunan sayfa</span></div><div><b>${avg}</b><span>Ortalama puanım</span></div></div>
+  <div class="group"><div class="gh">${y} · aylara göre</div><div class="gb"><div class="mbars">${mc.map((n,i)=>`<div><em>${n||''}</em><i style="height:${n/mx*78}%"></i><span>${M[i]}</span></div>`).join('')}</div></div></div>
+  ${ta.length?`<div class="group"><div class="gh">En çok okuduğun yazarlar</div><div class="gb">${ta.map(([a,n])=>`<div class="row" style="justify-content:space-between;padding:6px 0"><span>${esc(a)}</span><span class="muted">${n}</span></div>`).join('')}</div></div>`:''}
+  <div class="group"><button class="opt" data-act="bulk">${I.list}<span class="d">Listeden toplu ekle<small>Başka uygulamadaki kitaplarını taşı</small></span>${I.chev}</button>${isAdmin()?`<button class="opt" data-act="audioNew">${I.upload}<span class="d">Sesli kitap yükle<small>Herkese açık olarak yayınlanır</small></span>${I.chev}</button>`:''}${LOCAL?'':`<button class="opt" data-act="logout"><span class="d" style="color:var(--red);padding-left:36px">Çıkış yap</span></button>`}</div>
+  ${LOCAL?`<div class="group"><div class="gh">Yerel mod</div><div class="gb small muted">Supabase bağlı olmadığı için kitapların, puanların ve sesli kitaplar sadece bu tarayıcıda saklanıyor. Dosyanın başındaki <b>AYAR</b> kısmına Supabase bilgilerini girince hesaplar, herkese açık sesli kitaplar ve okur yorumları devreye girer.</div></div>`:''}`;
+}
+
+/* ==================== alt sayfa ==================== */
+function sheet(html,kind,title,right){S.sheet=kind;$('#sheet').innerHTML=`<div class="grab"></div><div class="shd"><button class="x" data-act="close">${right||'Kapat'}</button><h3>${esc(title||'')}</h3><span style="width:44px"></span></div>`+html;$('#sw').hidden=false;document.body.style.overflow='hidden';lazyCovers()}
+function closeSheet(){S.sheet=null;S.openKey=null;$('#sw').hidden=true;document.body.style.overflow=''}
+
+function openLogin(msg){sheet(`<div style="text-align:center;padding:10px 0 6px">${I.book.replace('<svg','<svg width="48" height="48" style="color:var(--ac)"')}<h2 style="font:600 22px var(--serif);margin:10px 0 4px">${esc(msg||'Giriş yap')}</h2><p class="muted small">Kitaplığın tüm cihazlarında senkron kalır.</p></div>
+  <button class="btn full" style="background:var(--card);border:1px solid var(--line);margin-top:10px" data-act="google"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.7 1.2 9.2 3.6l6.9-6.9C35.9 2.4 30.4 0 24 0 14.6 0 6.6 5.4 2.6 13.3l8 6.2C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.4 5.7c4.3-4 6.9-9.9 6.9-17.1z"/><path fill="#FBBC05" d="M10.6 28.5c-.5-1.4-.8-2.9-.8-4.5s.3-3.1.8-4.5l-8-6.2C.9 16.6 0 20.2 0 24s.9 7.4 2.6 10.7l8-6.2z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.4-5.7c-2.1 1.4-4.8 2.3-8.5 2.3-6.2 0-11.5-4.1-13.4-9.9l-8 6.2C6.6 42.6 14.6 48 24 48z"/></svg> Google ile devam et</button>
+  <div class="small muted" style="text-align:center;margin:16px 0 8px">ya da e-posta ile giriş bağlantısı al</div>
+  <form id="mailForm" class="row"><input class="inp" id="mailIn" type="email" placeholder="ornek@mail.com" autocomplete="email"><button class="btn pri">Gönder</button></form>`,'login','')}
+
+/* ---------- kitap detay (kitaplıkta olan veya aday) ---------- */
+async function openBook(x){
+  const k=x.anahtar||keyOf(x.baslik,x.yazar);S.openKey=k;const b=inLib(k);const d=b||x;
+  const facts=[d.sayfa?[d.sayfa,'sayfa']:null,d.yil?[d.yil,'yıl']:null,d.yayinevi?[d.yayinevi,'yayınevi']:null].filter(Boolean);
+  sheet(`<div class="dh">${cover(d,140)}<h2>${esc(d.baslik)}</h2><div class="au">${esc(d.yazar||'')}</div><div id="comStat" class="small muted" style="margin-top:6px;min-height:18px"></div></div>
+  ${facts.length?`<div class="facts">${facts.map(([v,l])=>`<div><b>${esc(v)}</b><span>${l}</span></div>`).join('')}</div>`:''}
+  ${b?`<div class="group"><div class="gh">Durum</div><div class="gb"><div class="status3">${Object.entries(DURUM).map(([k2,t])=>`<button class="${k2} ${b.durum===k2?'on':''}" data-act="setDurum" data-s="${k2}">${t}</button>`).join('')}</div>
+    ${b.durum==='okuyorum'&&b.sayfa?`<div style="margin-top:14px"><div class="row small" style="justify-content:space-between"><span>Sayfa ${b.mevcut_sayfa||0} / ${b.sayfa}</span><span class="muted">%${Math.round((b.mevcut_sayfa||0)/b.sayfa*100)}</span></div><input type="range" min="0" max="${b.sayfa}" value="${b.mevcut_sayfa||0}" data-chg="sayfaIlerleme"></div>`:''}</div></div>
+    <div class="group"><div class="gh">Puanım</div><div class="gb"><div class="rater"><span class="stars" id="rater" style="font-size:38px">★★★★★<span class="on" style="width:${(b.puan||0)/5*100}%">★★★★★</span></span><span class="val" id="raterV">${b.puan>0?rate1(b.puan):''}</span></div><div class="small muted" style="margin-top:4px">${b.puan>0?`<button data-act="clearRate" style="color:var(--ac)">Puanı kaldır</button>`:'Yıldızın sol yarısına dokunursan yarım puan verirsin.'}</div></div></div>
+    <div class="group"><div class="gh">Yorumum</div><div class="gb"><textarea class="inp" id="revIn" placeholder="Bu kitap hakkında düşüncelerin…">${esc(b.yorum||'')}</textarea><div class="row" style="justify-content:space-between;margin-top:10px"><label class="row small" style="gap:10px"><span class="sw2"><input type="checkbox" id="revPub" ${b.yorum_acik!==false?'checked':''}><span></span></span>Diğer okurlar görsün</label><button class="btn pri sm" data-act="saveRev">Kaydet</button></div></div></div>`
+  :`<div class="group"><div class="gh">Kitaplığına ekle</div><div class="gb"><div class="status3">${Object.entries(DURUM).map(([k2,t])=>`<button class="${k2}" data-act="addCand" data-s="${k2}">${t}</button>`).join('')}</div></div></div>`}
+  ${d.aciklama?`<div class="group"><div class="gh">Konusu</div><div class="gb"><div class="desc ${d.aciklama.length>380?'cl':''}" id="desc">${esc(d.aciklama)}</div>${d.aciklama.length>380?`<button class="small" style="color:var(--ac);margin-top:6px" data-act="more">Devamını oku</button>`:''}</div></div>`:''}
+  <div class="group"><div class="gh">Okur yorumları</div><div class="gb" id="revs"><div class="loading" style="padding:14px"><span class="spin"></span></div></div></div>
+  ${b?`<div class="group"><div class="gh">Tarihler</div><div class="gb g2"><div><label class="f" style="margin-top:0">Başladım</label><input type="date" class="inp" value="${b.baslama||''}" data-chg="baslama"></div><div><label class="f" style="margin-top:0">Bitirdim</label><input type="date" class="inp" value="${b.bitis||''}" data-chg="bitis"></div></div></div>
+    <div class="row" style="gap:8px;margin-top:4px"><button class="btn out sm" data-act="fav" style="${b.favori?'color:var(--red)':''}">${b.favori?I.heart:I.heartO} ${b.favori?'Favori':'Favorilere ekle'}</button><button class="btn out sm" data-act="editBook">Düzenle</button><span style="flex:1"></span><button class="btn red sm" data-act="askDel" style="background:none">Sil</button></div><div id="delBox"></div>`:''}`,'book','',b?'Bitti':'Kapat');
+  window._cand=x;
+  if(b){const r=$('#rater');r.addEventListener('pointerdown',rateHandler);}
+  loadCommunity(k);
+}
+function rateHandler(e){const r=e.currentTarget,box=r.getBoundingClientRect();const step=v=>Math.max(.5,Math.min(5,Math.ceil((v-box.left)/box.width*10)/2));
+  const set=v=>{r.querySelector('.on').style.width=v/5*100+'%';$('#raterV').textContent=rate1(v)};let val=step(e.clientX);set(val);r.setPointerCapture(e.pointerId);
+  const mv=ev=>{val=step(ev.clientX);set(val)};const up=async()=>{r.removeEventListener('pointermove',mv);r.removeEventListener('pointerup',up);const b=inLib(S.openKey);if(!b)return;
+    const p={puan:val};if(b.durum==='okuyacagim'){p.durum='okudum';p.bitis=b.bitis||today()}await saveRow(b,p);S.stats=null;toast(`${rate1(val)} puan verdin`);openBook(b)};
+  r.addEventListener('pointermove',mv);r.addEventListener('pointerup',up)}
+async function loadCommunity(k){
+  const[st,rv]=await Promise.all([sb.from('kitap_istatistik').select('*').eq('anahtar',k).maybeSingle(),
+    sb.from('kitaplik').select('puan,yorum,updated_at,user_id,profiller(ad,avatar)').eq('anahtar',k).eq('yorum_acik',true).not('yorum','is',null).neq('yorum','').order('updated_at',{ascending:false}).limit(40)]);
+  if(S.openKey!==k)return;const s=st.data;
+  const cs=$('#comStat');if(cs&&s)cs.innerHTML=[s.ort_puan?`${stars(s.ort_puan,13)} <b style="color:var(--ink)">${rate1(s.ort_puan)}</b> (${s.puan_sayisi} puan)`:'',s.okuyan?`${s.okuyan} kişi okudu`:''].filter(Boolean).join(' · ');
+  const L=(rv.data||[]).filter(r=>!S.me||r.user_id!==S.me.id);const el=$('#revs');if(!el)return;
+  el.innerHTML=L.length?L.map(r=>{const p=r.profiller||{};return `<div class="rev"><div class="who">${p.avatar?`<img class="avatar" src="${esc(safeUrl(p.avatar))}" alt="">`:`<span class="avatar">${esc((p.ad||'?')[0].toUpperCase())}</span>`}${esc(p.ad||'Okur')}${r.puan>0?` ${stars(r.puan,11)}`:''}<small>${ago(r.updated_at)}</small></div><p>${esc(r.yorum)}</p></div>`}).join(''):`<div class="small muted">Henüz yorum yok.${inLib(k)?' İlk yorumu sen yaz.':''}</div>`;
+}
+
+/* ---------- ekleme ---------- */
+function openAdd(){if(!S.me){openLogin('Kitap eklemek için giriş yap');return}
+  sheet(`<div class="group" style="margin-top:4px"><button class="opt" data-act="scanOpen">${I.barcode}<span class="d">Barkod tara<small>Kamerayı barkoda tut, kitap kendiliğinden bulunsun</small></span>${I.chev}</button><button class="opt" data-act="searchOpen">${I.search.replace('<svg','<svg class="ic"')}<span class="d">Kitap ara<small>Ad, yazar veya ISBN ile</small></span>${I.chev}</button><button class="opt" data-act="manual">${I.pen}<span class="d">Elle ekle<small>Bulunamayan kitaplar için</small></span>${I.chev}</button><button class="opt" data-act="bulk">${I.list}<span class="d">Toplu ekle<small>Listeyi yapıştır, kapaklar otomatik gelsin</small></span>${I.chev}</button></div>`,'add','Kitap ekle')}
+function openSearch(q){sheet(`<form class="search" id="sForm" style="margin-top:0">${I.search}<input id="sIn" placeholder="Kitap adı, yazar veya ISBN" value="${esc(q||'')}" autocomplete="off" enterkeyhint="search"></form><div id="sRes"></div>`,'search','Kitap ara');setTimeout(()=>$('#sIn')&&$('#sIn').focus(),200);if(q)doSearch(q)}
+async function doSearch(q){const el=$('#sRes');if(!el)return;el.innerHTML=`<div class="loading"><span class="spin"></span> Aranıyor</div>`;
+  const digits=q.replace(/[^0-9X]/gi,'');
+  try{let L;if(digits.length===13||digits.length===10){const r=await lookupIsbn(digits);L=r?[r]:[]}else L=await gbSearch(q,24);
+    const seen=new Set();L=L.filter(x=>{const k=keyOf(x.baslik,x.yazar);if(seen.has(k))return false;seen.add(k);return true});
+    window._res=L;if(!$('#sRes'))return;
+    $('#sRes').innerHTML=L.length?`<div class="list">${L.map((x,i)=>{const have=inLib(keyOf(x.baslik,x.yazar));return `<button class="li" data-act="pickRes" data-i="${i}">${cover(x,48)}<div class="bd"><div class="t">${esc(x.baslik)}</div><div class="a">${esc(x.yazar)}</div><div class="m">${[x.yayinevi,x.yil,x.sayfa?x.sayfa+' s.':''].filter(Boolean).map(esc).join(' · ')}${have?` <span class="st" style="color:var(--read)">· Kitaplığında</span>`:''}</div></div>${I.chev}</button>`}).join('')}</div><button class="btn out full" style="margin-top:14px" data-act="manual" data-q="${esc(q)}">Aradığını bulamadın mı? Elle ekle</button>`
+      :`<div class="empty">Sonuç bulunamadı.<br><button class="btn pri" style="margin-top:14px" data-act="manual" data-q="${esc(q)}">Elle ekle</button></div>`}
+  catch(e){if($('#sRes'))$('#sRes').innerHTML=`<div class="empty">Bağlantı hatası, tekrar dene.</div>`}}
+
+let FORM={};
+function openForm(b,isNew){FORM={kapak:b.kapak||'',isbn:b.isbn||''};
+  sheet(`<div class="row" style="gap:16px;align-items:flex-end"><span id="fCv">${cover(b,80)}</span><div><button class="btn sm" data-act="fCoverFind">Kapağı bul</button> <button class="btn sm" data-act="fCoverUp">Fotoğraf</button><div class="small muted" style="margin-top:6px">Başlığı yazdıktan sonra “Kapağı bul”a dokun.</div></div></div>
+  <label class="f">Kitap adı</label><input class="inp" id="f_baslik" value="${esc(b.baslik||'')}">
+  <label class="f">Yazar</label><input class="inp" id="f_yazar" value="${esc(b.yazar||'')}">
+  <div class="g2"><div><label class="f">Yayınevi</label><input class="inp" id="f_yayinevi" value="${esc(b.yayinevi||'')}"></div><div><label class="f">Yıl</label><input class="inp" id="f_yil" inputmode="numeric" value="${esc(b.yil||'')}"></div><div><label class="f">Sayfa</label><input class="inp" id="f_sayfa" inputmode="numeric" value="${esc(b.sayfa||'')}"></div><div><label class="f">ISBN</label><input class="inp" id="f_isbn" inputmode="numeric" value="${esc(b.isbn||'')}"></div></div>
+  <label class="f">Konusu</label><textarea class="inp" id="f_aciklama" style="min-height:90px">${esc(b.aciklama||'')}</textarea>
+  ${isNew?`<label class="f">Durum</label><div class="status3" id="fSt">${Object.entries(DURUM).map(([k,t])=>`<button class="${k} ${k==='okuyacagim'?'on':''}" data-act="fSt" data-s="${k}">${t}</button>`).join('')}</div>`:''}
+  <button class="btn pri full" style="margin-top:20px" data-act="fSave" data-id="${b.id||''}">${isNew?'Kitaplığa ekle':'Kaydet'}</button>`,'form',isNew?'Elle ekle':'Düzenle','Vazgeç');FORM.durum='okuyacagim'}
+function readForm(){const g=k=>($('#f_'+k).value||'').trim();return{baslik:g('baslik'),yazar:g('yazar'),yayinevi:g('yayinevi'),yil:g('yil'),sayfa:parseInt(g('sayfa'))||null,isbn:g('isbn').replace(/[^0-9X]/gi,'')||null,aciklama:g('aciklama'),kapak:FORM.kapak}}
+
+/* ---------- toplu ekle ---------- */
+function openBulk(){if(!S.me){openLogin();return}sheet(`<p class="small muted" style="margin-top:0">Her satıra bir kitap: <b>Kitap adı - Yazar</b>. Kapak, sayfa sayısı ve diğer bilgiler otomatik aranır.</p><textarea class="inp" id="bulkIn" style="min-height:200px" placeholder="Kürk Mantolu Madonna - Sabahattin Ali&#10;Aşk ve Gurur - Jane Austen&#10;Akşam Güneşi - Reşat Nuri Güntekin"></textarea><label class="f">Hepsinin durumu</label><div class="status3" id="fSt">${Object.entries(DURUM).map(([k,t])=>`<button class="${k} ${k==='okudum'?'on':''}" data-act="fSt" data-s="${k}">${t}</button>`).join('')}</div><button class="btn pri full" style="margin-top:18px" id="bulkBtn" data-act="bulkGo">Ekle</button><div id="bulkLog" class="small muted" style="margin-top:10px"></div>`,'bulk','Toplu ekle','Vazgeç');FORM={durum:'okudum'}}
+async function bulkGo(btn){const lines=($('#bulkIn').value||'').split('\n').map(s=>s.trim()).filter(Boolean);if(!lines.length)return;btn.disabled=true;let n=0,sk=0;
+  for(let i=0;i<lines.length;i++){btn.innerHTML=`<span class="spin"></span> ${i+1} / ${lines.length}`;const p=lines[i].split(/\s+[-–—]\s+|\t|;/);const t=(p[0]||'').trim(),a=(p.slice(1).join(' ')||'').trim();if(!t)continue;
+    if(inLib(keyOf(t,a))){sk++;continue}
+    let info={baslik:t,yazar:a};try{const r=await gbSearch(`intitle:${t}${a?' inauthor:'+surname(a):''}`,3);const hit=r.find(x=>norm(x.baslik).startsWith(norm(t).slice(0,12)))||r[0];
+      if(hit)info={...hit,baslik:t,yazar:a||hit.yazar,aciklama:hit.aciklama}}catch(e){}
+    const row=await addRow(info,FORM.durum);if(row){n++;if(FORM.durum==='okudum'){row.bitis=null;await saveRow(row,{bitis:null})}}await sleep(120)}
+  closeSheet();S.tab='kitaplik';render();toast(`${n} kitap eklendi${sk?`, ${sk} zaten vardı`:''}`)}
+
+/* ==================== barkod tarayıcı ==================== */
+let reader=null,scanning=false,track=null;
+function validIsbn(s){if(!/^97[89]\d{10}$/.test(s))return false;let t=0;for(let i=0;i<12;i++)t+=+s[i]*(i%2?3:1);return(10-t%10)%10===+s[12]}
+async function scanOpen(){
+  if(!S.me){openLogin('Kitap eklemek için giriş yap');return}
+  closeSheet();$('#scan').hidden=false;$('#scanMsg').textContent='Kitabın arkasındaki barkodu çerçevenin içine getir';scanning=true;
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){$('#scanMsg').textContent='Bu tarayıcı kameraya erişemiyor. Fotoğraftan okuyabilir ya da ISBN yazabilirsin.';return}
+  const video=$('#scanVideo');
+  try{
+    if('BarcodeDetector' in window&&(await BarcodeDetector.getSupportedFormats()).includes('ean_13')){
+      const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});
+      video.srcObject=stream;await video.play();track=stream.getVideoTracks()[0];torchUi();
+      const det=new BarcodeDetector({formats:['ean_13']});
+      const loop=async()=>{if(!scanning)return;try{const r=await det.detect(video);const c=r.map(x=>x.rawValue).find(validIsbn);if(c)return onCode(c)}catch(e){}setTimeout(loop,120)};loop();
+    }else{
+      const hints=new Map();hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[ZXing.BarcodeFormat.EAN_13]);hints.set(ZXing.DecodeHintType.TRY_HARDER,true);
+      reader=new ZXing.BrowserMultiFormatReader(hints,150);
+      await reader.decodeFromConstraints({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080},focusMode:'continuous'},audio:false},video,(res)=>{if(res&&scanning){const c=res.getText();if(validIsbn(c))onCode(c)}});
+      track=video.srcObject&&video.srcObject.getVideoTracks()[0];torchUi();
+    }
+  }catch(e){console.warn(e);$('#scanMsg').textContent=e&&e.name==='NotAllowedError'?'Kamera izni verilmedi. Ayarlar > Safari > Kamera’dan izin ver ya da fotoğraftan oku.':'Kamera açılamadı. Fotoğraftan okuyabilir ya da ISBN yazabilirsin.'}
+}
+function torchUi(){try{const c=track&&track.getCapabilities&&track.getCapabilities();$('#torchBtn').classList.toggle('hide',!(c&&c.torch))}catch(e){}}
+function scanStop(){scanning=false;try{reader&&reader.reset()}catch(e){}reader=null;const v=$('#scanVideo');if(v.srcObject){v.srcObject.getTracks().forEach(t=>t.stop());v.srcObject=null}track=null;$('#scan').hidden=true}
+function onCode(code){if(!scanning)return;scanning=false;try{navigator.vibrate&&navigator.vibrate(60)}catch(e){}const f=$('#scanFlash');f.style.opacity=.7;setTimeout(()=>{f.style.opacity=0;scanStop();isbnFound(code)},180)}
+async function isbnFound(isbn){
+  const ex=S.lib.find(b=>b.isbn===isbn);if(ex){toast('Bu kitap zaten kitaplığında');openBook(ex);return}
+  sheet(`<div class="loading" style="padding:50px 0"><span class="spin"></span> ISBN ${esc(isbn)} aranıyor</div>`,'scanres','Barkod okundu');
+  const r=await lookupIsbn(isbn);if(S.sheet!=='scanres')return;
+  if(r&&r.baslik)openBook(r);
+  else sheet(`<div class="empty" style="padding-top:20px"><h3>Kitap veritabanında bulunamadı</h3><p>ISBN ${esc(isbn)}. Bazı yerli baskılar kayıtlı olmayabiliyor; adıyla arayabilir ya da elle ekleyebilirsin.</p><div class="row" style="justify-content:center;margin-top:10px"><button class="btn pri" data-act="manualIsbn" data-isbn="${isbn}">Elle ekle</button><button class="btn" data-act="searchOpen">Adıyla ara</button></div></div>`,'scanres','Barkod okundu')}
+async function decodePhoto(file){const url=URL.createObjectURL(file);try{const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=url});
+  if('BarcodeDetector' in window){try{const r=await new BarcodeDetector({formats:['ean_13']}).detect(img);const c=r.map(x=>x.rawValue).find(validIsbn);if(c)return c}catch(e){}}
+  const hints=new Map();hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[ZXing.BarcodeFormat.EAN_13]);hints.set(ZXing.DecodeHintType.TRY_HARDER,true);const rd=new ZXing.MultiFormatReader();rd.setHints(hints);
+  for(const max of[1400,900,2200,640])for(const rot of[0,1]){const W=img.naturalWidth,H=img.naturalHeight,sc=Math.min(1,max/Math.max(W,H)),w=Math.round(W*sc),h=Math.round(H*sc);const c=document.createElement('canvas');c.width=rot?h:w;c.height=rot?w:h;const x=c.getContext('2d');if(rot){x.translate(h,0);x.rotate(Math.PI/2)}x.drawImage(img,0,0,w,h);
+    try{const t=rd.decode(new ZXing.BinaryBitmap(new ZXing.HybridBinarizer(new ZXing.HTMLCanvasElementLuminanceSource(c)))).getText();if(validIsbn(t))return t}catch(e){}}return null}finally{URL.revokeObjectURL(url)}}
+
+/* ==================== sesli kitap: detay, yönetim ==================== */
+function openAudio(id){const a=S.audio.find(x=>x.id===id);if(!a)return;const p=S.prog[id];
+  sheet(`<div class="dh">${cover(a,150)}<h2>${esc(a.baslik)}</h2><div class="au">${esc(a.yazar||'')}</div><div class="small muted" style="margin-top:4px">${a.seslendiren?'Seslendiren: '+esc(a.seslendiren)+' · ':''}${a.bolumler.length} bölüm${aTotal(a)?' · '+fmtDur(aTotal(a)):''}</div></div>
+  <button class="btn pri full" style="margin:16px 0 4px" data-act="playA" data-id="${a.id}">${I.play.replace('<svg','<svg width="18" height="18"')} ${p&&!p.bitti&&(p.saniye>5||p.bolum)?`Devam et · Bölüm ${p.bolum+1}`:'Dinle'}</button>
+  ${aPct(a)?`<div class="bar"><i style="width:${aPct(a)}%"></i></div>`:''}
+  ${a.aciklama?`<div class="group"><div class="gh">Hakkında</div><div class="gb"><div class="desc">${esc(a.aciklama)}</div></div></div>`:''}
+  <div class="group"><div class="gh">Bölümler</div><div class="gb" style="padding-top:4px">${a.bolumler.map((b,i)=>`<button class="ch ${p&&p.bolum===i&&!p.bitti?'on':''}" data-act="playCh" data-id="${a.id}" data-i="${i}"><span class="n">${i+1}</span><span>${esc(b.baslik||'Bölüm '+(i+1))}</span><small>${b.sure?fmtT(b.sure):''}</small></button>`).join('')||'<div class="small muted">Bölüm yok.</div>'}</div></div>
+  ${isAdmin()?`<div class="group"><div class="gh">Yönetici</div><div class="gb row" style="flex-wrap:wrap;gap:8px"><button class="btn sm" data-act="audioAddCh" data-id="${a.id}">Bölüm ekle</button><button class="btn sm" data-act="audioEdit" data-id="${a.id}">Düzenle</button><button class="btn sm red" data-act="audioDelAsk" data-id="${a.id}">Sil</button></div><div id="aDel" class="gb" style="padding-top:0"></div></div>`:''}`,'audio','')}
+function openAudioForm(a){if(!isAdmin())return;const isNew=!a;a=a||{};FORM={kapak:a.kapak||'',files:[],coverFile:null};
+  sheet(`<div class="row" style="gap:16px;align-items:flex-end"><span id="fCv">${cover(a,80)}</span><div><button class="btn sm" data-act="fCoverFind">Kapağı bul</button> <button class="btn sm" data-act="fCoverUp">Görsel yükle</button></div></div>
+  <label class="f">Kitap adı</label><input class="inp" id="a_baslik" value="${esc(a.baslik||'')}">
+  <div class="g2"><div><label class="f">Yazar</label><input class="inp" id="a_yazar" value="${esc(a.yazar||'')}"></div><div><label class="f">Seslendiren</label><input class="inp" id="a_seslendiren" value="${esc(a.seslendiren||'')}"></div></div>
+  <label class="f">Tür</label><input class="inp" id="a_tur" value="${esc(a.tur||'')}">
+  <label class="f">Açıklama</label><textarea class="inp" id="a_aciklama" style="min-height:90px">${esc(a.aciklama||'')}</textarea>
+  ${isNew?`<label class="f">Ses dosyaları</label><button class="btn out full" data-act="pickAudio">${I.upload} Dosya seç</button><div class="small muted" id="aFiles" style="margin-top:6px">Birden fazla dosya seçebilirsin; dosya adına göre sıralanıp bölüm olur.</div>`:''}
+  <button class="btn pri full" style="margin-top:20px" id="aSave" data-act="audioSave" data-id="${a.id||''}">${isNew?'Yükle ve yayınla':'Kaydet'}</button><div class="small muted" id="aLog" style="margin-top:8px;text-align:center"></div>`,'aform',isNew?'Sesli kitap yükle':'Düzenle','Vazgeç')}
+const BUCKET='sesli-kitaplar';
+const safeName=n=>n.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ı/g,'i').replace(/[^A-Za-z0-9._-]+/g,'_').slice(-80);
+function fileDur(f){return new Promise(res=>{const a=document.createElement('audio');const u=URL.createObjectURL(f);a.preload='metadata';a.onloadedmetadata=()=>{const d=a.duration;URL.revokeObjectURL(u);res(isFinite(d)?Math.round(d):null)};a.onerror=()=>{URL.revokeObjectURL(u);res(null)};a.src=u})}
+async function uploadChapters(kid,files,start,log){
+  for(let i=0;i<files.length;i++){const f=files[i];log(`Yükleniyor ${i+1}/${files.length}: ${f.name}`);
+    const path=`${kid}/${String(start+i+1).padStart(3,'0')}-${Date.now().toString(36)}-${safeName(f.name)}`;
+    const up=await sb.storage.from(BUCKET).upload(path,f,{contentType:f.type||'audio/mpeg',upsert:false});
+    if(up.error){toast(`${f.name} yüklenemedi: ${up.error.message}`);continue}
+    const url=sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;const sure=await fileDur(f);
+    const{error}=await sb.from('sesli_bolumler').insert({kitap_id:kid,sira:start+i,baslik:f.name.replace(/\.[^.]+$/,'').replace(/[_]+/g,' '),dosya_yolu:path,dosya_url:url,sure});
+    if(error)toast('Bölüm kaydedilemedi')}}
+async function audioSave(btn){
+  const g=k=>($('#a_'+k).value||'').trim();const row={baslik:g('baslik'),yazar:g('yazar')||null,seslendiren:g('seslendiren')||null,tur:g('tur')||null,aciklama:g('aciklama')||null};
+  if(!row.baslik){toast('Kitap adı gerekli');return}const id=btn.dataset.id;const log=m=>$('#aLog').textContent=m;btn.disabled=true;
+  if(!id&&!FORM.files.length){toast('En az bir ses dosyası seç');btn.disabled=false;return}
+  try{
+    if(FORM.coverFile){log('Kapak yükleniyor');const p=`kapaklar/${Date.now().toString(36)}-${safeName(FORM.coverFile.name)}`;const u=await sb.storage.from(BUCKET).upload(p,FORM.coverFile,{contentType:FORM.coverFile.type});if(!u.error)FORM.kapak=sb.storage.from(BUCKET).getPublicUrl(p).data.publicUrl}
+    row.kapak=keepUrl(FORM.kapak)||null;
+    let kid=id;
+    if(id){const{error}=await sb.from('sesli_kitaplar').update(row).eq('id',id);if(error)throw error}
+    else{const{data,error}=await sb.from('sesli_kitaplar').insert(row).select().single();if(error)throw error;kid=data.id;await uploadChapters(kid,FORM.files,0,log)}
+    await loadAudio();closeSheet();S.tab='sesli';render();toast(id?'Kaydedildi':'Sesli kitap yayınlandı');openAudio(kid);
+  }catch(e){console.error(e);toast('Hata: '+(e.message||'kaydedilemedi'));btn.disabled=false;log('')}}
+async function audioDelete(id){const a=S.audio.find(x=>x.id===id);if(!a)return;
+  const paths=a.bolumler.map(b=>b.dosya_yolu);if(paths.length)await sb.storage.from(BUCKET).remove(paths);
+  const{error}=await sb.from('sesli_kitaplar').delete().eq('id',id);if(error){toast('Silinemedi');return}
+  if(P.id===id){audio.pause();audio.removeAttribute('src');P.id=null}await loadAudio();closeSheet();render();toast('Silindi')}
+
+/* ==================== oynatıcı ==================== */
+const audio=$('#audio');const P={id:null,ch:0,rate:+localStorage.getItem('kv.rate')||1,sleepAt:0,sleepT:null};
+function playA(id,ch,fromStart){const a=S.audio.find(x=>x.id===id);if(!a||!a.bolumler.length){toast('Bu kitapta bölüm yok');return}
+  const p=S.prog[id];if(ch==null)ch=p&&!p.bitti?Math.min(p.bolum,a.bolumler.length-1):0;
+  if(P.id&&(P.id!==id||P.ch!==ch))persistPos();
+  const same=P.id===id&&P.ch===ch&&audio.src;P.id=id;P.ch=ch;
+  if(!same){audio.src=safeUrl(a.bolumler[ch].dosya_url)||a.bolumler[ch].dosya_url;const st=fromStart?0:(p&&!p.bitti&&p.bolum===ch?p.saniye:0);
+    audio.addEventListener('loadedmetadata',function f(){audio.removeEventListener('loadedmetadata',f);if(st&&st<audio.duration-3)audio.currentTime=st},{once:true})}
+  audio.playbackRate=P.rate;audio.play().catch(()=>toast('Oynatmak için tekrar dokun'));
+  try{if('mediaSession' in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:a.bolumler[ch].baslik||a.baslik,artist:a.yazar||'',album:a.baslik,artwork:safeUrl(a.kapak)?[{src:safeUrl(a.kapak),sizes:'480x720'}]:[]});
+    navigator.mediaSession.setActionHandler('play',()=>audio.play());navigator.mediaSession.setActionHandler('pause',()=>audio.pause());
+    navigator.mediaSession.setActionHandler('seekbackward',()=>skip(-15));navigator.mediaSession.setActionHandler('seekforward',()=>skip(30));
+    navigator.mediaSession.setActionHandler('nexttrack',()=>P.ch<a.bolumler.length-1&&playA(id,P.ch+1,true));navigator.mediaSession.setActionHandler('previoustrack',()=>P.ch>0&&playA(id,P.ch-1,true))}}catch(e){}
+  updateMini();refreshPlayer()}
+function persistPos(){if(P.id&&audio.src)saveProg(P.id,P.ch,audio.currentTime||0,false)}
+function skip(s){if(audio.duration)audio.currentTime=Math.max(0,Math.min(audio.duration-.5,audio.currentTime+s))}
+audio.addEventListener('pause',()=>{persistPos();updateMini();refreshPlayer()});
+audio.addEventListener('play',()=>{updateMini();refreshPlayer()});
+audio.addEventListener('ended',()=>{const a=S.audio.find(x=>x.id===P.id);if(!a)return;if(P.ch<a.bolumler.length-1)playA(a.id,P.ch+1,true);else{saveProg(a.id,0,0,true);toast('Kitabı bitirdin');updateMini();refreshPlayer()}});
+let lastTick=0,lastSave=0;audio.addEventListener('timeupdate',()=>{const n=Date.now();if(n-lastTick>400){lastTick=n;updateMini(true);refreshPlayer(true)}if(n-lastSave>20000&&!audio.paused){lastSave=n;persistPos()}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)persistPos()});
+function updateMini(light){const m=$('#mini');const a=P.id&&S.audio.find(x=>x.id===P.id);if(!a){m.hidden=true;return}m.hidden=false;
+  $('#miniPg').style.width=(audio.duration?audio.currentTime/audio.duration*100:0)+'%';$('#miniS').textContent=`${a.bolumler[P.ch]?.baslik||''} · ${fmtT(audio.currentTime)}`;
+  if(light)return;$('#miniCv').innerHTML=cover(a,32);$('#miniT').textContent=a.baslik;$('#miniBtn').innerHTML=audio.paused?I.play:I.pause}
+function openPlayer(){const a=S.audio.find(x=>x.id===P.id);if(!a)return;
+  sheet(`<div class="player"><div class="cvw">${cover(a,190)}</div><h2>${esc(a.baslik)}</h2><div class="muted" style="margin-top:4px">${esc(a.yazar||'')}</div><div id="plCh" class="small" style="color:var(--ac);margin-top:4px"></div>
+  <input type="range" id="plSeek" min="0" max="1000" value="0" style="margin-top:20px" data-inp="seek"><div class="times"><span id="plC">0:00</span><span id="plR">-0:00</span></div>
+  <div class="ctl"><button class="skp" data-act="skip" data-s="-15">${I.rew}<em>15</em></button><button class="big" data-act="toggle" id="plBtn"></button><button class="skp" data-act="skip" data-s="30">${I.ffw}<em>30</em></button></div>
+  <div class="row" style="justify-content:center;gap:8px"><button class="chip2" data-act="rate" id="plRate">${P.rate}×</button><button class="chip2" data-act="sleep" id="plSleep">Uyku</button></div>
+  <div style="text-align:left;margin-top:22px">${a.bolumler.map((b,i)=>`<button class="ch ${i===P.ch?'on':''}" data-act="playCh" data-id="${a.id}" data-i="${i}"><span class="n">${i+1}</span><span>${esc(b.baslik||'Bölüm '+(i+1))}</span><small>${b.sure?fmtT(b.sure):''}</small></button>`).join('')}</div></div>`,'player','Şimdi çalıyor','Küçült');refreshPlayer()}
+function refreshPlayer(light){if(S.sheet!=='player')return;const a=S.audio.find(x=>x.id===P.id);if(!a)return;const s=$('#plSeek');
+  if(s&&document.activeElement!==s)s.value=audio.duration?audio.currentTime/audio.duration*1000:0;$('#plC').textContent=fmtT(audio.currentTime);$('#plR').textContent='-'+fmtT((audio.duration||0)-audio.currentTime);
+  if(light)return;$('#plBtn').innerHTML=audio.paused?I.play:I.pause;$('#plCh').textContent=`Bölüm ${P.ch+1} / ${a.bolumler.length}`;
+  $('#plSleep').textContent=P.sleepAt?`Uyku · ${Math.max(1,Math.round((P.sleepAt-Date.now())/60000))} dk`:'Uyku';
+  document.querySelectorAll('.player .ch').forEach((el,i)=>el.classList.toggle('on',i===P.ch))}
+
+/* ==================== olaylar ==================== */
+const A={
+  tab:el=>{S.tab=el.dataset.t;closeSheet();render();scrollTo(0,0)},
+  hAct:()=>S.tab==='kesfet'?scanOpen():S.tab==='sesli'?openAudioForm():openAdd(),
+  close:()=>closeSheet(),
+  login:()=>openLogin(),
+  google:async()=>{const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});if(error)toast('Giriş başlatılamadı')},
+  logout:async()=>{await sb.auth.signOut();location.reload()},
+  filter:el=>{S.filter=el.dataset.f;render()},
+  view:el=>{S.view=el.dataset.v;localStorage.setItem('kv.view',S.view);render()},
+  disc:el=>{S.disc=el.dataset.d;render()},
+  openLib:el=>openBook(S.lib.find(b=>b.id===el.dataset.id)),
+  openKey:el=>{const x=(S.stats.pop.concat(S.stats.top)).find(s=>s.anahtar===el.dataset.k);openBook(inLib(x.anahtar)||{...x})},
+  openCand:async el=>{const t=el.dataset.t,a=el.dataset.a;const b=inLib(keyOf(t,a));if(b)return openBook(b);
+    sheet(`<div class="loading" style="padding:50px 0"><span class="spin"></span></div>`,'wait','');let info={baslik:t,yazar:a};
+    try{const r=await gbSearch(`intitle:${t} inauthor:${surname(a)}`,5);const h=r.find(x=>x.kapak&&x.kapak.includes('books.google'))||r[0];if(h)info={...h,baslik:t,yazar:a}}catch(e){}
+    if(S.sheet==='wait')openBook(info)},
+  scanOpen:()=>scanOpen(),scanClose:()=>scanStop(),
+  scanPhoto:()=>$('#photoFile').click(),
+  scanManual:()=>{scanStop();sheet(`<form id="isbnForm"><input class="inp" id="isbnIn" inputmode="numeric" placeholder="978…" autocomplete="off" style="font-size:20px;letter-spacing:.06em;text-align:center"><button class="btn pri full" style="margin-top:12px">Kitabı bul</button></form><p class="small muted" style="text-align:center">Numara barkodun hemen altında yazar.</p>`,'isbn','ISBN ile bul','Vazgeç');setTimeout(()=>$('#isbnIn').focus(),200)},
+  scanTorch:async()=>{try{const on=!track._t;await track.applyConstraints({advanced:[{torch:on}]});track._t=on}catch(e){}},
+  searchOpen:el=>openSearch(el&&el.dataset.q),
+  pickRes:el=>openBook(window._res[+el.dataset.i]),
+  addCand:async el=>{const x=window._cand;el.disabled=true;const r=await addRow(x,el.dataset.s);if(r){toast('Kitaplığına eklendi');render();openBook(r)}else el.disabled=false},
+  manual:el=>openForm({baslik:el&&el.dataset.q||''},true),
+  manualIsbn:el=>openForm({isbn:el.dataset.isbn},true),
+  fSt:el=>{FORM.durum=el.dataset.s;el.parentNode.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===el))},
+  fCoverUp:()=>$('#coverFile').click(),
+  fCoverFind:async el=>{const t=($('#f_baslik')||$('#a_baslik')).value.trim(),a=($('#f_yazar')||$('#a_yazar')).value.trim();if(!t){toast('Önce kitap adını yaz');return}el.disabled=true;el.innerHTML='<span class="spin"></span>';
+    delete COVERS[keyOf(t,a)];const u=await findCover(t,a);el.disabled=false;el.textContent='Kapağı bul';if(u){FORM.kapak=u;FORM.coverFile=null;$('#fCv').innerHTML=cover({baslik:t,yazar:a,kapak:u},80)}else toast('Kapak bulunamadı')},
+  fSave:async el=>{const x=readForm();if(!x.baslik){toast('Kitap adı gerekli');return}el.disabled=true;
+    if(el.dataset.id){const b=S.lib.find(z=>z.id===el.dataset.id);x.anahtar=keyOf(x.baslik,x.yazar);await saveRow(b,x);render();openBook(b)}
+    else{const r=await addRow(x,FORM.durum);if(r){render();toast('Eklendi');openBook(r)}else el.disabled=false}},
+  setDurum:async el=>{const b=inLib(S.openKey);const s=el.dataset.s;const p={durum:s};if(s==='okudum'){p.bitis=b.bitis||today();if(b.sayfa)p.mevcut_sayfa=b.sayfa}if(s==='okuyorum')p.baslama=b.baslama||today();await saveRow(b,p);S.stats=null;render();openBook(b)},
+  clearRate:async()=>{const b=inLib(S.openKey);await saveRow(b,{puan:0});S.stats=null;render();openBook(b)},
+  saveRev:async()=>{const b=inLib(S.openKey);await saveRow(b,{yorum:$('#revIn').value.trim()||null,yorum_acik:$('#revPub').checked});toast('Yorumun kaydedildi');render();loadCommunity(b.anahtar)},
+  more:el=>{$('#desc').classList.remove('cl');el.remove()},
+  fav:async()=>{const b=inLib(S.openKey);await saveRow(b,{favori:!b.favori});render();openBook(b)},
+  editBook:()=>openForm(inLib(S.openKey),false),
+  askDel:()=>{$('#delBox').innerHTML=`<div class="group"><div class="gb"><b>“${esc(inLib(S.openKey).baslik)}” silinsin mi?</b><div class="small muted">Puanın ve yorumun da silinir.</div><div class="row" style="margin-top:10px"><button class="btn sm" style="background:var(--red);color:#fff" data-act="del">Sil</button><button class="btn sm" data-act="noDel">Vazgeç</button></div></div></div>`;$('#delBox').scrollIntoView({behavior:'smooth'})},
+  noDel:()=>$('#delBox').innerHTML='',
+  del:async()=>{const b=inLib(S.openKey);await delRow(b);closeSheet();render();toast('Silindi')},
+  goal:async el=>{S.profile.hedef=Math.max(1,(S.profile.hedef||24)+ +el.dataset.d);render();await sb.from('profiller').update({hedef:S.profile.hedef}).eq('id',S.me.id)},
+  bulk:()=>openBulk(),bulkGo:el=>bulkGo(el),
+  openA:el=>openAudio(el.dataset.id),
+  playA:el=>{const id=el.dataset.id;if(P.id===id&&!audio.paused){openPlayer();return}playA(id);if(S.sheet==='audio')openPlayer()},
+  playCh:el=>{playA(el.dataset.id,+el.dataset.i,true);openPlayer()},
+  toggle:(el,e)=>{e.stopPropagation();if(!P.id)return;audio.paused?playA(P.id):audio.pause()},
+  openPlayer:()=>openPlayer(),
+  skip:el=>skip(+el.dataset.s),
+  rate:el=>{const r=[1,1.25,1.5,1.75,2,0.8];P.rate=r[(r.indexOf(P.rate)+1)%r.length];audio.playbackRate=P.rate;el.textContent=P.rate+'×';localStorage.setItem('kv.rate',P.rate)},
+  sleep:()=>{const o=[0,15,30,45,60];const cur=P.sleepAt?Math.round((P.sleepAt-Date.now())/60000):0;const m=o[(o.findIndex(v=>v>=cur)+1)%o.length]||0;clearTimeout(P.sleepT);
+    if(m){P.sleepAt=Date.now()+m*60000;P.sleepT=setTimeout(()=>{audio.pause();P.sleepAt=0;refreshPlayer()},m*60000);toast(`${m} dakika sonra duracak`)}else{P.sleepAt=0;toast('Uyku zamanlayıcı kapatıldı')}refreshPlayer()},
+  audioNew:()=>openAudioForm(),
+  audioEdit:el=>openAudioForm(S.audio.find(a=>a.id===el.dataset.id)),
+  pickAudio:()=>$('#audioFiles').click(),
+  audioSave:el=>audioSave(el),
+  audioAddCh:el=>{FORM={addTo:el.dataset.id};$('#audioFiles').click()},
+  audioDelAsk:el=>{$('#aDel').innerHTML=`<div class="small" style="margin:8px 0">Bu sesli kitap ve tüm ses dosyaları herkes için silinecek.</div><button class="btn sm" style="background:var(--red);color:#fff" data-act="audioDel" data-id="${el.dataset.id}">Evet, sil</button>`},
+  audioDel:el=>audioDelete(el.dataset.id),
+};
+document.addEventListener('click',e=>{const el=e.target.closest('[data-act]');if(!el)return;const f=A[el.dataset.act];if(f){e.preventDefault();f(el,e)}});
+document.addEventListener('input',e=>{const k=e.target.dataset.inp;if(k==='q'){S.q=e.target.value;renderLibItems();lazyCovers()}if(k==='seek'&&audio.duration)audio.currentTime=e.target.value/1000*audio.duration});
+document.addEventListener('change',async e=>{const k=e.target.dataset.chg;if(!k)return;const v=e.target.value;
+  if(k==='sort'){S.sort=v;renderLibItems();return}
+  const b=inLib(S.openKey);if(!b)return;
+  if(k==='sayfaIlerleme'){const n=+v;const p={mevcut_sayfa:n};if(b.sayfa&&n>=b.sayfa){p.durum='okudum';p.bitis=b.bitis||today();toast('Kitabı bitirdin')}await saveRow(b,p);render();openBook(b)}
+  else{await saveRow(b,{[k]:v||null});render()}});
+document.addEventListener('submit',async e=>{e.preventDefault();const id=e.target.id;
+  if(id==='sForm'){const q=$('#sIn').value.trim();if(q)doSearch(q)}
+  if(id==='discForm'){const q=$('#discQ').value.trim();if(q)openSearch(q)}
+  if(id==='isbnForm'){const v=$('#isbnIn').value.replace(/[^0-9X]/gi,'');if(v.length===13||v.length===10)isbnFound(v);else toast('ISBN 13 haneli olmalı')}
+  if(id==='mailForm'){const m=$('#mailIn').value.trim();if(!m)return;const{error}=await sb.auth.signInWithOtp({email:m,options:{emailRedirectTo:location.origin+location.pathname}});toast(error?'Gönderilemedi':'Giriş bağlantısı e-postana gönderildi')}});
+addEventListener('scroll',()=>$('#hdr').classList.toggle('sc',scrollY>4),{passive:true});
+
+$('#photoFile').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;$('#scanMsg').textContent='Fotoğraf inceleniyor…';
+  const c=await decodePhoto(f).catch(()=>null);if(c){scanning=true;onCode(c)}else $('#scanMsg').textContent='Fotoğrafta barkod bulunamadı. Daha yakından ve net çekmeyi dene.'});
+$('#coverFile').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
+  if(S.sheet==='aform'){FORM.coverFile=f;const u=URL.createObjectURL(f);$('#fCv').innerHTML=`<div class="cv" style="width:80px;height:120px"><img src="${u}"></div>`;return}
+  const img=await new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.src=URL.createObjectURL(f)});const sc=Math.min(1,600/img.naturalHeight);const c=document.createElement('canvas');c.width=img.naturalWidth*sc;c.height=img.naturalHeight*sc;c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+  c.toBlob(async blob=>{if(!S.me)return;const p=`kapak-${S.me.id}-${Date.now().toString(36)}.jpg`;const up=await sb.storage.from('kapaklar').upload(p,blob,{contentType:'image/jpeg'});
+    if(up.error){toast('Kapak yüklenemedi');return}FORM.kapak=sb.storage.from('kapaklar').getPublicUrl(p).data.publicUrl;$('#fCv').innerHTML=cover({kapak:FORM.kapak},80)},'image/jpeg',.82)});
+$('#audioFiles').addEventListener('change',async e=>{const fs=[...e.target.files].sort((a,b)=>a.name.localeCompare(b.name,'tr',{numeric:true}));e.target.value='';if(!fs.length)return;
+  if(FORM.addTo){const a=S.audio.find(x=>x.id===FORM.addTo);toast('Bölümler yükleniyor…');await uploadChapters(a.id,fs,a.bolumler.length,m=>toast(m));await loadAudio();toast('Bölümler eklendi');openAudio(a.id);return}
+  FORM.files=fs;$('#aFiles').textContent=`${fs.length} dosya: ${fs.map(f=>f.name).join(', ')}`;const t=$('#a_baslik');if(t&&!t.value)t.value=fs[0].name.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ').replace(/\s*\d+\s*$/,'').trim()});
+
+/* ==================== başlat ==================== */
+let LOCAL=false;
+async function start(){
+  const cfg=AYAR.SUPABASE_URL&&AYAR.SUPABASE_ANON_KEY&&window.supabase;
+  if(cfg)sb=supabase.createClient(AYAR.SUPABASE_URL,AYAR.SUPABASE_ANON_KEY);
+  else{LOCAL=true;await preloadBlobs();sb=localClient()}
+  const{data:{session}}=await sb.auth.getSession();
+  await onUser(session&&session.user);
+  sb.auth.onAuthStateChange((ev,s)=>{const u=s&&s.user;if((u&&u.id)!==(S.me&&S.me.id))onUser(u)});
+}
+
+/* ==================== YEREL MOD (Supabase yokken) ====================
+   Supabase ayarı girilmemişse aynı uygulama tarayıcıda çalışır:
+   veriler localStorage'da, ses ve kapak dosyaları IndexedDB'de durur. */
+function idbOpen(){return new Promise((res,rej)=>{const r=indexedDB.open('kitapligim-yerel',1);r.onupgradeneeded=()=>r.result.createObjectStore('f');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function idbDo(mode,fn){const d=await idbOpen();return new Promise((res,rej)=>{const t=d.transaction('f',mode);const out=fn(t.objectStore('f'));t.oncomplete=()=>res(out&&out.result);t.onerror=()=>rej(t.error)})}
+async function preloadBlobs(){try{const d=await idbOpen();await new Promise(res=>{const c=d.transaction('f').objectStore('f').openCursor();c.onsuccess=()=>{const cur=c.result;if(!cur)return res();BLOBURL[cur.key]=URL.createObjectURL(cur.value);cur.continue()};c.onerror=()=>res()})}catch(e){}}
+function localClient(){
+  const K='kv.yerel.',uid=()=>(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));
+  const load=t=>{try{return JSON.parse(localStorage.getItem(K+t)||'[]')}catch(e){return[]}};
+  const save=(t,a)=>{try{localStorage.setItem(K+t,JSON.stringify(a))}catch(e){toast('Tarayıcı depolama alanı doldu')}};
+  const now=()=>new Date().toISOString();
+  const USER={id:'yerel',email:AYAR.ADMIN_EMAIL,user_metadata:{full_name:'Ben'}};
+  function stats(){const g={};load('kitaplik').forEach(r=>{const x=g[r.anahtar]||(g[r.anahtar]={anahtar:r.anahtar,baslik:r.baslik,yazar:r.yazar,kapak:r.kapak,isbn:r.isbn,okuyan:0,toplam:0,_s:0,puan_sayisi:0});
+    x.toplam++;if(r.durum==='okudum')x.okuyan++;if(r.puan>0){x._s+= +r.puan;x.puan_sayisi++}if(!x.kapak&&r.kapak)x.kapak=r.kapak});
+    return Object.values(g).map(x=>({...x,ort_puan:x.puan_sayisi?Math.round(x._s/x.puan_sayisi*100)/100:null}))}
+  function qb(t){let op='select',pay=null,sel='*',single=false,lim=null;const F=[],O=[];
+    const o={select(x){if(op==='select')sel=x||'*';return o},eq(c,v){F.push(r=>r[c]===v);return o},neq(c,v){F.push(r=>r[c]!==v);return o},gt(c,v){F.push(r=>(+r[c]||0)>v);return o},
+      not(c){F.push(r=>r[c]!=null);return o},order(c,p){O.push([c,p&&p.ascending===false?-1:1]);return o},limit(n){lim=n;return o},maybeSingle(){single=true;return o},single(){single=true;return o},
+      insert(r){op='insert';pay=r;return o},update(r){op='update';pay=r;return o},delete(){op='delete';return o},upsert(r){op='upsert';pay=r;return o},
+      then(res){let out;try{out=run()}catch(e){console.error(e);out={data:null,error:{message:String(e)}}}res(out)}};
+    const match=r=>F.every(f=>f(r));
+    function run(){
+      if(t==='kitap_istatistik'){let a=stats().filter(match);a=sortLim(a);return{data:single?(a[0]||null):a,error:null}}
+      let a=load(t);
+      if(op==='insert'){const row={id:uid(),created_at:now(),updated_at:now(),...(t==='kitaplik'?{user_id:'yerel',yorum_acik:true,favori:false,mevcut_sayfa:0}:{}),...pay};if(t==='profiller')row.id=pay.id;a.push(row);save(t,a);return{data:single?row:[row],error:null}}
+      if(op==='update'){a.forEach(r=>{if(match(r))Object.assign(r,pay)});save(t,a);return{data:null,error:null}}
+      if(op==='delete'){const gone=a.filter(match).map(r=>r.id);save(t,a.filter(r=>!match(r)));
+        if(t==='sesli_kitaplar'){save('sesli_bolumler',load('sesli_bolumler').filter(b=>!gone.includes(b.kitap_id)));save('dinleme',load('dinleme').filter(b=>!gone.includes(b.kitap_id)))}return{data:null,error:null}}
+      if(op==='upsert'){const kf=t==='dinleme'?(r=>r.user_id===pay.user_id&&r.kitap_id===pay.kitap_id):(r=>r.id===pay.id);const ex=a.find(kf);if(ex)Object.assign(ex,pay);else a.push({...pay});save(t,a);return{data:null,error:null}}
+      a=sortLim(a.filter(match)).map(r=>({...r}));
+      if(sel.includes('sesli_bolumler')){const B=load('sesli_bolumler');a.forEach(r=>r.sesli_bolumler=B.filter(b=>b.kitap_id===r.id))}
+      if(sel.includes('profiller')){const P=load('profiller');a.forEach(r=>r.profiller=P.find(p=>p.id===r.user_id)||null)}
+      return{data:single?(a[0]||null):a,error:null}}
+    function sortLim(a){if(O.length)a.sort((x,y)=>{for(const[c,d]of O){const p=x[c]??'',q=y[c]??'';if(p<q)return -d;if(p>q)return d}return 0});return lim?a.slice(0,lim):a}
+    return o}
+  return{from:qb,
+    auth:{getSession:async()=>({data:{session:{user:USER}}}),onAuthStateChange(){},signOut:async()=>({}),signInWithOAuth:async()=>({error:{message:'yerel'}}),signInWithOtp:async()=>({error:{message:'yerel'}})},
+    storage:{from:b=>({
+      upload:async(path,file)=>{const k=b+'/'+path;try{await idbDo('readwrite',s=>s.put(file,k));BLOBURL[k]=URL.createObjectURL(file);return{data:{path},error:null}}catch(e){return{data:null,error:{message:'Cihazda yer yok'}}}},
+      getPublicUrl:path=>({data:{publicUrl:'idb:'+b+'/'+path}}),
+      remove:async paths=>{for(const p of paths){const k=b+'/'+p;try{await idbDo('readwrite',s=>s.delete(k))}catch(e){}if(BLOBURL[k])URL.revokeObjectURL(BLOBURL[k]);delete BLOBURL[k]}return{error:null}}})}};
+}
+async function onUser(u){S.me=u?{id:u.id,email:u.email}:null;S.libLoaded=false;render();
+  if(u){await ensureProfile(u);if(S.sheet==='login')closeSheet()}else S.profile=null;
+  await Promise.all([loadLib(),loadProg()]);render()}
+start();
+</script>
+</body>
+</html>
