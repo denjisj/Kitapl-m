@@ -157,6 +157,43 @@ textarea.inp{min-height:110px;resize:vertical;line-height:1.5}
 .shd .x{color:var(--ac);font-weight:500;font-size:16px;padding:6px 2px}
 @keyframes up{from{transform:translateY(100%)}}
 @keyframes fd{from{opacity:0}}
+.kgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kc{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);text-align:left;color:var(--ink)}
+.kc-b{padding:14px 12px 12px;min-height:86px;color:#fff;display:flex;flex-direction:column;justify-content:flex-end}
+.kc-b b{font:600 17px/1.2 var(--serif)}.kc-b span{font-size:12px;opacity:.82;margin-top:4px}
+.kc-f{display:flex;gap:9px;align-items:center;padding:9px 10px;min-height:66px}
+.kc-f small{display:block;color:var(--mu);font-size:11.5px;line-height:1.35}.kc-f .t{font-size:13px;font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.kintro{border:1px dashed var(--line);border-radius:16px;padding:26px 18px;text-align:center;margin-top:6px}
+.kintro h3{font:600 21px var(--serif);margin:10px 0 6px}.kintro p{color:var(--mu);font-size:14.5px;margin:0 0 16px}
+.khead{border-radius:18px;padding:20px 18px;color:#fff;margin-top:4px}
+.khead h2{font:600 26px/1.15 var(--serif);margin:0}.khead p{margin:8px 0 0;opacity:.9;font-size:14.5px;white-space:pre-wrap}
+.kmeta{display:flex;align-items:center;gap:10px;margin-top:12px;font-size:13px;opacity:.92}
+.kav{display:flex}.kav .avatar{box-shadow:0 0 0 2px rgba(0,0,0,.25);margin-left:-8px}.kav .avatar:first-child{margin-left:0}
+.btn.wht{background:rgba(255,255,255,.18);color:#fff}
+.kcur{display:flex;gap:14px;align-items:flex-start}.kcur .kt{font:600 18px/1.25 var(--serif)}
+.kplan{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.kbar{position:relative;height:8px;border-radius:99px;background:var(--fill);margin:10px 0 8px}
+.kbar i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:color-mix(in srgb,var(--ac) 40%,transparent)}
+.kbar em{position:absolute;top:-4px;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:var(--ac);box-shadow:0 0 0 2px var(--card)}
+.kmine{display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}.kmine .inp{width:86px;padding:8px 10px}
+.kprog{margin-top:8px}.kmem{display:flex;align-items:center;gap:10px;padding:7px 0}.kmem .bd{flex:1;min-width:0}
+.kmem .bar{height:5px;border-radius:9px;background:var(--fill);margin-top:5px;overflow:hidden}.kmem .bar i{display:block;height:100%;background:var(--ac);border-radius:9px}
+.kvote{display:flex;flex-direction:column;align-items:center;gap:6px;flex:none}
+.kv{display:flex;flex-direction:column;align-items:center;min-width:48px;padding:6px 8px;border-radius:10px;border:1px solid var(--line);color:var(--mu);font-size:11px;line-height:1.1}
+.kv b{font-size:15px;color:var(--ink)}.kv.on{background:var(--ac);border-color:var(--ac);color:var(--ac-ink)}.kv.on b{color:var(--ac-ink)}
+.lnk{color:var(--ac);font-weight:600;font-size:14px}.lnk.red{color:var(--red)}
+.kchk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink2);margin-top:10px;cursor:pointer;white-space:nowrap}.kchk input[type=checkbox]{width:18px;height:18px;accent-color:var(--ac);margin:0}.kchk .inp{display:inline-block;width:70px;padding:5px 8px;font-size:14px}
+.kmsg{display:flex;gap:10px;padding:13px 14px;border-bottom:1px solid var(--line)}.kmsg:last-child{border-bottom:0}.kmsg .bd{flex:1;min-width:0}
+.kmsg .hd{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--mu);flex-wrap:wrap}.kmsg .hd b{color:var(--ink);font-size:14px}
+.kmsg .hd em{font-style:normal;font-size:11.5px;padding:1px 8px;border-radius:99px;background:var(--fill);color:var(--ink2)}
+.kmsg p{margin:4px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px}
+.kspo{margin-top:6px;padding:11px 12px;border-radius:10px;background:var(--fill);color:var(--mu);font-size:13.5px;width:100%;text-align:left;line-height:1.4}.kspo b{color:var(--ink)}
+.kmeet{display:flex;gap:14px;align-items:center}.kday{flex:none;width:56px;height:60px;border-radius:12px;background:var(--ac-soft);color:var(--ac);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.kday b{font:700 22px/1 var(--sans)}.kday span{font-size:12px;text-transform:uppercase;margin-top:3px}
+.kbadge{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--ac-soft);color:var(--ac);font-weight:600;vertical-align:2px;margin-left:4px}
+.kswatch{display:flex;gap:10px;flex-wrap:wrap}.kswatch label{width:36px;height:36px;border-radius:50%;cursor:pointer;position:relative}
+.kswatch input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}.kswatch input:checked+i{position:absolute;inset:-5px;border:2.5px solid var(--ink);border-radius:50%}
+.kcode{font:700 34px/1.2 ui-monospace,Menlo,monospace;letter-spacing:.14em;margin:4px 0;color:var(--ac)}
 .pwa-strip{display:flex;align-items:center;gap:4px;margin:6px 0 14px;padding:8px 6px 8px 10px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
 .pwa-go{flex:1;min-width:0;display:flex;align-items:center;gap:12px;text-align:left;color:var(--ink)}
 .pwa-go img{width:40px;height:40px;border-radius:10px;flex:none}
@@ -391,6 +428,7 @@ const I={
   lib:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="4" height="16" rx="1"/><rect x="8.5" y="4" width="4" height="16" rx="1"/><path d="M14.6 5.2l3.8-1 3.1 15.6-3.8 1z"/></svg>',
   comp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>',
   head:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15v-3a8 8 0 0116 0v3"/><path d="M4 15a2 2 0 012-2h1v7H6a2 2 0 01-2-2zM20 15a2 2 0 00-2-2h-1v7h1a2 2 0 002-2z"/></svg>',
+  club:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0113 0"/><path d="M16 4.6a3.5 3.5 0 010 6.8M21.5 20a6.5 6.5 0 00-4-6"/></svg>',
   user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>',
   plus:'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
   search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>',
@@ -616,8 +654,295 @@ async function loadStats(){const[a,b]=await Promise.all([
   sb.from('kitap_istatistik').select('*').gt('puan_sayisi',0).order('ort_puan',{ascending:false}).order('puan_sayisi',{ascending:false}).limit(50)]);
   S.stats={pop:a.data||[],top:b.data||[]}}
 
+/* ==================== kitap kulübü ==================== */
+const KL={list:null,pub:null,err:null,c:{},tab:'okuma',reveal:new Set(),poll:0,davet:{}};
+const KRENK=['#1f5f4e','#6b2d2a','#264b5d','#3e3560','#6a4a24','#5a2c4c','#24504b','#7a3b1f'];
+const kBg=c=>{const r=KRENK[(c&&c.renk)||0]||KRENK[0];return `linear-gradient(135deg,${r},color-mix(in srgb,${r} 55%,#000))`};
+const kMe=()=>S.me&&S.me.id;
+function kRol(id){const C=KL.c[id];if(!C||!kMe())return null;const m=C.uyeler.find(u=>u.user_id===kMe());return m?m.rol:null}
+const kYon=id=>['sahip','yonetici'].includes(kRol(id));
+const kAd=(C,uid)=>{const p=C.P[uid];return p?(p.ad||(p.kullanici_adi?'@'+p.kullanici_adi:'Okur')):'Okur'};
+const fmtTarih=d=>d?new Date(String(d).slice(0,10)+'T12:00').toLocaleDateString('tr-TR',{day:'numeric',month:'long'}):'';
+const fmtZaman=d=>new Date(d).toLocaleString('tr-TR',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
+const kodUret=()=>Array.from(crypto.getRandomValues(new Uint8Array(6)),b=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[b%32]).join('');
+const kLink=c=>location.origin+location.pathname+'#/kulup/katil/'+c.davet_kodu;
+const plusDays=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
+const klReset=()=>{KL.list=null;KL.pub=null;KL.c={};KL.davet={}};
+
+async function klLoadList(){
+  try{
+    let myIds=[];
+    if(kMe()){const my=await sb.from('kulup_uyeler').select('kulup_id').eq('user_id',kMe());if(my.error)throw my.error;myIds=(my.data||[]).map(r=>r.kulup_id)}
+    const[mine,pub]=await Promise.all([myIds.length?sb.from('kulupler').select('*').in('id',myIds):{data:[]},
+      sb.from('kulupler').select('*').eq('gizli',false).order('created_at',{ascending:false}).limit(40)]);
+    if(pub.error)throw pub.error;
+    const all=[...(mine.data||[]),...(pub.data||[])],ids=[...new Set(all.map(c=>c.id))];
+    const[uy,kt]=ids.length?await Promise.all([sb.from('kulup_uyeler').select('kulup_id').in('kulup_id',ids),sb.from('kulup_kitaplar').select('*').in('kulup_id',ids).eq('durum','aktif')]):[{data:[]},{data:[]}];
+    const n={},ak={};(uy.data||[]).forEach(r=>n[r.kulup_id]=(n[r.kulup_id]||0)+1);(kt.data||[]).forEach(b=>ak[b.kulup_id]=b);
+    const dec=c=>({...c,_n:n[c.id]||0,_kitap:ak[c.id]||null});
+    KL.list=(mine.data||[]).map(dec).sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at)));
+    KL.pub=(pub.data||[]).filter(c=>!myIds.includes(c.id)).map(dec).sort((a,b)=>b._n-a._n);KL.err=null}
+  catch(e){KL.err=e;KL.list=[];KL.pub=[]}}
+
+async function klLoad(id){
+  const q=t=>sb.from(t).select('*').eq('kulup_id',id);
+  const[c,u,k,m,o,i,a]=await Promise.all([sb.from('kulupler').select('*').eq('id',id).maybeSingle(),q('kulup_uyeler'),
+    q('kulup_kitaplar').order('created_at',{ascending:false}),q('kulup_mesajlar').order('created_at',{ascending:false}).limit(300),
+    q('kulup_oylar'),q('kulup_ilerleme'),q('kulup_katilim')]);
+  if(c.error){KL.c[id]={err:c.error,t:Date.now()};return}
+  const C={c:c.data,uyeler:u.data||[],kitaplar:k.data||[],mesajlar:m.data||[],oylar:o.data||[],ilerleme:i.data||[],katilim:a.data||[],P:{},t:Date.now()};
+  const ids=[...new Set([...C.uyeler.map(x=>x.user_id),...C.mesajlar.map(x=>x.user_id),...C.kitaplar.map(x=>x.oneren)].filter(Boolean))];
+  if(ids.length){const{data}=await sb.from('profiller').select('*').in('id',ids);(data||[]).forEach(p=>C.P[p.id]=p)}
+  if(LOCAL&&!C.P.yerel)C.P.yerel={id:'yerel',ad:(S.profile&&S.profile.ad)||'Ben'};
+  const R={sahip:0,yonetici:1,uye:2};C.uyeler.sort((a,b)=>(R[a.rol]-R[b.rol])||String(a.created_at).localeCompare(String(b.created_at)));
+  KL.c[id]=C}
+async function klRefresh(id){await klLoad(id);KL.list=null;if(R.name==='kulup'&&R.arg===id)render()}
+
+/* ---------- liste ---------- */
+function vClubs(){
+  if(S.dbErr)return errBand();
+  if(KL.list===null){klLoadList().then(()=>R.name==='kulupler'&&render());return `<div class="loading"><span class="spin"></span> Yükleniyor</div>`}
+  if(KL.err)return `<div class="group"><div class="gb small">Kulüp tabloları henüz kurulmamış. Supabase'de <b>guncelleme-4.sql</b> dosyasını çalıştır.<br><span class="muted">${esc(dbMsg(KL.err))}</span></div></div>`;
+  const card=c=>`<button class="kc" data-act="klOpen" data-id="${c.id}"><div class="kc-b" style="background:${kBg(c)}"><b>${esc(c.ad)}</b><span>${c._n} üye${c.gizli?' · Özel':''}</span></div>
+    <div class="kc-f">${c._kitap?`${cover(c._kitap,30)}<div><small>Şu an okunuyor</small><div class="t">${esc(c._kitap.baslik)}</div></div>`:`<div><small>${esc((c.aciklama||'Henüz kitap seçilmedi').slice(0,80))}</small></div>`}</div></button>`;
+  return `${KL.list.length?`<h2 class="sec" style="margin-top:6px">Kulüplerim <small>${KL.list.length}</small></h2><div class="kgrid">${KL.list.map(card).join('')}</div>`
+    :`<div class="kintro">${I.club.replace('<svg','<svg width="44" height="44" style="color:var(--ac)"')}<h3>Birlikte okumak daha güzel</h3><p>Arkadaşlarınla bir kulüp kur. Kitabı oylayarak seçin, okuma takvimi belirleyin, spoiler korkusu olmadan konuşun.</p><button class="btn pri" data-act="klNew">Kulüp kur</button></div>`}
+  <form class="search" id="klKodForm" style="margin-top:16px">${I.search}<input id="klKod" placeholder="Davet kodu ile katıl" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="12" enterkeyhint="go"></form>
+  <h2 class="sec">Herkese açık kulüpler <small>${KL.pub.length||''}</small></h2>
+  ${KL.pub.length?`<div class="kgrid">${KL.pub.map(card).join('')}</div>`:`<div class="empty small" style="padding:24px">Henüz herkese açık kulüp yok. İlkini sen kur.</div>`}
+  ${KL.list.length?`<button class="btn full" style="margin-top:18px" data-act="klNew">+ Yeni kulüp kur</button>`:''}`}
+
+/* ---------- kulüp sayfası ---------- */
+function vClub(id){const v=$('#view');const C=KL.c[id];
+  clearTimeout(KL.poll);
+  if(!C){v.innerHTML=`<div class="loading" style="padding:60px 0"><span class="spin"></span></div>`;klLoad(id).then(()=>R.name==='kulup'&&R.arg===id&&render());return}
+  if(C.err||!C.c){$('#ttl').textContent='Kulüp';v.innerHTML=`<div class="empty">${C.err?'Kulüp yüklenemedi. '+esc(dbMsg(C.err)):'Bu kulüp bulunamadı ya da özel. Özel bir kulübe sadece davet koduyla girilebilir.'}<br><button class="btn pri" style="margin-top:14px" data-act="tab" data-t="kulup">Kulüplere dön</button></div>`;return}
+  const c=C.c,rol=kRol(id),uye=!!rol,yon=kYon(id),me=kMe();
+  $('#ttl').textContent=c.ad;
+  const aktif=C.kitaplar.find(b=>b.durum==='aktif');
+  const benim=aktif&&me?((C.ilerleme.find(p=>p.kitap_id===aktif.id&&p.user_id===me)||{}).sayfa||0):0;
+  const msgN=C.mesajlar.length;
+  const head=`<div class="khead" style="background:${kBg(c)}"><h2>${esc(c.ad)}</h2>${c.aciklama?`<p>${esc(c.aciklama)}</p>`:''}
+    <div class="kmeta"><span class="kav">${C.uyeler.slice(0,5).map(u=>av(C.P[u.user_id],26)).join('')}</span><span>${C.uyeler.length} üye · ${c.gizli?'Özel kulüp':'Herkese açık'}</span></div>
+    <div class="row" style="gap:8px;margin-top:14px;flex-wrap:wrap">${uye?`<button class="btn sm wht" data-act="klInvite" data-id="${id}">Davet et</button>${yon?`<button class="btn sm wht" data-act="klSettings" data-id="${id}">Ayarlar</button>`:''}${rol!=='sahip'?`<button class="btn sm wht" data-act="klLeave" data-id="${id}">Ayrıl</button>`:''}`
+      :c.gizli?'':`<button class="btn sm" style="background:#fff;color:#111" data-act="klJoin" data-id="${id}">Kulübe katıl</button>`}</div></div>`;
+  const tabs=`<div class="seg" style="margin-top:14px"><button class="${KL.tab==='okuma'?'on':''}" data-act="klTab" data-t="okuma">Okuma</button><button class="${KL.tab==='sohbet'?'on':''}" data-act="klTab" data-t="sohbet">Sohbet${msgN?` · ${msgN}`:''}</button><button class="${KL.tab==='uyeler'?'on':''}" data-act="klTab" data-t="uyeler">Üyeler</button></div>`;
+  let body='';
+  if(KL.tab==='sohbet')body=klChat(id,C,aktif,benim,uye,yon);
+  else if(KL.tab==='uyeler')body=klMembers(id,C,aktif,yon,rol);
+  else body=klReading(id,C,aktif,benim,uye,yon);
+  v.innerHTML=head+tabs+body;
+  if(KL.tab==='sohbet')klPoll(id)}
+function klPoll(id){clearTimeout(KL.poll);KL.poll=setTimeout(async()=>{const here=()=>R.name==='kulup'&&R.arg===id&&KL.tab==='sohbet';if(!here())return;
+  const n=(KL.c[id].mesajlar||[]).length;await klLoad(id);if(!here())return;
+  const a=document.activeElement,typing=a&&/TEXTAREA|INPUT/.test(a.tagName)&&a.value;
+  if(KL.c[id].mesajlar.length!==n&&!typing)render();else klPoll(id)},20000)}
+
+function klReading(id,C,aktif,benim,uye,yon){const c=C.c,me=kMe();let h='';
+  if(aktif){const n=+aktif.sayfa||0;
+    let plan='';
+    if(aktif.baslangic&&aktif.bitis){const d0=new Date(aktif.baslangic+'T00:00'),d1=new Date(aktif.bitis+'T23:59'),now=Date.now();
+      const gun=Math.max(1,Math.round((d1-d0)/864e5)),k=Math.max(0,Math.min(1,(now-d0)/(d1-d0))),hedef=Math.round(n*k);
+      plan=`<div class="kplan"><div class="row" style="justify-content:space-between"><b>${fmtTarih(aktif.baslangic)} – ${fmtTarih(aktif.bitis)}</b>${n?`<span class="muted small">Günde ~${Math.ceil(n/gun)} sayfa</span>`:''}</div>
+        ${n?`<div class="kbar"><i style="width:${k*100}%"></i>${uye?`<em style="left:${Math.min(100,benim/n*100)}%" title="Sen"></em>`:''}</div>`:''}
+        <div class="small muted">${now<d0?`Okuma ${fmtTarih(aktif.baslangic)} tarihinde başlıyor`:now>d1?'Okuma takvimi bitti':n?`Takvime göre bugün <b style="color:var(--ink)">${hedef}. sayfada</b> olmak gerekiyor${uye?(benim>=hedef?' · Takvimdesin 👏':` · ${hedef-benim} sayfa gerideysin`):''}`:''}</div></div>`}
+    const pr=C.uyeler.map(u=>({u,s:(C.ilerleme.find(p=>p.kitap_id===aktif.id&&p.user_id===u.user_id)||{}).sayfa||0})).sort((a,b)=>b.s-a.s);
+    const lib=inLib(aktif.anahtar);
+    h+=`<h2 class="sec">Şu an okuyoruz</h2><div class="group" style="margin-top:0"><div class="gb">
+      <div class="kcur"><button data-act="klBook" data-k="${aktif.id}" style="flex:none">${cover(aktif,74)}</button><div style="min-width:0;flex:1"><div class="kt">${esc(aktif.baslik)}</div><div class="muted small">${esc(aktif.yazar||'')}${n?` · ${n} sayfa`:''}</div>
+      ${S.me?`<div style="margin-top:8px">${lib?`<span class="small muted">✓ Kitaplığında</span>`:`<button class="lnk small" data-act="klAddLib" data-k="${aktif.id}">+ Kitaplığıma ekle</button>`}</div>`:''}</div></div>
+      ${plan}
+      ${uye?`<div class="kmine"><span class="small" style="font-weight:600">Ben</span><input class="inp" type="number" inputmode="numeric" id="klSayfa" value="${benim}" min="0" ${n?`max="${n}"`:''}><span class="muted small">/ ${n||'?'} sayfa</span><button class="btn sm pri" style="margin-left:auto" data-act="klProg" data-id="${id}" data-k="${aktif.id}">Kaydet</button></div>`:''}
+      <div class="kprog">${pr.map(({u,s})=>`<div class="kmem">${av(C.P[u.user_id],30)}<div class="bd"><div class="row" style="justify-content:space-between"><span class="small" style="font-weight:600">${esc(u.user_id===me?'Sen':kAd(C,u.user_id))}</span><span class="small muted">${n&&s>=n?'Bitirdi ✓':s?`s. ${s}`:'Başlamadı'}</span></div>${n?`<div class="bar"><i style="width:${Math.min(100,s/n*100)}%"></i></div>`:''}</div></div>`).join('')}</div>
+      ${yon?`<div class="row" style="gap:8px;margin-top:14px"><button class="btn sm" data-act="klDates" data-k="${aktif.id}">Takvimi düzenle</button><button class="btn sm" data-act="klFinish" data-k="${aktif.id}">Kitabı bitir</button></div>`:''}
+    </div></div>`}
+  else h+=`<div class="group"><div class="gb small muted">${yon?'Şu an okunan bir kitap yok. Aşağıdan bir aday seç ya da kitap öner.':'Şu an okunan bir kitap yok. Yönetici aday kitaplardan birini seçince burada görünecek.'}</div></div>`;
+  // buluşma
+  const bz=c.bulusma_zaman,ileri=bz&&new Date(bz)>Date.now()-3*3600e3;
+  const ev=C.katilim.filter(x=>x.cevap==='evet'),ha=C.katilim.filter(x=>x.cevap==='hayir'),bn=me&&C.katilim.find(x=>x.user_id===me);
+  const yer=c.bulusma_yer||'',url=/^https?:\/\//i.test(yer)?safeUrl(yer):'';
+  h+=`<h2 class="sec">Buluşma</h2><div class="group" style="margin-top:0"><div class="gb">${bz&&ileri?`<div class="kmeet"><div class="kday"><b>${new Date(bz).getDate()}</b><span>${new Date(bz).toLocaleDateString('tr-TR',{month:'short'})}</span></div><div style="min-width:0"><div style="font-weight:600">${esc(fmtZaman(bz))}</div>
+      <div class="small muted">${url?`<a href="${esc(url)}" target="_blank" rel="noopener" class="lnk small">Görüntülü görüşmeye katıl</a>`:esc(yer||'Yer belirtilmedi')}</div><div class="small muted" style="margin-top:4px">${ev.length} kişi katılıyor${ha.length?` · ${ha.length} katılamıyor`:''}</div></div></div>
+      ${uye?`<div class="row" style="gap:8px;margin-top:12px"><button class="btn sm ${bn&&bn.cevap==='evet'?'pri':''}" data-act="klRsvp" data-id="${id}" data-v="evet">Katılıyorum</button><button class="btn sm ${bn&&bn.cevap==='hayir'?'pri':''}" data-act="klRsvp" data-id="${id}" data-v="hayir">Katılamıyorum</button></div>`:''}`
+    :`<div class="small muted">${bz?'Son buluşma geride kaldı.':'Henüz bir buluşma planlanmadı.'}</div>`}
+    ${yon?`<button class="lnk small" style="margin-top:10px" data-act="klMeet" data-id="${id}">${bz&&ileri?'Buluşmayı düzenle':'Buluşma planla'}</button>`:''}</div></div>`;
+  // oylama
+  const ad=C.kitaplar.filter(b=>b.durum==='aday').map(b=>({b,oy:C.oylar.filter(o=>o.kitap_id===b.id)})).sort((x,y)=>y.oy.length-x.oy.length);
+  h+=`<h2 class="sec">Sıradaki kitap <small>${ad.length?'oyla':''}</small></h2>${ad.length?`<div class="list">${ad.map(({b,oy})=>{const on=me&&oy.some(o=>o.user_id===me);
+    return `<div class="li">${cover(b,40)}<div class="bd"><div class="t">${esc(b.baslik)}</div><div class="a">${esc(b.yazar||'')}</div><div class="small muted">${esc(b.oneren===me?'Sen':kAd(C,b.oneren))} önerdi${yon||b.oneren===me?` · <button class="lnk small" style="color:var(--mu);font-weight:500" data-act="klDelBook" data-id="${id}" data-k="${b.id}">Kaldır</button>`:''}</div></div>
+      <div class="kvote"><button class="kv ${on?'on':''}" ${uye?`data-act="klVote" data-id="${id}" data-k="${b.id}"`:'disabled'}>▲<b>${oy.length}</b></button>${yon?`<button class="lnk small" data-act="klPick" data-id="${id}" data-k="${b.id}">Seç</button>`:''}</div></div>`}).join('')}</div>`
+    :`<div class="group" style="margin-top:0"><div class="gb small muted">Henüz aday kitap yok.${uye?' İlk öneriyi sen yap, üyeler oylasın.':''}</div></div>`}
+  ${uye?`<button class="btn full" style="margin-top:10px" data-act="klSuggest" data-id="${id}">+ Kitap öner</button>`:''}`;
+  const bit=C.kitaplar.filter(b=>b.durum==='bitti');
+  if(bit.length)h+=`<h2 class="sec">Birlikte okuduklarımız <small>${bit.length}</small></h2><div class="shelf">${bit.map(b=>`<button class="gi" data-act="klBook" data-k="${b.id}">${cover(b,90)}<div class="t">${esc(b.baslik)}</div></button>`).join('')}</div>`;
+  if(!uye&&!c.gizli)h+=`<button class="btn pri full" style="margin-top:18px" data-act="klJoin" data-id="${id}">Kulübe katıl</button>`;
+  return h}
+
+function klChat(id,C,aktif,benim,uye,yon){const me=kMe();
+  const comp=uye?`<div class="group kcomp" style="margin-top:0"><div class="gb"><textarea class="inp" id="klMsg" maxlength="2000" placeholder="${aktif?esc(aktif.baslik)+' hakkında ne düşünüyorsun?':'Kulübe bir şey yaz…'}"></textarea>
+      ${aktif?`<label class="kchk"><input type="checkbox" id="klSp" ${benim?'checked':''}><span>Spoiler koruması:</span><input class="inp" id="klSpS" type="number" inputmode="numeric" min="1" value="${benim||''}" placeholder="sayfa"><span>. sayfa</span></label>`:''}
+      <div class="row" style="margin-top:10px;justify-content:space-between;align-items:flex-end"><span class="small muted" style="flex:1">${aktif?'Sayfayı yazarsan, o sayfaya henüz gelmeyen üyeler mesajını kapalı görür.':''}</span><button class="btn pri sm" data-act="klSend" data-id="${id}">Gönder</button></div></div></div>`
+    :`<div class="group" style="margin-top:0"><div class="gb small muted">Sohbete yazmak için kulübe katılman gerekiyor.</div></div>`;
+  const list=C.mesajlar.map(m=>{const mine=m.user_id===me;const k=m.kitap_id&&C.kitaplar.find(b=>b.id===m.kitap_id);
+    const hide=m.sayfa&&aktif&&m.kitap_id===aktif.id&&!mine&&m.sayfa>benim&&!KL.reveal.has(m.id);
+    return `<div class="kmsg">${av(C.P[m.user_id],34)}<div class="bd"><div class="hd"><b>${esc(mine?'Sen':kAd(C,m.user_id))}</b><span>${ago(m.created_at)}</span>${m.sayfa?`<em>s. ${m.sayfa}</em>`:''}${k&&(!aktif||k.id!==aktif.id)?`<em>${esc(k.baslik)}</em>`:''}${mine||yon?`<button class="lnk small" style="margin-left:auto;color:var(--mu2);font-weight:500" data-act="klDelMsg" data-id="${id}" data-k="${m.id}">${mine?'Sil':'Kaldır'}</button>`:''}</div>
+      ${hide?`<button class="kspo" data-act="klReveal" data-k="${m.id}">🔒 <b>Spoiler olabilir.</b> Bu mesaj ${m.sayfa}. sayfayla ilgili, sen ${benim?benim+'. sayfadasın':'henüz başlamadın'}. Yine de görmek için dokun.</button>`:`<p>${esc(m.metin)}</p>`}</div></div>`}).join('');
+  return comp+(C.mesajlar.length?`<div class="list" style="margin-top:12px">${list}</div>`:`<div class="empty small" style="padding:30px">Henüz mesaj yok. Sohbeti sen başlat.</div>`)}
+
+function klMembers(id,C,aktif,yon,rol){const me=kMe();const n=aktif&&+aktif.sayfa;
+  const RL={sahip:'Kurucu',yonetici:'Yönetici',uye:''};
+  return `<div class="list" style="margin-top:0">${C.uyeler.map(u=>{const p=C.P[u.user_id]||{};const s=aktif?((C.ilerleme.find(x=>x.kitap_id===aktif.id&&x.user_id===u.user_id)||{}).sayfa||0):0;
+    const can=u.user_id!==me&&u.rol!=='sahip'&&(rol==='sahip'||(yon&&u.rol==='uye'));
+    return `<div class="li"><button data-act="klUser" data-u="${u.user_id}" style="flex:none">${av(p,40)}</button><div class="bd"><div class="t">${esc(u.user_id===me?'Sen':kAd(C,u.user_id))} ${RL[u.rol]?`<span class="kbadge">${RL[u.rol]}</span>`:''}</div><div class="small muted">${esc(at(p))}${aktif?` · ${n&&s>=n?'Bitirdi':s?`s. ${s}`:'Başlamadı'}`:''}</div></div>
+      ${can?`<div class="kvote">${rol==='sahip'?`<button class="lnk small" data-act="klRole" data-id="${id}" data-u="${u.user_id}" data-r="${u.rol==='yonetici'?'uye':'yonetici'}">${u.rol==='yonetici'?'Üye yap':'Yönetici yap'}</button>`:''}<button class="lnk small red" data-act="klKick" data-id="${id}" data-u="${u.user_id}">Çıkar</button></div>`:''}</div>`}).join('')}</div>
+    ${kRol(id)?`<button class="btn full" style="margin-top:12px" data-act="klInvite" data-id="${id}">Arkadaşını davet et</button>`:''}`}
+
+/* ---------- davet bağlantısı ---------- */
+async function klDavetBilgi(kod){kod=String(kod||'').trim().toUpperCase();
+  if(LOCAL){const{data}=await sb.from('kulupler').select('*').eq('davet_kodu',kod).maybeSingle();if(!data)return null;const u=await sb.from('kulup_uyeler').select('*').eq('kulup_id',data.id);return{id:data.id,ad:data.ad,aciklama:data.aciklama,renk:data.renk,uye:(u.data||[]).length}}
+  const{data,error}=await sb.rpc('kulup_davet',{kod});if(error)throw error;return Array.isArray(data)?data[0]||null:data}
+function vDavet(kod){const v=$('#view');$('#ttl').textContent='Kulüp daveti';const D=KL.davet[kod];
+  if(D===undefined){v.innerHTML=`<div class="loading" style="padding:60px 0"><span class="spin"></span></div>`;klDavetBilgi(kod).then(x=>{KL.davet[kod]=x},()=>{KL.davet[kod]=null}).then(()=>R.name==='klDavet'&&render());return}
+  if(!D){v.innerHTML=`<div class="empty">Bu davet kodu geçersiz ya da kulüp silinmiş.<br><button class="btn pri" style="margin-top:14px" data-act="tab" data-t="kulup">Kulüplere dön</button></div>`;return}
+  v.innerHTML=`<div class="khead" style="background:${kBg(D)};text-align:center;padding:34px 20px"><div class="small" style="opacity:.8;letter-spacing:.08em">KİTAP KULÜBÜ DAVETİ</div><h2 style="margin-top:8px">${esc(D.ad)}</h2>${D.aciklama?`<p>${esc(D.aciklama)}</p>`:''}<div class="kmeta" style="justify-content:center">${D.uye} üye</div>
+    <button class="btn" style="background:#fff;color:#111;margin-top:18px;padding:0 26px" data-act="klJoinCode" data-k="${esc(kod)}">${S.me?'Kulübe katıl':'Giriş yap ve katıl'}</button></div>`}
+async function klJoinCode(kod){kod=String(kod||'').trim().toUpperCase();if(!kod)return;
+  if(!S.me){openLogin('Kulübe katılmak için giriş yap');return}
+  let id=null;
+  try{if(LOCAL){const{data}=await sb.from('kulupler').select('*').eq('davet_kodu',kod).maybeSingle();if(data){id=data.id;const ex=await sb.from('kulup_uyeler').select('*').eq('kulup_id',id).eq('user_id',kMe()).maybeSingle();if(!ex.data)await sb.from('kulup_uyeler').insert({kulup_id:id,user_id:kMe(),rol:'uye'})}}
+    else{const{data,error}=await sb.rpc('kulube_katil',{kod});if(error)throw error;id=data}}
+  catch(e){alertBox('Katılınamadı',dbMsg(e));return}
+  if(!id){toast('Bu davet kodu geçersiz');return}
+  klReset();KL.tab='okuma';toast('Kulübe katıldın 🎉');location.replace('#/kulup/'+id)}
+
+/* ---------- formlar ---------- */
+function klForm(c){c=c||{};const r=c.renk||0;
+  return `<label class="f">Kulübün adı</label><input class="inp" id="kl_ad" maxlength="60" value="${esc(c.ad||'')}" placeholder="Ör. Pazar Akşamı Okurları">
+  <label class="f">Açıklama</label><textarea class="inp" id="kl_ac" maxlength="500" style="min-height:76px" placeholder="Ne tür kitaplar okuyorsunuz, ne sıklıkla buluşuyorsunuz?">${esc(c.aciklama||'')}</textarea>
+  <label class="f">Renk</label><div class="kswatch">${KRENK.map((x,i)=>`<label style="background:${x}"><input type="radio" name="kl_renk" value="${i}" ${i===r?'checked':''}><i></i></label>`).join('')}</div>
+  <div class="group"><label class="opt" style="cursor:pointer"><span class="d">Özel kulüp<small>Listede görünmez, sadece davet koduyla katılınır.</small></span><span class="sw2"><input type="checkbox" id="kl_gizli" ${c.gizli?'checked':''}><span></span></span></label></div>`}
+const klVals=()=>({ad:$('#kl_ad').value.trim(),aciklama:$('#kl_ac').value.trim()||null,renk:+((document.querySelector('[name=kl_renk]:checked')||{}).value||0),gizli:$('#kl_gizli').checked});
+function klNew(){if(!S.me){openLogin('Kulüp kurmak için giriş yap');return}
+  sheet(klForm({})+`<button class="btn pri full" data-act="klCreate">Kulübü kur</button>`,'klnew','Yeni kulüp','Vazgeç')}
+async function klCreate(btn){const v=klVals();if(v.ad.length<2){toast('Kulübe bir ad ver');return}btn.disabled=true;
+  const{data,error}=await sb.from('kulupler').insert({...v,davet_kodu:kodUret(),sahip:kMe()}).select().single();
+  if(error||!data){btn.disabled=false;alertBox('Kulüp kurulamadı',dbMsg(error)+' (guncelleme-4.sql çalıştırıldı mı?)');return}
+  const r2=await sb.from('kulup_uyeler').insert({kulup_id:data.id,user_id:kMe(),rol:'sahip'});
+  if(r2.error){btn.disabled=false;alertBox('Kulüp kurulamadı',dbMsg(r2.error));return}
+  closeSheet();klReset();KL.tab='okuma';go('#/kulup/'+data.id);setTimeout(()=>klInvite(data.id),900)}
+function klSettings(id){const c=KL.c[id].c;
+  sheet(klForm(c)+`<button class="btn pri full" data-act="klSave" data-id="${id}">Kaydet</button>
+  <div class="group"><button class="opt" data-act="klNewCode" data-id="${id}"><span class="d">Davet kodunu yenile<small>Eski kod ve bağlantı çalışmaz hale gelir. Şu an: ${esc(c.davet_kodu)}</small></span></button>
+  ${kRol(id)==='sahip'?`<button class="opt" data-act="klDelete" data-id="${id}" style="color:var(--red)"><span class="d">Kulübü sil<small>Bütün mesajlar, oylar ve okuma geçmişi silinir.</small></span></button>`:''}</div>`,'klset','Kulüp ayarları','Vazgeç')}
+async function klSave(btn){const id=btn.dataset.id,v=klVals();if(v.ad.length<2){toast('Kulübe bir ad ver');return}btn.disabled=true;
+  const{error}=await sb.from('kulupler').update(v).eq('id',id);if(error){btn.disabled=false;alertBox('Kaydedilemedi',dbMsg(error));return}
+  closeSheet();toast('Kaydedildi');klRefresh(id)}
+function klInvite(id){const C=KL.c[id];if(!C||!C.c)return;const c=C.c,link=kLink(c);
+  sheet(`<div style="text-align:center;padding:4px 0 2px"><div class="small muted">Davet kodu</div><div class="kcode">${esc(c.davet_kodu)}</div>
+  <div class="small muted" style="margin:4px 0 14px;word-break:break-all">${esc(link)}</div>
+  <div class="row" style="gap:8px"><button class="btn pri" style="flex:1" data-act="klShare" data-id="${id}">Paylaş</button><button class="btn" style="flex:1" data-act="klCopy" data-id="${id}">Bağlantıyı kopyala</button></div>
+  <p class="small muted" style="margin:14px 0 0">${c.gizli?'Kulübün özel. Sadece bu kodu ya da bağlantıyı alanlar katılabilir.':'Kulübün herkese açık. Bağlantı olmadan da Kulüp sekmesinden bulunabilir.'}</p></div>`,'klinv',c.ad)}
+
+/* ---------- kitap önerme ---------- */
+function klSuggest(id){KL.sugFor=id;
+  sheet(`<form class="search" id="klSForm" style="margin-top:2px">${I.search}<input id="klSIn" placeholder="Kitap adı veya yazar" autocomplete="off" enterkeyhint="search"></form><div id="klSRes"><div class="small muted" style="padding:6px 2px">Önermek istediğin kitabı ara. Kitaplığındakilerden de seçebilirsin:</div>
+   <div class="list">${S.lib.slice(0,12).map((b,i)=>`<div class="li" style="cursor:pointer" data-act="klCand" data-src="lib" data-i="${i}">${cover(b,38)}<div class="bd"><div class="t">${esc(b.baslik)}</div><div class="a">${esc(b.yazar||'')}</div></div></div>`).join('')||'<div class="li small muted">Kitaplığın boş.</div>'}</div></div>`,'klsug','Kitap öner','Kapat');
+  setTimeout(()=>$('#klSIn')&&$('#klSIn').focus(),250)}
+async function klSearch(q){const el=$('#klSRes');if(!el)return;el.innerHTML=`<div class="loading"><span class="spin"></span> Aranıyor</div>`;
+  try{const L=await searchBooks(q);KL.sres=L;if(!$('#klSRes'))return;
+    $('#klSRes').innerHTML=L.length?`<div class="list">${L.slice(0,20).map((x,i)=>`<div class="li" style="cursor:pointer" data-act="klCand" data-src="ara" data-i="${i}">${cover(x,38)}<div class="bd"><div class="t">${esc(x.baslik)}</div><div class="a">${esc(x.yazar||'')}</div>${x.sayfa?`<div class="small muted">${x.sayfa} sayfa</div>`:''}</div></div>`).join('')}</div>`:`<div class="empty small">Sonuç bulunamadı.</div>`}
+  catch(e){el.innerHTML=`<div class="empty small">Arama yapılamadı, internet bağlantını kontrol et.</div>`}}
+async function klCand(el){const id=KL.sugFor,C=KL.c[id];const x=el.dataset.src==='lib'?S.lib[+el.dataset.i]:KL.sres[+el.dataset.i];if(!x||!C)return;
+  const k=keyOf(x.baslik,x.yazar);if(C.kitaplar.some(b=>b.anahtar===k&&b.durum!=='bitti')){toast('Bu kitap zaten listede');return}
+  const{error}=await sb.from('kulup_kitaplar').insert({kulup_id:id,anahtar:k,baslik:x.baslik,yazar:x.yazar||null,kapak:keepUrl(x.kapak)||null,sayfa:parseInt(x.sayfa)||null,durum:'aday',oneren:kMe()});
+  if(error){alertBox('Önerilemedi',dbMsg(error));return}closeSheet();toast('Kitap önerildi, üyeler oylayabilir');klRefresh(id)}
+
+/* ---------- takvim ve buluşma ---------- */
+function klDates(id,kid,pick){const b=KL.c[id].kitaplar.find(x=>x.id===kid);if(!b)return;
+  sheet(`<div class="row" style="gap:12px;align-items:center;margin:2px 0 6px">${cover(b,46)}<div><div style="font-weight:600">${esc(b.baslik)}</div><div class="small muted">${esc(b.yazar||'')}</div></div></div>
+  <div class="row" style="gap:10px"><div style="flex:1"><label class="f">Başlangıç</label><input class="inp" type="date" id="kl_d0" value="${b.baslangic||today()}"></div><div style="flex:1"><label class="f">Bitiş</label><input class="inp" type="date" id="kl_d1" value="${b.bitis||plusDays(28)}"></div></div>
+  <label class="f">Sayfa sayısı</label><input class="inp" type="number" inputmode="numeric" id="kl_sy" value="${b.sayfa||''}" placeholder="Okuma takvimi için gerekli">
+  <p class="small muted" style="margin:8px 0 14px">Üyeler her gün kaç sayfa okumaları gerektiğini ve takvimin neresinde olduklarını görür.</p>
+  <button class="btn pri full" data-act="klStart" data-id="${id}" data-k="${kid}" data-p="${pick?1:''}">${pick?'Bu kitabı okumaya başlayalım':'Kaydet'}</button>`,'kldates',pick?'Okuma takvimi':'Takvimi düzenle','Vazgeç')}
+async function klStart(btn){const{id,k,p}=btn.dataset;const d0=$('#kl_d0').value||null,d1=$('#kl_d1').value||null,sy=parseInt($('#kl_sy').value)||null;
+  if(d0&&d1&&d1<d0){toast('Bitiş tarihi başlangıçtan önce olamaz');return}btn.disabled=true;
+  if(p){const eski=KL.c[id].kitaplar.filter(b=>b.durum==='aktif');for(const b of eski)await sb.from('kulup_kitaplar').update({durum:'bitti',bitis:b.bitis||today()}).eq('id',b.id)}
+  const{error}=await sb.from('kulup_kitaplar').update({durum:'aktif',baslangic:d0,bitis:d1,sayfa:sy}).eq('id',k);
+  if(error){btn.disabled=false;alertBox('Kaydedilemedi',dbMsg(error));return}
+  if(p)await sb.from('kulup_oylar').delete().eq('kitap_id',k);
+  closeSheet();toast(p?'Yeni kitap seçildi 📖':'Takvim güncellendi');klRefresh(id)}
+function klMeet(id){const c=KL.c[id].c;const d=c.bulusma_zaman&&new Date(c.bulusma_zaman)>Date.now()?new Date(c.bulusma_zaman):null;
+  const loc=x=>{const z=new Date(x.getTime()-x.getTimezoneOffset()*6e4);return z.toISOString().slice(0,16)};
+  const def=new Date();def.setDate(def.getDate()+7);def.setHours(20,0,0,0);
+  sheet(`<label class="f">Tarih ve saat</label><input class="inp" type="datetime-local" id="kl_bz" value="${loc(d||def)}">
+  <label class="f">Yer ya da görüntülü görüşme bağlantısı</label><input class="inp" id="kl_by" maxlength="200" value="${esc(d?c.bulusma_yer||'':'')}" placeholder="Ör. Moda Kafe, Kadıköy ya da https://meet…">
+  <p class="small muted" style="margin:8px 0 14px">Tarihi değiştirirsen üyelerin katılım cevapları sıfırlanır.</p>
+  <button class="btn pri full" data-act="klMeetSave" data-id="${id}">Kaydet</button>${d?`<button class="btn full red" style="margin-top:8px" data-act="klMeetDel" data-id="${id}">Buluşmayı iptal et</button>`:''}`,'klmeet','Buluşma','Vazgeç')}
+async function klMeetSave(btn,del){const id=btn.dataset.id,C=KL.c[id];
+  const z=del?null:($('#kl_bz').value?new Date($('#kl_bz').value).toISOString():null),y=del?null:($('#kl_by').value.trim()||null);
+  if(!del&&!z){toast('Tarih seç');return}btn.disabled=true;
+  const{error}=await sb.from('kulupler').update({bulusma_zaman:z,bulusma_yer:y}).eq('id',id);
+  if(error){btn.disabled=false;alertBox('Kaydedilemedi',dbMsg(error));return}
+  if(del||z!==C.c.bulusma_zaman)await sb.from('kulup_katilim').delete().eq('kulup_id',id);
+  closeSheet();toast(del?'Buluşma iptal edildi':'Buluşma kaydedildi');klRefresh(id)}
+
+/* ---------- eylemler ---------- */
+function klConfirm(t,m,act,data,lbl){sheet(`<div class="empty" style="padding:20px 8px"><h3>${esc(t)}</h3><p>${esc(m)}</p><div class="row" style="gap:8px;justify-content:center"><button class="btn" data-act="close">Vazgeç</button><button class="btn pri" style="background:var(--red);color:#fff" data-act="${act}" ${Object.entries(data).map(([k,v])=>`data-${k}="${esc(v)}"`).join(' ')}>${esc(lbl)}</button></div></div>`,'klconf','')}
+const KA={
+  klOpen:el=>{KL.tab='okuma';KL.reveal.clear();go('#/kulup/'+el.dataset.id)},
+  klTab:el=>{KL.tab=el.dataset.t;render()},
+  klNew:()=>klNew(),klCreate:el=>klCreate(el),klSave:el=>klSave(el),
+  klSettings:el=>klSettings(el.dataset.id),klInvite:el=>klInvite(el.dataset.id),
+  klShare:async el=>{const c=KL.c[el.dataset.id].c,link=kLink(c),text=`"${c.ad}" kitap kulübüne katıl! Davet kodu: ${c.davet_kodu}`;
+    if(navigator.share){try{await navigator.share({title:c.ad,text,url:link})}catch(e){}}else{try{await navigator.clipboard.writeText(text+'\n'+link);toast('Davet metni kopyalandı')}catch(e){toast(link)}}},
+  klCopy:async el=>{const link=kLink(KL.c[el.dataset.id].c);try{await navigator.clipboard.writeText(link);toast('Bağlantı kopyalandı')}catch(e){toast(link)}},
+  klNewCode:async el=>{const id=el.dataset.id;const{error}=await sb.from('kulupler').update({davet_kodu:kodUret()}).eq('id',id);if(error){alertBox('Yenilenemedi',dbMsg(error));return}closeSheet();await klRefresh(id);klInvite(id)},
+  klDelete:el=>klConfirm('Kulüp silinsin mi?','Bütün mesajlar, oylar ve okuma geçmişi kalıcı olarak silinir.','klDeleteOk',{id:el.dataset.id},'Kulübü sil'),
+  klDeleteOk:async el=>{const{error}=await sb.from('kulupler').delete().eq('id',el.dataset.id);if(error){alertBox('Silinemedi',dbMsg(error));return}
+    if(LOCAL)for(const t of['kulup_uyeler','kulup_kitaplar','kulup_mesajlar','kulup_oylar','kulup_ilerleme','kulup_katilim'])await sb.from(t).delete().eq('kulup_id',el.dataset.id);
+    closeSheet();klReset();toast('Kulüp silindi');go('#/kulup')},
+  klJoin:async el=>{if(!S.me){openLogin('Kulübe katılmak için giriş yap');return}const id=el.dataset.id;
+    const{error}=await sb.from('kulup_uyeler').insert({kulup_id:id,user_id:kMe(),rol:'uye'});if(error){alertBox('Katılınamadı',dbMsg(error));return}toast('Kulübe katıldın 🎉');klRefresh(id)},
+  klJoinCode:el=>klJoinCode(el.dataset.k),
+  klLeave:el=>klConfirm('Kulüpten ayrılıyor musun?','Mesajların kulüpte kalır. İstersen sonra tekrar katılabilirsin.','klLeaveOk',{id:el.dataset.id},'Ayrıl'),
+  klLeaveOk:async el=>{const id=el.dataset.id;const{error}=await sb.from('kulup_uyeler').delete().eq('kulup_id',id).eq('user_id',kMe());if(error){alertBox('Ayrılınamadı',dbMsg(error));return}
+    closeSheet();klReset();toast('Kulüpten ayrıldın');go('#/kulup')},
+  klKick:el=>klConfirm('Üye çıkarılsın mı?',`${kAd(KL.c[el.dataset.id],el.dataset.u)} kulüpten çıkarılacak.`,'klKickOk',{id:el.dataset.id,u:el.dataset.u},'Çıkar'),
+  klKickOk:async el=>{const{error}=await sb.from('kulup_uyeler').delete().eq('kulup_id',el.dataset.id).eq('user_id',el.dataset.u);if(error){alertBox('Çıkarılamadı',dbMsg(error));return}closeSheet();klRefresh(el.dataset.id)},
+  klRole:async el=>{const{error}=await sb.from('kulup_uyeler').update({rol:el.dataset.r}).eq('kulup_id',el.dataset.id).eq('user_id',el.dataset.u);if(error){alertBox('Değiştirilemedi',dbMsg(error));return}klRefresh(el.dataset.id)},
+  klUser:el=>go('#/kullanici/'+el.dataset.u),
+  klBook:el=>{const C=KL.c[R.arg];const b=C&&C.kitaplar.find(x=>x.id===el.dataset.k);if(b)go('#/kitap/'+encodeURIComponent(b.anahtar))},
+  klAddLib:async el=>{const b=KL.c[R.arg].kitaplar.find(x=>x.id===el.dataset.k);if(!b)return;const r=await addRow({baslik:b.baslik,yazar:b.yazar,kapak:b.kapak,sayfa:b.sayfa},'okuyorum');if(r){toast('Kitaplığına eklendi');render()}},
+  klProg:async el=>{const id=el.dataset.id,kid=el.dataset.k,C=KL.c[id],b=C.kitaplar.find(x=>x.id===kid);let s=parseInt($('#klSayfa').value)||0;if(b&&b.sayfa)s=Math.min(s,+b.sayfa);s=Math.max(0,s);
+    const row={kitap_id:kid,kulup_id:id,user_id:kMe(),sayfa:s,updated_at:new Date().toISOString()};
+    const{error}=await sb.from('kulup_ilerleme').upsert(row);if(error){alertBox('Kaydedilemedi',dbMsg(error));return}
+    const ex=C.ilerleme.find(p=>p.kitap_id===kid&&p.user_id===kMe());if(ex)ex.sayfa=s;else C.ilerleme.push(row);
+    const lb=b&&inLib(b.anahtar);if(lb){const p={mevcut_sayfa:s};if(lb.durum==='okuyacagim')p.durum='okuyorum';if(b.sayfa&&s>=b.sayfa){p.durum='okudum';p.bitis=lb.bitis||today()}saveRow(lb,p)}
+    toast(b&&b.sayfa&&s>=b.sayfa?'Kitabı bitirdin 🎉':'İlerlemen kaydedildi');render()},
+  klVote:async el=>{const id=el.dataset.id,kid=el.dataset.k,C=KL.c[id],me=kMe();const on=C.oylar.some(o=>o.kitap_id===kid&&o.user_id===me);
+    const r=on?await sb.from('kulup_oylar').delete().eq('kitap_id',kid).eq('user_id',me):await sb.from('kulup_oylar').insert({kitap_id:kid,kulup_id:id,user_id:me});
+    if(r.error){alertBox('Oy verilemedi',dbMsg(r.error));return}
+    if(on)C.oylar=C.oylar.filter(o=>!(o.kitap_id===kid&&o.user_id===me));else C.oylar.push({kitap_id:kid,kulup_id:id,user_id:me});render()},
+  klPick:el=>klDates(el.dataset.id,el.dataset.k,true),
+  klDates:el=>klDates(R.arg,el.dataset.k,false),
+  klStart:el=>klStart(el),
+  klFinish:el=>klConfirm('Kitap bitti mi?','Kitap "Birlikte okuduklarımız" rafına taşınır. Sonra yeni kitabı seçebilirsiniz.','klFinishOk',{id:R.arg,k:el.dataset.k},'Bitir'),
+  klFinishOk:async el=>{const{error}=await sb.from('kulup_kitaplar').update({durum:'bitti',bitis:today()}).eq('id',el.dataset.k);if(error){alertBox('Kaydedilemedi',dbMsg(error));return}closeSheet();toast('Tebrikler, bir kitabı daha birlikte bitirdiniz 📚');klRefresh(el.dataset.id)},
+  klDelBook:async el=>{const{error}=await sb.from('kulup_kitaplar').delete().eq('id',el.dataset.k);if(error){alertBox('Kaldırılamadı',dbMsg(error));return}if(LOCAL)await sb.from('kulup_oylar').delete().eq('kitap_id',el.dataset.k);klRefresh(el.dataset.id)},
+  klSuggest:el=>klSuggest(el.dataset.id),klCand:el=>klCand(el),
+  klMeet:el=>klMeet(el.dataset.id),klMeetSave:el=>klMeetSave(el,false),klMeetDel:el=>klMeetSave(el,true),
+  klRsvp:async el=>{const id=el.dataset.id,C=KL.c[id],me=kMe(),v=el.dataset.v;const row={kulup_id:id,user_id:me,cevap:v};
+    const{error}=await sb.from('kulup_katilim').upsert(row);if(error){alertBox('Kaydedilemedi',dbMsg(error));return}
+    const ex=C.katilim.find(x=>x.user_id===me);if(ex)ex.cevap=v;else C.katilim.push(row);render()},
+  klSend:async el=>{const id=el.dataset.id,C=KL.c[id];const t=$('#klMsg').value.trim();if(!t){toast('Bir şey yaz');return}
+    const ak=C.kitaplar.find(b=>b.durum==='aktif');const sp=ak&&$('#klSp')&&$('#klSp').checked?parseInt($('#klSpS').value)||null:null;
+    el.disabled=true;const{data,error}=await sb.from('kulup_mesajlar').insert({kulup_id:id,kitap_id:ak?ak.id:null,user_id:kMe(),metin:t,sayfa:sp}).select().single();el.disabled=false;
+    if(error){alertBox('Gönderilemedi',dbMsg(error));return}C.mesajlar.unshift(data||{id:Math.random(),kulup_id:id,user_id:kMe(),metin:t,sayfa:sp,created_at:new Date().toISOString()});render()},
+  klDelMsg:async el=>{const id=el.dataset.id,C=KL.c[id];const{error}=await sb.from('kulup_mesajlar').delete().eq('id',el.dataset.k);if(error){alertBox('Silinemedi',dbMsg(error));return}C.mesajlar=C.mesajlar.filter(m=>m.id!==el.dataset.k);render()},
+  klReveal:el=>{KL.reveal.add(el.dataset.k);render()}};
+
 /* ==================== çizim ==================== */
-const TABS=[['kitaplik','Kitaplığım',I.lib],['kesfet','Keşfet',I.comp],['sesli','Sesli Kitap',I.head],['profil','Profil',I.user]];
+const TABS=[['kitaplik','Kitaplığım',I.lib],['kesfet','Keşfet',I.comp],['kulup','Kulüp',I.club],['sesli','Sesli Kitap',I.head],['profil','Profil',I.user]];
 $('#tabs').innerHTML=TABS.map(([k,t,i])=>`<button data-act="tab" data-t="${k}">${i}<span>${t}</span></button>`).join('');
 /* ---------- yönlendirici (her bölüm ve kitap kendi adresinde) ----------
    #/kitaplik  #/kesfet/top|pop|puan  #/sesli  #/profil
@@ -630,6 +955,7 @@ function parseRoute(){const h=(location.hash||'').replace(/^#\/?/,'');const[a,..
   if(a==='kullanici'&&arg)return{name:'kullanici',arg};
   if(a==='u'&&arg)return{name:'handle',arg};
   if(a&&a[0]==='@'&&a.length>1)return{name:'handle',arg:decodeURIComponent(a.slice(1))};
+  if(a==='kulup'){if(rest[0]==='katil'&&rest[1])return{name:'klDavet',arg:decodeURIComponent(rest[1])};if(rest[0])return{name:'kulup',arg:decodeURIComponent(rest[0])};return{name:'kulupler',arg:''}}
   if(a==='kesfet')return{name:'kesfet',arg:['top','pop','puan','okur'].includes(arg)?arg:'top'};
   if(['kitaplik','sesli','profil'].includes(a))return{name:a,arg:''};
   return{name:'kitaplik',arg:''}}
@@ -638,17 +964,17 @@ addEventListener('hashchange',e=>{const old=(e.oldURL.split('#')[1]||'');SCROLL[
   if(R.name!=='kitap')S.openKey=null;if(R.name!=='ara')S.sres=null;
   render(true);requestAnimationFrame(()=>scrollTo(0,SCROLL[location.hash]||0))});
 addEventListener('scroll',()=>{lastY=scrollY},{passive:true});
-const TABOF={kitaplik:'kitaplik',kesfet:'kesfet',sesli:'sesli',profil:'profil',sesliKitap:'sesli',ara:'kesfet'};
+const TABOF={kitaplik:'kitaplik',kesfet:'kesfet',sesli:'sesli',profil:'profil',sesliKitap:'sesli',ara:'kesfet',kulupler:'kulup',kulup:'kulup',klDavet:'kulup'};
 function render(anim){
   if(!['kitap','kullanici','handle'].includes(R.name))S.tab=TABOF[R.name];
   if(R.name==='kesfet')S.disc=R.arg;
   document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===S.tab));
-  const sub=['kitap','sesliKitap','ara','kullanici','handle'].includes(R.name);
+  const sub=['kitap','sesliKitap','ara','kullanici','handle','kulup','klDavet'].includes(R.name);
   $('#hdr').classList.toggle('sub',sub);$('#hBack').classList.toggle('hide',!sub);
-  const T={kitaplik:'Kitaplığım',kesfet:'Keşfet',sesli:'Sesli Kitaplar',profil:'Profil',ara:'Kitap ara',kitap:'',sesliKitap:'',kullanici:'',handle:''};
+  const T={kitaplik:'Kitaplığım',kesfet:'Keşfet',sesli:'Sesli Kitaplar',profil:'Profil',ara:'Kitap ara',kitap:'',sesliKitap:'',kullanici:'',handle:'',kulupler:'Kitap Kulüpleri',kulup:'',klDavet:''};
   $('#ttl').textContent=T[R.name];
   const h=$('#hAct');
-  if(R.name==='kitaplik'||(R.name==='sesli'&&isAdmin())){h.innerHTML=I.plus;h.classList.remove('hide')}
+  if(R.name==='kitaplik'||R.name==='kulupler'||(R.name==='sesli'&&isAdmin())){h.innerHTML=I.plus;h.classList.remove('hide')}
   else if(R.name==='kesfet'){h.innerHTML=I.barcode.replace('class="ic"','width="24" height="24"');h.classList.remove('hide')}
   else h.classList.add('hide');
   const v=$('#view');
@@ -657,13 +983,16 @@ function render(anim){
   else if(R.name==='kesfet')v.innerHTML=vDisc();
   else if(R.name==='sesli')v.innerHTML=vAudio();
   else if(R.name==='profil')v.innerHTML=vProf();
+  else if(R.name==='kulupler')v.innerHTML=vClubs();
+  else if(R.name==='kulup')vClub(R.arg);
+  else if(R.name==='klDavet')vDavet(R.arg);
   else if(R.name==='kitap')vBook(R.arg);
   else if(R.name==='sesliKitap')vAudioPage(R.arg);
   else if(R.name==='ara')vSearch(R.arg);
   else if(R.name==='kullanici')vUser(R.arg);
   else if(R.name==='handle'){$('#view').innerHTML=`<div class="loading" style="padding:60px 0"><span class="spin"></span></div>`;openHandle(R.arg)}
   if(R.name==='kitaplik')renderLibItems();
-  document.title=(R.name==='kitap'||R.name==='sesliKitap'||R.name==='kullanici')&&$('#ttl').textContent?$('#ttl').textContent+' · Kitaplığım':(T[R.name]||'')+' · Kitaplığım';
+  document.title=(R.name==='kitap'||R.name==='sesliKitap'||R.name==='kullanici'||R.name==='kulup')&&$('#ttl').textContent?$('#ttl').textContent+' · Kitaplığım':(T[R.name]||'')+' · Kitaplığım';
   lazyCovers();updateMini();
 }
 function vUser(id){const v=$('#view');if(S.me&&id===S.me.id){go('#/profil');return}
@@ -1138,13 +1467,14 @@ function refreshPlayer(light){if(S.sheet!=='player')return;const a=S.audio.find(
 
 /* ==================== olaylar ==================== */
 const A={
+  ...KA,
   pwaHelp:()=>pwaHelp(),
   pwaOS:el=>pwaHelp(el.dataset.os),
   pwaHide:()=>{try{localStorage.setItem('kv.pwaGizle','1')}catch(e){}render();toast('Profil sayfasından istediğin zaman açabilirsin')},
   pwaInstall:async()=>{const e=PWA.ev;if(!e)return;PWA.ev=null;e.prompt();try{const r=await e.userChoice;if(r&&r.outcome==='accepted'){closeSheet();toast('Kitaplığım ana ekrana ekleniyor')}else pwaHelp('android')}catch(x){}},
   tab:el=>{const t=el.dataset.t;go(t==='kesfet'?'#/kesfet/'+(S.disc||'top'):'#/'+t)},
   back:()=>{if(NAV>0){NAV--;history.back()}else go(S.tab==='kesfet'?'#/kesfet/'+S.disc:'#/'+(S.tab||'kitaplik'))},
-  hAct:()=>S.tab==='kesfet'?scanOpen():S.tab==='sesli'?openAudioForm():openAdd(),
+  hAct:()=>S.tab==='kulup'?klNew():S.tab==='kesfet'?scanOpen():S.tab==='sesli'?openAudioForm():openAdd(),
   close:()=>{if(S.sheet==='kadi')try{sessionStorage.setItem('kv.kadiSonra','1')}catch(e){}closeSheet()},
   login:()=>openLogin(),
   google:async()=>{const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});if(error)toast('Giriş başlatılamadı')},
@@ -1243,6 +1573,8 @@ document.addEventListener('change',async e=>{const k=e.target.dataset.chg;if(!k)
   else{await saveRow(b,{[k]:v||null});render()}});
 document.addEventListener('submit',async e=>{e.preventDefault();const id=e.target.id;
   if(id==='sForm'){const q=$('#sIn').value.trim();if(q){$('#sIn').blur();S.sres=null;if(R.name==='ara'&&R.arg===q)render();else{closeSheet();NAV++;location.hash='#/ara/'+encodeURIComponent(q)}}}
+  if(id==='klKodForm'){const k=$('#klKod').value.trim();if(k){$('#klKod').blur();klJoinCode(k)}}
+  if(id==='klSForm'){const q=$('#klSIn').value.trim();if(q){$('#klSIn').blur();klSearch(q)}}
   if(id==='userForm'){S.uq=$('#userQ').value.trim();S.ures=null;$('#userQ').blur();render()}
   if(id==='discForm'){const q=$('#discQ').value.trim();if(q){$('#discQ').blur();openSearch(q)}}
   if(id==='scanIsbnForm'){const v=$('#scanIsbnIn').value.replace(/[^0-9X]/gi,'');if(validIsbn(v)||v.length===10){$('#scanIsbnIn').value='';BATCH.cool=0;onCode(v)}else scanMsg('Geçerli bir ISBN yaz (13 haneli, 978 ile başlar)','warn')}
@@ -1306,7 +1638,7 @@ function localClient(){
       if(op==='update'){a.forEach(r=>{if(match(r))Object.assign(r,pay)});save(t,a);return{data:null,error:null}}
       if(op==='delete'){const gone=a.filter(match).map(r=>r.id);save(t,a.filter(r=>!match(r)));
         if(t==='sesli_kitaplar'){save('sesli_bolumler',load('sesli_bolumler').filter(b=>!gone.includes(b.kitap_id)));save('dinleme',load('dinleme').filter(b=>!gone.includes(b.kitap_id)))}return{data:null,error:null}}
-      if(op==='upsert'){const kf=t==='dinleme'?(r=>r.user_id===pay.user_id&&r.kitap_id===pay.kitap_id):(r=>r.id===pay.id);const ex=a.find(kf);if(ex)Object.assign(ex,pay);else a.push({...pay});save(t,a);return{data:null,error:null}}
+      if(op==='upsert'){const kf=t==='dinleme'||t==='kulup_ilerleme'?(r=>r.user_id===pay.user_id&&r.kitap_id===pay.kitap_id):t==='kulup_katilim'?(r=>r.user_id===pay.user_id&&r.kulup_id===pay.kulup_id):(r=>r.id===pay.id);const ex=a.find(kf);if(ex)Object.assign(ex,pay);else a.push({...pay});save(t,a);return{data:null,error:null}}
       a=sortLim(a.filter(match)).map(r=>({...r}));
       if(sel.includes('sesli_bolumler')){const B=load('sesli_bolumler');a.forEach(r=>r.sesli_bolumler=B.filter(b=>b.kitap_id===r.id))}
       if(sel.includes('profiller')){const P=load('profiller');a.forEach(r=>r.profiller=P.find(p=>p.id===r.user_id)||null)}
@@ -1320,7 +1652,7 @@ function localClient(){
       getPublicUrl:path=>({data:{publicUrl:'idb:'+b+'/'+path}}),
       remove:async paths=>{for(const p of paths){const k=b+'/'+p;try{await idbDo('readwrite',s=>s.delete(k))}catch(e){}if(BLOBURL[k])URL.revokeObjectURL(BLOBURL[k]);delete BLOBURL[k]}return{error:null}}})}};
 }
-async function onUser(u){S.me=u?{id:u.id,email:u.email}:null;S.libLoaded=false;render();
+async function onUser(u){S.me=u?{id:u.id,email:u.email}:null;S.libLoaded=false;klReset();render();
   await healthCheck();
   if(u&&!S.dbErr){await ensureProfile(u);if(S.sheet==='login')closeSheet()}else if(!u)S.profile=null;
   S.USERS={};S.feed=null;await Promise.all([loadLib(),loadProg(),loadFollowing()]);render();
