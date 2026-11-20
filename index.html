@@ -18,7 +18,7 @@
 :root{
   --bg:#f6f3ee;--card:#fffdfa;--ink:#1c1b19;--ink2:#3d3a35;--mu:#7b766e;--mu2:#a8a299;--line:#e6e0d6;--fill:#efebe4;
   --ac:#1f5f4e;--ac-ink:#fff;--ac-soft:#e2ece8;--star:#e3a417;--red:#b03a2e;
-  --read:#2f7d4f;--reading:#b7791f;--want:#3b5fa8;
+  --read:#2f7d4f;--reading:#b7791f;--want:#3b5fa8;--dnf:#8a7768;
   --shadow:0 1px 2px rgba(40,30,10,.08),0 6px 18px rgba(40,30,10,.08);
   --sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);
   --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
@@ -26,7 +26,7 @@
 }
 @media (prefers-color-scheme:dark){:root{
   --bg:#131312;--card:#1c1b19;--ink:#efebe4;--ink2:#cfc9bf;--mu:#99938a;--mu2:#6e6961;--line:#2c2a27;--fill:#252421;
-  --ac:#6cbfa3;--ac-ink:#0d1f19;--ac-soft:#1c2c27;--read:#6cbf8a;--reading:#e0a64a;--want:#86a6ea;--red:#e2685b;
+  --ac:#6cbfa3;--ac-ink:#0d1f19;--ac-soft:#1c2c27;--read:#6cbf8a;--reading:#e0a64a;--want:#86a6ea;--dnf:#b8a493;--red:#e2685b;
   --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 20px rgba(0,0,0,.35)}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--sans);-webkit-font-smoothing:antialiased}
@@ -194,6 +194,21 @@ textarea.inp{min-height:110px;resize:vertical;line-height:1.5}
 .kswatch{display:flex;gap:10px;flex-wrap:wrap}.kswatch label{width:36px;height:36px;border-radius:50%;cursor:pointer;position:relative}
 .kswatch input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}.kswatch input:checked+i{position:absolute;inset:-5px;border:2.5px solid var(--ink);border-radius:50%}
 .kcode{font:700 34px/1.2 ui-monospace,Menlo,monospace;letter-spacing:.14em;margin:4px 0;color:var(--ac)}
+.wrapbtn{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:16px 18px;border-radius:14px;margin:0 0 14px;color:#fff;background:linear-gradient(120deg,#1f5f4e,#123a30 60%,#3e3560)}
+.wrapbtn span{flex:1}.wrapbtn b{display:block;font:600 19px var(--serif)}.wrapbtn small{opacity:.85;font-size:13px}.wrapbtn em{font-style:normal;font-size:26px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:13px;padding:5px 11px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--ink2);line-height:1.3}
+.chip.on{background:var(--ac);border-color:var(--ac);color:var(--ac-ink)}.chip.soft{background:var(--ac-soft);border-color:transparent;color:var(--ac)}
+.chip.warn.on{background:color-mix(in srgb,var(--reading) 22%,transparent);border-color:transparent;color:var(--ink)}.chip b{font-weight:700;margin-left:2px}
+.lockt{text-transform:none;letter-spacing:0;font-size:11.5px;color:var(--mu2);margin-left:6px}
+details.cw{margin-top:8px;font-size:13px;color:var(--mu)}details.cw summary{cursor:pointer;list-style:none;display:inline-block;padding:4px 10px;border-radius:99px;background:var(--fill)}details.cw summary::-webkit-details-marker{display:none}
+.quote{padding:12px 0;border-top:1px solid var(--line)}.quote:first-child{border:0;padding-top:2px}
+.quote blockquote{margin:0;padding-left:14px;border-left:3px solid var(--ac);font:italic 16px/1.6 var(--serif);color:var(--ink);white-space:pre-wrap}
+.quote .qm{display:flex;align-items:center;gap:7px;margin-top:8px;font-size:13px;color:var(--mu);flex-wrap:wrap}.quote .qm .avatar{width:20px;height:20px;font-size:9px}
+.gent{padding:10px 0;border-top:1px solid var(--line)}.gent .gd{display:flex;align-items:center;gap:8px;font-size:13px}.gent .gd span{color:var(--mu)}.gent p{margin:5px 0 0;white-space:pre-wrap;font-size:15px}
+.streak .fire{font-size:30px;line-height:1}.days{display:grid;grid-template-columns:repeat(14,1fr);gap:4px;margin-top:12px}.days i{height:8px;border-radius:3px;background:var(--fill)}.days i.on{background:var(--reading)}
+.wrapbox{position:relative;border-radius:14px;overflow:hidden;background:#0b1512;aspect-ratio:9/16;max-height:62vh;margin:0 auto}.wrapbox canvas{width:100%;height:100%;display:block}
+.wrapbox .loading{display:flex;align-items:center;justify-content:center;color:#aab5af;background:#0b1512}
 .pwa-strip{display:flex;align-items:center;gap:4px;margin:6px 0 14px;padding:8px 6px 8px 10px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
 .pwa-go{flex:1;min-width:0;display:flex;align-items:center;gap:12px;text-align:left;color:var(--ink)}
 .pwa-go img{width:40px;height:40px;border-radius:10px;flex:none}
@@ -221,9 +236,10 @@ textarea.inp{min-height:110px;resize:vertical;line-height:1.5}
 .facts div+div{border-left:1px solid var(--line)}
 .facts b{display:block;font-size:15px;font-weight:600}
 .facts span{font-size:11.5px;color:var(--mu)}
-.status3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.status3{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
 .status3 button{padding:10px 4px;border-radius:10px;background:var(--card);border:1px solid var(--line);font-size:14px;font-weight:500;color:var(--ink2)}
 .status3 button.on{color:#fff;border-color:transparent}
+.status3 button.on.birakti{background:var(--dnf)}.d-birakti{background:var(--dnf)}
 .status3 button.on.okudum{background:var(--read)}.status3 button.on.okuyorum{background:var(--reading)}.status3 button.on.okuyacagim{background:var(--want)}
 @media (prefers-color-scheme:dark){.status3 button.on{color:#111}}
 .desc{font:15.5px/1.6 var(--serif);color:var(--ink2);position:relative}
@@ -399,6 +415,7 @@ const AYAR = {
 <input type="file" id="photoFile" accept="image/*" hidden>
 <input type="file" id="coverFile" accept="image/*" hidden>
 <input type="file" id="avatarFile" accept="image/*" hidden>
+<input type="file" id="csvFile" accept=".csv,text/csv" hidden>
 <input type="file" id="audioFiles" accept="audio/*,.mp3,.m4a,.m4b,.aac,.ogg,.wav" multiple hidden>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -459,7 +476,7 @@ const TOP100=[["Suç ve Ceza","Fyodor Dostoyevski"],["Sefiller","Victor Hugo"],[
 ["Bilinmeyen Bir Kadının Mektubu","Stefan Zweig"],["Silahlara Veda","Ernest Hemingway"],["Beyaz Diş","Jack London"],["Vadideki Zambak","Honoré de Balzac"],["Otomatik Portakal","Anthony Burgess"],["Körlük","José Saramago"],["Gülün Adı","Umberto Eco"],["Koku","Patrick Süskind"],["Böyle Buyurdu Zerdüşt","Friedrich Nietzsche"],["Sofie'nin Dünyası","Jostein Gaarder"],
 ["İnsan Ne İle Yaşar","Lev Tolstoy"],["İnsanın Anlam Arayışı","Viktor E. Frankl"],["Sapiens","Yuval Noah Harari"],["Uçurtma Avcısı","Khaled Hosseini"],["Bin Muhteşem Güneş","Khaled Hosseini"],["Swann'ların Tarafı","Marcel Proust"],["Ulysses","James Joyce"],["Ölü Canlar","Nikolay Gogol"],["Babalar ve Oğullar","İvan Turgenyev"],["Oblomov","İvan Gonçarov"],
 ["Ana","Maksim Gorki"],["Momo","Michael Ende"],["Bitmeyecek Öykü","Michael Ende"],["Hobbit","J. R. R. Tolkien"],["Yüzüklerin Efendisi","J. R. R. Tolkien"],["Harry Potter ve Felsefe Taşı","J. K. Rowling"],["Dune","Frank Herbert"],["Vakıf","Isaac Asimov"],["Otostopçunun Galaksi Rehberi","Douglas Adams"],["Sol Ayağım","Christy Brown"]];
-const DURUM={okudum:'Okudum',okuyorum:'Okuyorum',okuyacagim:'Okuyacağım'};
+const DURUM={okudum:'Okudum',okuyorum:'Okuyorum',okuyacagim:'Okuyacağım',birakti:'Yarım bıraktım'};
 
 /* ==================== durum ==================== */
 const S={following:new Set(),USERS:{},tab:'kitaplik',filter:'hepsi',sort:'yeni',q:'',view:localStorage.getItem('kv.view')||'grid',disc:'top',
@@ -505,7 +522,7 @@ function stars(r,size){r=+r||0;return `<span class="stars" style="font-size:${si
 /* ==================== kitap verisi (Google Books + Open Library) ==================== */
 const GB='https://www.googleapis.com/books/v1/volumes';
 const gbKey=()=>AYAR.GOOGLE_BOOKS_KEY?'&key='+AYAR.GOOGLE_BOOKS_KEY:'';
-function stripHtml(s){const d=document.createElement('div');d.innerHTML=s||'';return d.textContent.trim()}
+function stripHtml(s){try{return new DOMParser().parseFromString(String(s||''),'text/html').body.textContent.trim()}catch(e){return String(s||'')}}
 function gbMap(it){const v=it.volumeInfo||{};const ids=v.industryIdentifiers||[];
   const isbn=((ids.find(x=>x.type==='ISBN_13')||ids.find(x=>x.type==='ISBN_10')||{}).identifier)||'';
   let img=v.imageLinks&&(v.imageLinks.thumbnail||v.imageLinks.smallThumbnail)||'';
@@ -605,7 +622,8 @@ async function loadUser(id){
     sb.from('kitaplik').select('*').eq('user_id',id).order('updated_at',{ascending:false}).limit(500),
     sb.from('takipler').select('takip_eden',{count:'exact',head:true}).eq('takip_edilen',id),
     sb.from('takipler').select('takip_edilen',{count:'exact',head:true}).eq('takip_eden',id)]);
-  return S.USERS[id]={p:pr.data,books:bk.data||[],takipci:cnt(f1),takip:cnt(f2),t:Date.now()}}
+  let qs=[];try{const q=await sb.from('alintilar').select('*').eq('user_id',id).eq('acik',true).order('created_at',{ascending:false}).limit(20);qs=q.data||[]}catch(e){}
+  return S.USERS[id]={p:pr.data,books:bk.data||[],quotes:qs,takipci:cnt(f1),takip:cnt(f2),t:Date.now()}}
 async function toggleFollow(id){if(!S.me){openLogin('Takip etmek için giriş yap');return}
   const on=S.following.has(id);
   const r=on?await sb.from('takipler').delete().eq('takip_eden',S.me.id).eq('takip_edilen',id):await sb.from('takipler').insert({takip_eden:S.me.id,takip_edilen:id});
@@ -653,6 +671,195 @@ async function loadStats(){const[a,b]=await Promise.all([
   sb.from('kitap_istatistik').select('*').gt('okuyan',0).order('okuyan',{ascending:false}).limit(50),
   sb.from('kitap_istatistik').select('*').gt('puan_sayisi',0).order('ort_puan',{ascending:false}).order('puan_sayisi',{ascending:false}).limit(50)]);
   S.stats={pop:a.data||[],top:b.data||[]}}
+
+/* ==================== okuma araçları: alıntı, günlük, seri, kitabım, ruh hali, içe aktarma, yıl özeti ==================== */
+const MOODS=['Duygusal','Düşündürücü','Karanlık','Eğlenceli','Umut verici','Gerilimli','Romantik','Macera dolu','Hüzünlü','Rahatlatıcı','İlham verici','Gizemli'];
+const UYARI=['Ölüm ve kayıp','Şiddet','Savaş','İntihar','Kendine zarar verme','İstismar','Cinsel içerik','Bağımlılık','Ağır hastalık','Hayvana şiddet','Ayrımcılık','Argo ve küfür'];
+S.ozel={};S.days=new Set();S.gunluk={};S.tag='';
+const yerelGun=(d=new Date())=>{const z=new Date(d.getTime()-d.getTimezoneOffset()*6e4);return z.toISOString().slice(0,10)};
+const OZ=id=>S.ozel[id]||{};
+const fmtGun=g=>new Date(g+'T12:00').toLocaleDateString('tr-TR',{day:'numeric',month:'long'});
+
+async function loadOzel(){S.ozel={};S.days=new Set();S.gunluk={};S.myQuotes=undefined;if(!S.me)return;
+  try{const[o,g]=await Promise.all([sb.from('kitap_ozel').select('*').eq('user_id',S.me.id),sb.from('gunluk').select('gun').eq('user_id',S.me.id).order('gun',{ascending:false}).limit(3000)]);
+    (o.data||[]).forEach(r=>S.ozel[r.kitap_id]=r);(g.data||[]).forEach(r=>r.gun&&S.days.add(String(r.gun).slice(0,10)))}catch(e){}}
+
+/* ---------- okuma serisi ---------- */
+function seri(){const bugun=S.days.has(yerelGun());const d=new Date();if(!bugun)d.setDate(d.getDate()-1);let n=0;while(S.days.has(yerelGun(d))){n++;d.setDate(d.getDate()-1)}return{n,bugun}}
+function enUzunSeri(){const a=[...S.days].sort();let best=0,cur=0,prev=null;for(const g of a){cur=prev&&Math.round((new Date(g+'T12:00')-new Date(prev+'T12:00'))/864e5)===1?cur+1:1;best=Math.max(best,cur);prev=g}return best}
+async function logRead(b,sayfa,metin){if(!S.me)return null;const gun=yerelGun();
+  if(!metin&&b){const L=S.gunluk[b.id];const son=L&&L.find(e=>e.gun===gun&&!e.metin);
+    if(son){son.sayfa=sayfa;await sb.from('gunluk').update({sayfa}).eq('id',son.id);S.days.add(gun);return son}}
+  const row={user_id:S.me.id,kitap_id:b?b.id:null,sayfa:sayfa==null?null:sayfa,metin:metin||null,gun};
+  const{data,error}=await sb.from('gunluk').insert(row).select().single();if(error){console.warn(error);return null}
+  S.days.add(gun);if(b&&S.gunluk[b.id])S.gunluk[b.id].unshift(data);return data}
+function streakCard(){const p=S.profile||{};if(p.seri_goster===false)return'';const s=seri(),best=enUzunSeri();
+  return `<div class="group streak"><div class="gb"><div class="row" style="gap:14px"><div class="fire">${s.n?'🔥':'📖'}</div><div style="flex:1;min-width:0"><b>${s.n?`${s.n} günlük okuma serisi`:'Okuma serisi'}</b>
+    <div class="small muted">${s.bugun?'Bugün okudun, serin devam ediyor.':s.n?'Serini korumak için bugün de birkaç sayfa oku.':'Okuduğun günleri işaretle, serin büyüsün.'}${best>1?` En uzun serin: ${best} gün.`:''}</div></div>
+    ${s.bugun?'<span class="tag" style="margin:0">✓ Bugün</span>':`<button class="btn sm pri" data-act="readToday">Bugün okudum</button>`}</div>
+    <div class="days">${Array.from({length:14},(_,i)=>{const d=new Date();d.setDate(d.getDate()-13+i);const g=yerelGun(d);return `<i class="${S.days.has(g)?'on':''}" title="${fmtGun(g)}"></i>`}).join('')}</div></div></div>`}
+
+/* ---------- kitabım (sadece sana özel) ---------- */
+async function ozelSave(b,patch){const cur=OZ(b.id);const row={kitap_id:b.id,user_id:S.me.id,sahibim:!!cur.sahibim,odunc:cur.odunc||null,odunc_tarih:cur.odunc_tarih||null,etiketler:cur.etiketler||[],...patch};
+  const{error}=await sb.from('kitap_ozel').upsert(row);if(error){alertBox('Kaydedilemedi',dbMsg(error)+' (guncelleme-5.sql çalıştırıldı mı?)');return false}S.ozel[b.id]=row;return true}
+const tumEtiketler=()=>{const s={};Object.values(S.ozel).forEach(o=>(o.etiketler||[]).forEach(t=>s[t]=(s[t]||0)+1));return Object.entries(s).sort((a,b)=>b[1]-a[1]).map(x=>x[0])};
+function bookPrivate(b){const o=OZ(b.id),tags=o.etiketler||[],all=tumEtiketler().filter(t=>!tags.includes(t)).slice(0,8);
+  return `<div class="group"><div class="gh">Kitabım <span class="lockt">🔒 sadece sen görürsün</span></div><div class="gb">
+    <label class="row" style="justify-content:space-between;cursor:pointer"><span>Bu kitap bende var</span><span class="sw2"><input type="checkbox" data-chg2="sahibim" ${o.sahibim?'checked':''}><span></span></span></label>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line)">${o.odunc?`<div class="row" style="justify-content:space-between"><span>📤 <b>${esc(o.odunc)}</b> adlı kişide${o.odunc_tarih?` <span class="muted small">· ${fmtGun(o.odunc_tarih)}</span>`:''}</span><button class="btn sm" style="white-space:nowrap;flex:none" data-act="oduncGeri">Geri aldım</button></div>`
+      :`<div class="row" style="gap:8px"><input class="inp" id="oduncIn" placeholder="Ödünç verdiğin kişi" maxlength="40" style="padding:8px 10px"><button class="btn sm" data-act="oduncVer">Ödünç verdim</button></div>`}</div>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line)"><div class="small muted" style="margin-bottom:8px">Etiketlerim</div>
+      <div class="chips">${tags.map(t=>`<button class="chip on" data-act="tagDel" data-t="${esc(t)}">#${esc(t)} ×</button>`).join('')}${all.map(t=>`<button class="chip" data-act="tagAdd" data-t="${esc(t)}">+ ${esc(t)}</button>`).join('')}</div>
+      <form class="row" id="tagForm" style="gap:8px;margin-top:8px"><input class="inp" id="tagIn" placeholder="Yeni etiket: yaz-tatili, hediye…" maxlength="24" style="padding:8px 10px" autocomplete="off"><button class="btn sm">Ekle</button></form></div>
+  </div></div>`}
+
+/* ---------- ruh hali ve içerik uyarıları ---------- */
+function bookMood(b){const m=b.ruh_hali||[],u=b.uyarilar||[];
+  return `<div class="group"><div class="gh">Nasıl bir kitaptı?</div><div class="gb"><div class="small muted" style="margin-bottom:8px">Sana nasıl hissettirdi? En fazla 3 tane seç.</div>
+    <div class="chips">${MOODS.map(x=>`<button class="chip ${m.includes(x)?'on':''}" data-act="moodT" data-m="${esc(x)}">${esc(x)}</button>`).join('')}</div>
+    <div class="small muted" style="margin:14px 0 8px">İçerik uyarıları <span class="muted">· diğer okurların kitap seçmesine yardımcı olur</span></div>
+    <div class="chips">${UYARI.map(x=>`<button class="chip warn ${u.includes(x)?'on':''}" data-act="cwT" data-m="${esc(x)}">${esc(x)}</button>`).join('')}</div></div></div>`}
+function moodSummary(rows){const n=rows.filter(r=>(r.ruh_hali||[]).length).length;const M={},W={};
+  rows.forEach(r=>{(r.ruh_hali||[]).forEach(x=>M[x]=(M[x]||0)+1);(r.uyarilar||[]).forEach(x=>W[x]=(W[x]||0)+1)});
+  const ms=Object.entries(M).sort((a,b)=>b[1]-a[1]).slice(0,4),ws=Object.entries(W).sort((a,b)=>b[1]-a[1]);
+  if(!ms.length&&!ws.length)return'';
+  return `${ms.length?`<div class="chips" style="justify-content:center;margin-top:10px">${ms.map(([x,c])=>`<span class="chip on soft">${esc(x)} <b>%${Math.round(c/n*100)}</b></span>`).join('')}</div>`:''}
+    ${ws.length?`<details class="cw"><summary>⚠️ İçerik uyarıları (${ws.length})</summary><div class="chips" style="justify-content:center;margin-top:8px">${ws.map(([x,c])=>`<span class="chip warn on">${esc(x)} <b>${c}</b></span>`).join('')}</div></details>`:''}`}
+
+/* ---------- okuma günlüğü ---------- */
+function bookJournal(b){const sy=b.mevcut_sayfa||'';
+  return `<div class="group"><div class="gh">Okuma günlüğüm <span class="lockt">🔒 sadece sen görürsün</span></div><div class="gb">
+    <textarea class="inp" id="gIn" placeholder="Bugün ne okudun, ne düşündün?" style="min-height:70px" maxlength="2000"></textarea>
+    <div class="row" style="margin-top:8px;gap:8px"><span class="small muted">Sayfa</span><input class="inp" id="gS" type="number" inputmode="numeric" min="0" value="${sy}" style="width:84px;padding:7px 10px"><span style="flex:1"></span><button class="btn pri sm" data-act="gAdd">Günlüğe ekle</button></div>
+    <div id="gunluk" style="margin-top:6px"></div></div></div>`}
+async function renderJournal(b){const el=$('#gunluk');if(!el)return;
+  if(S.gunluk[b.id]===undefined){el.innerHTML=`<div class="loading" style="padding:10px"><span class="spin"></span></div>`;
+    const{data}=await sb.from('gunluk').select('*').eq('kitap_id',b.id).order('created_at',{ascending:false}).limit(200);S.gunluk[b.id]=data||[]}
+  const L=S.gunluk[b.id],el2=$('#gunluk');if(!el2||S.openKey!==b.anahtar)return;
+  el2.innerHTML=L.length?L.map(e=>`<div class="gent"><div class="gd"><b>${fmtGun(e.gun)}</b>${e.sayfa!=null?`<span>s. ${e.sayfa}</span>`:''}<button class="lnk small" style="margin-left:auto;color:var(--mu2);font-weight:500" data-act="gDel" data-k="${e.id}">Sil</button></div>${e.metin?`<p>${esc(e.metin)}</p>`:`<div class="small muted">${e.sayfa!=null?`${e.sayfa}. sayfaya geldin`:'Okudun'}</div>`}</div>`).join('')
+    :`<div class="small muted" style="padding-top:6px">Henüz not yok. Okurken aklına gelenleri buraya yaz; sayfanı güncellediğinde de buraya kaydedilir.</div>`}
+
+/* ---------- alıntılar ---------- */
+function quoteHtml(q,showBook){const p=q.profiller||{};const mine=S.me&&q.user_id===S.me.id;
+  return `<div class="quote"><blockquote>${esc(q.metin)}</blockquote><div class="qm">${showBook?`<a href="#/kitap/${encodeURIComponent(q.anahtar)}" class="ulink">${esc(q.baslik)}</a>`:`<a href="${mine?'#/profil':'#/kullanici/'+q.user_id}" style="display:contents;color:inherit;text-decoration:none">${av(p,20)}<span>${esc(mine?'Sen':p.ad||'Okur')}</span></a>`}${q.sayfa?`<span>· s. ${q.sayfa}</span>`:''}${mine&&!q.acik?'<span class="tag">sadece sen</span>':''}${mine?`<button class="lnk small" style="margin-left:auto;color:var(--mu2);font-weight:500" data-act="qDel" data-k="${q.id}">Sil</button>`:''}</div></div>`}
+async function loadQuotes(k){const el=$('#quotes');if(!el)return;
+  const{data,error}=await sb.from('alintilar').select('*, profiller(id,ad,avatar)').eq('anahtar',k).order('created_at',{ascending:false}).limit(60);
+  if(S.openKey!==k||!$('#quotes'))return;
+  if(error){$('#quotes').innerHTML=`<div class="small muted">Alıntılar için guncelleme-5.sql çalıştırılmalı.</div>`;return}
+  const L=(data||[]).filter(q=>q.acik||(S.me&&q.user_id===S.me.id));
+  $('#quotes').innerHTML=L.length?L.map(q=>quoteHtml(q)).join(''):`<div class="small muted">Henüz alıntı yok.${S.me?' Altını çizdiğin bir cümle varsa ilk sen ekle.':''}</div>`}
+function quoteForm(){if(!S.me){openLogin('Alıntı eklemek için giriş yap');return}const x=window._cand||{};const b=inLib(S.openKey);
+  sheet(`<div class="small muted" style="margin:2px 0 8px">${esc(x.baslik||'')}</div><textarea class="inp" id="qIn" maxlength="1000" style="min-height:130px;font:16px/1.55 var(--serif)" placeholder="Altını çizdiğin cümleyi yaz…"></textarea>
+    <div class="row" style="gap:10px;margin-top:10px"><span class="small muted">Sayfa</span><input class="inp" id="qS" type="number" inputmode="numeric" min="1" value="${b&&b.mevcut_sayfa||''}" style="width:90px;padding:7px 10px"><span style="flex:1"></span>
+    <label class="row small" style="gap:8px"><span class="sw2"><input type="checkbox" id="qPub" checked><span></span></span>Herkes görsün</label></div>
+    <button class="btn pri full" style="margin-top:14px" data-act="qSave">Alıntıyı kaydet</button>`,'quote','Alıntı ekle','Vazgeç');setTimeout(()=>$('#qIn')&&$('#qIn').focus(),250)}
+async function myQuotesHtml(){if(S.myQuotes===undefined){const{data}=await sb.from('alintilar').select('*').eq('user_id',S.me.id).order('created_at',{ascending:false}).limit(30);S.myQuotes=data||[];if(R.name==='profil')render()}}
+
+/* ---------- Goodreads / StoryGraph içe aktarma ---------- */
+let IMP=null;
+const metinOnly=s=>{try{return new DOMParser().parseFromString(String(s||''),'text/html').body.textContent.trim()}catch(e){return String(s||'')}};
+function csvParse(t){const rows=[];let r=[],f='',q=false;t=t.replace(/^﻿/,'');
+  for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+    else if(c==='"')q=true;else if(c===','){r.push(f);f=''}else if(c==='\n'||c==='\r'){if(c==='\r'&&t[i+1]==='\n')i++;r.push(f);rows.push(r);r=[];f=''}else f+=c}
+  if(f||r.length){r.push(f);rows.push(r)}return rows.filter(x=>x.length>1)}
+function importMap(rows){if(!rows.length)return null;const h=rows[0].map(x=>x.trim().toLowerCase());const ix=n=>h.indexOf(n);
+  const g=(r,...ns)=>{for(const n of ns){const i=ix(n);if(i>=0&&r[i]!=null&&String(r[i]).trim())return String(r[i]).trim()}return''};
+  const isGR=ix('exclusive shelf')>=0,isSG=ix('read status')>=0;if(!isGR&&!isSG)return null;
+  const st={read:'okudum','currently-reading':'okuyorum','to-read':'okuyacagim','did-not-finish':'birakti'};const L=[],seen=new Set();
+  for(const r of rows.slice(1)){const baslik=g(r,'title').replace(/\s*\([^)]*#\s*\d+[^)]*\)\s*$/,'').trim();if(!baslik)continue;
+    const yazar=isGR?g(r,'author'):g(r,'authors').split(',')[0].trim();const k=keyOf(baslik,yazar);if(seen.has(k))continue;seen.add(k);
+    let isbn=g(r,'isbn13','isbn/uid','isbn').replace(/[^0-9X]/gi,'');if(isbn.length!==13&&isbn.length!==10)isbn='';
+    const shelves=isGR?g(r,'bookshelves'):g(r,'tags');let durum=st[(isGR?g(r,'exclusive shelf'):g(r,'read status')).toLowerCase()]||'okuyacagim';
+    if(/(^|,\s*)(did-not-finish|dnf|abandoned)(\s*,|$)/i.test(shelves))durum='birakti';
+    let puan=parseFloat(g(r,'my rating','star rating'))||0;puan=Math.min(5,Math.round(puan*2)/2);
+    const d=g(r,'date read','last date read').replace(/\//g,'-');
+    L.push({baslik,yazar,isbn,durum,puan,bitis:/^\d{4}-\d{2}-\d{2}$/.test(d)?d:null,
+      yorum:metinOnly(g(r,'my review','review').replace(/<br\s*\/?>/gi,'\n')).slice(0,5000)||null,
+      etiket:shelves.split(',').map(s=>s.trim().toLowerCase()).filter(s=>s&&!['read','to-read','currently-reading','did-not-finish','dnf','favorites'].includes(s)).slice(0,8),
+      fav:/(^|,\s*)favou?rites(\s*,|$)/i.test(shelves),sayfa:parseInt(g(r,'number of pages'))||null,yayinevi:g(r,'publisher')||null,
+      yil:(g(r,'original publication year','year published')||'').slice(0,4)||null,tekrar:Math.max(0,(parseInt(g(r,'read count'))||1)-1)})}
+  return{kaynak:isGR?'Goodreads':'StoryGraph',L}}
+function importOpen(){if(!S.me){openLogin('İçe aktarmak için giriş yap');return}IMP=null;
+  sheet(`<p class="small" style="margin-top:2px">Eski kitaplığını puanların, yorumların ve okuma tarihlerinle birlikte taşı. Aynı kitap iki kez eklenmez.</p>
+  <div class="group"><div class="gh">1 · Dosyayı indir</div><div class="gb small" style="line-height:1.6"><b>Goodreads:</b> goodreads.com → My Books → Import and export → <i>Export Library</i>. Hazır olunca CSV dosyasını indir.<br><b>StoryGraph:</b> Profil → Manage Account → <i>Export StoryGraph Library</i>.</div></div>
+  <div class="group"><div class="gh">2 · Dosyayı seç</div><div class="gb"><button class="btn pri full" data-act="impPick">CSV dosyası seç</button><div id="impRes" style="margin-top:12px"></div></div></div>`,'imp','Goodreads / StoryGraph')}
+function importPreview(){const el=$('#impRes');if(!el||!IMP)return;const yeni=IMP.L.filter(x=>!inLib(keyOf(x.baslik,x.yazar)));const c={};yeni.forEach(x=>c[x.durum]=(c[x.durum]||0)+1);
+  el.innerHTML=`<div class="small"><b>${IMP.kaynak}</b> dosyasında ${IMP.L.length} kitap bulundu${IMP.L.length-yeni.length?`, ${IMP.L.length-yeni.length} tanesi zaten kitaplığında`:''}.</div>
+   <div class="chips" style="margin:10px 0">${Object.entries(c).map(([k,n])=>`<span class="chip on soft">${DURUM[k]} <b>${n}</b></span>`).join('')}</div>
+   ${yeni.length?`<button class="btn pri full" data-act="impRun">${yeni.length} kitabı aktar</button><div class="small muted" style="margin-top:8px">Kapaklar aktarımdan sonra arka planda bulunur.</div>`:'<div class="small muted">Aktarılacak yeni kitap yok.</div>'}<div id="impProg" class="small muted" style="margin-top:8px"></div>`}
+async function importRun(btn){const P=IMP.L.filter(x=>!inLib(keyOf(x.baslik,x.yazar)));btn.disabled=true;const pub=(S.profile||{}).yorumlar_acik!==false;let ok=0;const yeni=[];
+  for(let i=0;i<P.length;i+=40){const part=P.slice(i,i+40);
+    const rows=part.map(x=>({anahtar:keyOf(x.baslik,x.yazar),isbn:x.isbn||null,baslik:x.baslik,yazar:x.yazar||null,yayinevi:x.yayinevi,yil:x.yil,sayfa:x.sayfa,durum:x.durum,puan:x.puan,
+      yorum:x.yorum,yorum_acik:pub,favori:x.fav,bitis:x.durum==='okudum'?x.bitis:null,tekrar:x.tekrar,mevcut_sayfa:x.durum==='okudum'&&x.sayfa?x.sayfa:0}));
+    const{data,error}=await sb.from('kitaplik').insert(rows).select();
+    if(error){alertBox('Aktarım yarıda kaldı',dbMsg(error)+(ok?` (${ok} kitap aktarıldı)`:'')+' · guncelleme-5.sql çalıştırıldı mı?');break}
+    (data||[]).forEach((d,j)=>{S.lib.unshift(d);yeni.push(d);const t=part[j]&&part[j].etiket;if(t&&t.length)S.ozel[d.id]={kitap_id:d.id,user_id:S.me.id,etiketler:t}});
+    ok+=(data||[]).length;const pr=$('#impProg');if(pr)pr.textContent=`${ok} / ${P.length} aktarıldı…`}
+  const tg=yeni.filter(d=>S.ozel[d.id]).map(d=>({...S.ozel[d.id],sahibim:false,odunc:null,odunc_tarih:null}));
+  if(tg.length){if(LOCAL){for(const r of tg)await sb.from('kitap_ozel').upsert(r)}else for(let i=0;i<tg.length;i+=50)await sb.from('kitap_ozel').upsert(tg.slice(i,i+50))}
+  S.stats=null;closeSheet();toast(`${ok} kitap kitaplığına eklendi 📚`);go('#/kitaplik');render();fillCovers(yeni)}
+async function fillCovers(L){for(const b of L){if(b.kapak)continue;try{const u=await findCover(b.baslik,b.yazar);if(u){b.kapak=u;await sb.from('kitaplik').update({kapak:u}).eq('id',b.id);if(R.name==='kitaplik')renderLibItems()}}catch(e){}await new Promise(r=>setTimeout(r,350))}}
+
+/* ---------- yıl özeti ---------- */
+async function yearWrap(){const y=new Date().getFullYear();const read=S.lib.filter(b=>b.durum==='okudum'&&String(b.bitis||'').startsWith(String(y)));
+  if(!read.length){alertBox(`${y} özeti`,'Bu yıl bitirdiğin kitap henüz yok. Bir kitabı “Okudum” olarak işaretleyince özetin burada oluşur.');return}
+  sheet(`<div class="wrapbox"><canvas id="wrapC" width="1080" height="1920"></canvas><div class="loading" id="wrapL" style="position:absolute;inset:0"><span class="spin"></span> Hazırlanıyor</div></div>
+   <div class="row" style="gap:8px;margin-top:12px"><button class="btn pri" style="flex:1" data-act="wrapShare">Paylaş</button><button class="btn" style="flex:1" data-act="wrapSave">Görseli kaydet</button></div>`,'wrap',`${y} özetim`);
+  await drawWrap($('#wrapC'),y,read);const l=$('#wrapL');if(l)l.remove()}
+function loadImg(src){return new Promise(r=>{if(!src)return r(null);const im=new Image();im.crossOrigin='anonymous';const t=setTimeout(()=>r(null),6000);im.onload=()=>{clearTimeout(t);r(im)};im.onerror=()=>{clearTimeout(t);r(null)};im.src=src.replace(/^http:/,'https:')})}
+async function drawWrap(cv,y,read){const x=cv.getContext('2d'),W=1080,H=1920;const cs=getComputedStyle(document.documentElement);
+  const SERIF=(cs.getPropertyValue('--serif')||'Georgia,serif').trim(),SANS=(cs.getPropertyValue('--sans')||'system-ui,sans-serif').trim();
+  const g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,'#123a30');g.addColorStop(1,'#0b1512');x.fillStyle=g;x.fillRect(0,0,W,H);
+  const rg=x.createRadialGradient(W*.8,250,10,W*.8,250,700);rg.addColorStop(0,'rgba(127,208,179,.25)');rg.addColorStop(1,'rgba(127,208,179,0)');x.fillStyle=rg;x.fillRect(0,0,W,H);
+  const pages=read.reduce((s,b)=>s+(b.sayfa||0),0),rated=read.filter(b=>b.puan>0),avg=rated.length?rated.reduce((s,b)=>s+ +b.puan,0)/rated.length:0;
+  const au={};read.forEach(b=>{const k=(b.yazar||'').split(',')[0].trim();if(k)au[k]=(au[k]||0)+1});const top=Object.entries(au).sort((a,b)=>b[1]-a[1])[0];
+  const best=[...rated].sort((a,b)=>b.puan-a.puan||(b.sayfa||0)-(a.sayfa||0))[0];const longest=[...read].sort((a,b)=>(b.sayfa||0)-(a.sayfa||0))[0];
+  const dnf=S.lib.filter(b=>b.durum==='birakti').length,p=S.profile||{};
+  x.fillStyle='#7fd0b3';x.font=`700 34px ${SANS}`;x.fillText('KİTAPLIĞIM · OKUMA YILIM',80,130);
+  x.fillStyle='#f2efe8';x.font=`700 200px ${SERIF}`;x.fillText(String(y),72,330);
+  x.font=`600 300px ${SERIF}`;x.fillStyle='#7fd0b3';const nTxt=String(read.length);x.fillText(nTxt,72,650);const nw=x.measureText(nTxt).width;
+  x.fillStyle='#f2efe8';x.font=`600 60px ${SANS}`;x.fillText('kitap',96+nw,560);x.fillStyle='#aab5af';x.font=`500 40px ${SANS}`;x.fillText('bitirdim',96+nw,625);
+  const stat=(v,l,cx)=>{x.fillStyle='#f2efe8';x.font=`700 64px ${SERIF}`;x.fillText(v,cx,790);x.fillStyle='#aab5af';x.font=`500 30px ${SANS}`;x.fillText(l,cx,835)};
+  stat(pages.toLocaleString('tr-TR'),'sayfa',80);stat(avg?avg.toFixed(1).replace('.',',')+' ★':'–','ortalama puan',420);stat(String(enUzunSeri()||0),'günlük en uzun seri',760);
+  // kapaklar
+  const cvs=read.slice().sort((a,b)=>(b.puan||0)-(a.puan||0)).slice(0,10);const imgs=await Promise.all(cvs.map(b=>loadImg(safeUrl(b.kapak))));
+  const cw=172,ch=258,gap=20,ox=(W-(cw*5+gap*4))/2,oy=900;
+  cvs.forEach((b,i)=>{const cx=ox+(i%5)*(cw+gap),cy=oy+Math.floor(i/5)*(ch+gap);x.save();x.shadowColor='rgba(0,0,0,.5)';x.shadowBlur=24;x.shadowOffsetY=10;
+    x.fillStyle=PAL[hsh((b.baslik||'')+(b.yazar||''))%PAL.length];x.fillRect(cx,cy,cw,ch);x.restore();
+    if(imgs[i])x.drawImage(imgs[i],cx,cy,cw,ch);else{x.fillStyle='rgba(255,255,255,.9)';x.font=`600 22px ${SERIF}`;wrapText(x,b.baslik||'',cx+14,cy+40,cw-28,28,5)}});
+  let ty=oy+(cvs.length>5?2:1)*(ch+gap)+50;const line=(k,v)=>{if(!v)return;x.fillStyle='#aab5af';x.font=`500 30px ${SANS}`;x.fillText(k,80,ty);x.fillStyle='#f2efe8';x.font=`600 42px ${SERIF}`;wrapText(x,v,80,ty+52,W-160,50,1);ty+=130};
+  line('Yılın kitabı',best?`${best.baslik} · ${rate1(best.puan)} ★`:'');line('En çok okuduğum yazar',top?`${top[0]} (${top[1]} kitap)`:'');if(ty<1680)line('En uzun kitap',longest&&longest.sayfa?`${longest.baslik} · ${longest.sayfa} sayfa`:'');
+  x.fillStyle='rgba(255,255,255,.12)';x.fillRect(80,1780,W-160,2);x.fillStyle='#aab5af';x.font=`500 30px ${SANS}`;x.fillText(p.kullanici_adi?'@'+p.kullanici_adi:(p.ad||''),80,1840);
+  x.fillStyle='#7fd0b3';x.font=`700 30px ${SANS}`;const u='kitapsay.vercel.app';x.fillText(u,W-80-x.measureText(u).width,1840)}
+function wrapText(x,t,X,Y,w,lh,max){const ws=String(t).split(/\s+/);let l='',n=0;for(let i=0;i<ws.length;i++){const s=l?l+' '+ws[i]:ws[i];if(x.measureText(s).width>w&&l){if(++n>=max){x.fillText(l+'…',X,Y);return}x.fillText(l,X,Y);Y+=lh;l=ws[i]}else l=s}if(l)x.fillText(l,X,Y)}
+function wrapBlob(){return new Promise(r=>$('#wrapC').toBlob(r,'image/png'))}
+
+const OA={
+  readToday:async()=>{await logRead(null,null,null);toast('Bugünü işaretledin 🔥');render()},
+  oduncVer:async()=>{const b=inLib(S.openKey);const v=($('#oduncIn').value||'').trim();if(!v){toast('Kime verdiğini yaz');return}if(await ozelSave(b,{odunc:v,odunc_tarih:yerelGun()})){toast('Kaydedildi');render()}},
+  oduncGeri:async()=>{const b=inLib(S.openKey);if(await ozelSave(b,{odunc:null,odunc_tarih:null})){toast('Kitap geri geldi');render()}},
+  tagAdd:async el=>{const b=inLib(S.openKey);const t=el.dataset.t;const cur=OZ(b.id).etiketler||[];if(cur.includes(t))return;if(await ozelSave(b,{etiketler:[...cur,t]}))render()},
+  tagDel:async el=>{const b=inLib(S.openKey);const cur=OZ(b.id).etiketler||[];if(await ozelSave(b,{etiketler:cur.filter(x=>x!==el.dataset.t)}))render()},
+  tagF:el=>{S.tag=S.tag===el.dataset.t?'':el.dataset.t;render()},
+  moodT:async el=>{const b=inLib(S.openKey);const m=el.dataset.m;let a=[...(b.ruh_hali||[])];if(a.includes(m))a=a.filter(x=>x!==m);else{if(a.length>=3){toast('En fazla 3 tane seçebilirsin');return}a.push(m)}await saveRow(b,{ruh_hali:a});render()},
+  cwT:async el=>{const b=inLib(S.openKey);const m=el.dataset.m;let a=[...(b.uyarilar||[])];a=a.includes(m)?a.filter(x=>x!==m):[...a,m];await saveRow(b,{uyarilar:a});render()},
+  gAdd:async()=>{const b=inLib(S.openKey);const t=$('#gIn').value.trim(),s=$('#gS').value===''?null:Math.max(0,parseInt($('#gS').value)||0);if(!t&&s==null){toast('Bir not ya da sayfa yaz');return}
+    if(S.gunluk[b.id]===undefined)await renderJournal(b);const r=await logRead(b,s,t||null);if(!r){alertBox('Kaydedilemedi','guncelleme-5.sql çalıştırıldı mı?');return}
+    if(s!=null&&s!==(b.mevcut_sayfa||0)&&(!b.sayfa||s<=b.sayfa)){const p={mevcut_sayfa:s};if(b.durum==='okuyacagim'){p.durum='okuyorum';p.baslama=b.baslama||today()}await saveRow(b,p)}
+    $('#gIn').value='';toast('Günlüğe eklendi');render()},
+  gDel:async el=>{const b=inLib(S.openKey);await sb.from('gunluk').delete().eq('id',el.dataset.k);S.gunluk[b.id]=(S.gunluk[b.id]||[]).filter(e=>e.id!==el.dataset.k);renderJournal(b)},
+  qAdd:()=>quoteForm(),
+  qSave:async el=>{const t=$('#qIn').value.trim();if(t.length<3){toast('Alıntıyı yaz');return}const x=window._cand||{};el.disabled=true;
+    const{error}=await sb.from('alintilar').insert({user_id:S.me.id,anahtar:S.openKey,baslik:x.baslik||'',yazar:x.yazar||null,metin:t,sayfa:parseInt($('#qS').value)||null,acik:$('#qPub').checked});
+    if(error){el.disabled=false;alertBox('Kaydedilemedi',dbMsg(error)+' (guncelleme-5.sql çalıştırıldı mı?)');return}S.myQuotes=undefined;closeSheet();toast('Alıntı eklendi');loadQuotes(S.openKey)},
+  qDel:async el=>{const{error}=await sb.from('alintilar').delete().eq('id',el.dataset.k);if(error){alertBox('Silinemedi',dbMsg(error));return}S.myQuotes=undefined;if(R.name==='kitap')loadQuotes(S.openKey);else render()},
+  reread:async()=>{const b=inLib(S.openKey);await saveRow(b,{durum:'okuyorum',mevcut_sayfa:0,baslama:today(),bitis:null,tekrar:(b.tekrar||0)+1});toast('Yeniden okumaya başladın');render()},
+  clearDates:async()=>{const b=inLib(S.openKey);await saveRow(b,{baslama:null,bitis:null});toast('Tarihler temizlendi');render()},
+  impOpen:()=>importOpen(),impPick:()=>$('#csvFile').click(),impRun:el=>importRun(el),
+  wrap:()=>yearWrap(),
+  wrapSave:async()=>{const bl=await wrapBlob();const a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=`kitapligim-${new Date().getFullYear()}.png`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)},
+  wrapShare:async()=>{const bl=await wrapBlob();const f=new File([bl],`kitapligim-${new Date().getFullYear()}.png`,{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'Okuma yılım',text:'kitapsay.vercel.app'})}catch(e){}}else OA.wrapSave()}};
 
 /* ==================== kitap kulübü ==================== */
 const KL={list:null,pub:null,err:null,c:{},tab:'okuma',reveal:new Set(),poll:0,davet:{}};
@@ -1009,6 +1216,7 @@ function vUser(id){const v=$('#view');if(S.me&&id===S.me.id){go('#/profil');retu
   ${pub?`${reading.length?`<h2 class="sec">Şu an okuyor</h2><div class="shelf">${reading.map(b=>`<button class="gi" data-act="openRow" data-u="${id}" data-id="${b.id}">${cover(b,96)}<div class="t">${esc(b.baslik)}</div></button>`).join('')}</div>`:''}
     <h2 class="sec">Kitaplığı <small>${books.length}</small></h2>${books.length?`<div class="grid">${books.slice(0,60).map(b=>`<button class="gi" data-act="openRow" data-u="${id}" data-id="${b.id}">${cover(b,110)}<div class="t">${esc(b.baslik)}</div><div class="m">${b.puan>0?stars(b.puan,11)+`<span class="rnum">${rate1(b.puan)}</span>`:`<span class="dot d-${b.durum}"></span>${DURUM[b.durum]}`}</div></button>`).join('')}</div>`:`<div class="empty small">Kitaplığı henüz boş.</div>`}`
    :`<div class="group"><div class="gb small muted">Bu okur kitaplığını gizli tutuyor. Herkese açık yorumları aşağıda.</div></div>`}
+  ${(U.quotes||[]).length?`<h2 class="sec">Alıntıları <small>${U.quotes.length}</small></h2><div class="group" style="margin-top:0"><div class="gb">${U.quotes.map(q=>quoteHtml(q,true)).join('')}</div></div>`:''}
   <h2 class="sec">Yorumları <small>${revs.length}</small></h2>${revs.length?`<div class="list">${revs.map(b=>`<div class="feed" data-act="openRow" data-u="${id}" data-id="${b.id}" style="cursor:pointer">${cover(b,44)}<div class="bd"><b>${esc(b.baslik)}</b>${b.puan>0?` · ${stars(b.puan,11)}<span class="rnum">${rate1(b.puan)}</span>`:''}<p>${esc(b.yorum)}</p></div></div>`).join('')}</div>`:`<div class="empty small">Henüz yorum yazmamış.</div>`}`;
 }
 function editProfile(){const p=S.profile||{};FORM={avatar:p.avatar||''};setTimeout(()=>kadiCheck($('#kadiIn')),50);
@@ -1017,12 +1225,13 @@ function editProfile(){const p=S.profile||{};FORM={avatar:p.avatar||''};setTimeo
   <label class="f">Profilde görünen adın</label><input class="inp" id="ep_ad" maxlength="40" value="${esc(p.ad||'')}"><div class="small muted" style="margin-top:5px">Bu ad başkalarıyla aynı olabilir; seni ayıran kullanıcı adın.</div>
   <label class="f">Hakkında</label><textarea class="inp" id="ep_bio" maxlength="160" style="min-height:80px" placeholder="Ne tür kitaplar okursun?">${esc(p.bio||'')}</textarea>
   <div class="group"><label class="opt" style="cursor:pointer"><span class="d">Gizli hesap<small>Kitaplığını sadece sen görürsün. Açık bıraktığın yorumlar yine görünür.</small></span><span class="sw2"><input type="checkbox" id="ep_gizli" ${p.gizli?'checked':''}><span></span></span></label>
-  <label class="opt" style="cursor:pointer"><span class="d">Yorumlarım herkese açık<small>Kapatırsan bütün yorumların sadece sana görünür.</small></span><span class="sw2"><input type="checkbox" id="ep_yorum" ${p.yorumlar_acik!==false?'checked':''}><span></span></span></label></div>
+  <label class="opt" style="cursor:pointer"><span class="d">Yorumlarım herkese açık<small>Kapatırsan bütün yorumların sadece sana görünür.</small></span><span class="sw2"><input type="checkbox" id="ep_yorum" ${p.yorumlar_acik!==false?'checked':''}><span></span></span></label>
+  <label class="opt" style="cursor:pointer"><span class="d">Okuma serimi göster<small>Kapatırsan profilinde seri ve günlük işaretleri görünmez.</small></span><span class="sw2"><input type="checkbox" id="ep_seri" ${p.seri_goster!==false?'checked':''}><span></span></span></label></div>
   <button class="btn pri full" data-act="saveProfile">Kaydet</button>`,'eprof','Profili düzenle','Vazgeç')}
 async function saveProfile(btn){const p=S.profile;const ad=$('#ep_ad').value.trim(),bio=$('#ep_bio').value.trim(),gizli=$('#ep_gizli').checked,yo=$('#ep_yorum').checked;
   if(!ad){toast('Ad boş olamaz');return}
   const kadi=$('#kadiIn').value;if(!KADI_RE.test(kadi)){toast('Geçerli bir kullanıcı adı yaz');return}
-  btn.disabled=true;const upd={ad,bio:bio||null,gizli,yorumlar_acik:yo};if(kadi!==p.kullanici_adi)upd.kullanici_adi=kadi;
+  btn.disabled=true;const upd={ad,bio:bio||null,gizli,yorumlar_acik:yo};const sr=$('#ep_seri').checked;if(sr!==(p.seri_goster!==false))upd.seri_goster=sr;if(kadi!==p.kullanici_adi)upd.kullanici_adi=kadi;
   const{error}=await sb.from('profiller').update(upd).eq('id',S.me.id);
   if(error){btn.disabled=false;const msg=dbMsg(error);if(/kullanıcı adı/i.test(msg)){const m=$('#kadiMsg');m.style.color='var(--red)';m.textContent=msg;$('#kadiIn').scrollIntoView({behavior:'smooth',block:'center'})}else alertBox('Kaydedilemedi',msg);return}
   p.kullanici_adi=kadi;
@@ -1045,18 +1254,20 @@ function vLib(){
   if(!S.me)return needLogin('Kitaplığını oluştur');
   if(S.dbErr)return errBand();
   if(!S.libLoaded)return `<div class="loading"><span class="spin"></span> Yükleniyor</div>`;
-  const c={hepsi:S.lib.length,okudum:0,okuyorum:0,okuyacagim:0,favori:0};S.lib.forEach(b=>{c[b.durum]++;if(b.favori)c.favori++});
+  const c={hepsi:S.lib.length,okudum:0,okuyorum:0,okuyacagim:0,birakti:0,favori:0,sahip:0,odunc:0};S.lib.forEach(b=>{c[b.durum]++;if(b.favori)c.favori++;const o=OZ(b.id);if(o.sahibim)c.sahip++;if(o.odunc)c.odunc++});
+  const tags=tumEtiketler();if(S.tag&&!tags.includes(S.tag))S.tag='';
   const reading=S.lib.filter(b=>b.durum==='okuyorum');
   return `${S.filter==='hepsi'&&!S.q?pwaStrip():''}${reading.length&&S.filter==='hepsi'&&!S.q?`<h2 class="sec" style="margin-top:6px">Şu an okuyorum <small>${reading.length}</small></h2><div class="shelf">${reading.map(b=>`<button class="gi" data-act="openLib" data-id="${b.id}">${cover(b,104)}<div class="t">${esc(b.baslik)}</div>${b.sayfa?`<div class="bar"><i style="width:${Math.min(100,Math.round((b.mevcut_sayfa||0)/b.sayfa*100))}%"></i></div>`:''}</button>`).join('')}</div>`:''}
   <div class="search">${I.search}<input id="q" data-inp="q" placeholder="Kitaplığında ara" value="${esc(S.q)}" autocomplete="off"></div>
-  <div class="filters">${[['hepsi','Tümü'],['okudum','Okudum'],['okuyorum','Okuyorum'],['okuyacagim','Okuyacağım'],['favori','Favoriler']].map(([k,t])=>`<button class="${S.filter===k?'on':''}" data-act="filter" data-f="${k}">${t}<span>${c[k]}</span></button>`).join('')}</div>
+  <div class="filters">${[['hepsi','Tümü'],['okudum','Okudum'],['okuyorum','Okuyorum'],['okuyacagim','Okuyacağım'],['birakti','Yarım bıraktım'],['favori','Favoriler'],['sahip','Bende var'],['odunc','Ödünçte']].filter(([k])=>['hepsi','okudum','okuyorum','okuyacagim'].includes(k)||c[k]||S.filter===k).map(([k,t])=>`<button class="${S.filter===k?'on':''}" data-act="filter" data-f="${k}">${t}<span>${c[k]}</span></button>`).join('')}</div>
+  ${tags.length?`<div class="filters" style="margin-top:-6px">${tags.map(t=>`<button class="${S.tag===t?'on':''}" data-act="tagF" data-t="${esc(t)}">#${esc(t)}</button>`).join('')}</div>`:''}
   <div class="toolbar"><select data-chg="sort">${[['yeni','Son eklenen'],['baslik','Başlık'],['yazar','Yazar'],['puan','Puanım'],['bitis','Bitirme tarihi']].map(([k,t])=>`<option value="${k}" ${S.sort===k?'selected':''}>${t}</option>`).join('')}</select><div class="tgl"><button class="${S.view==='grid'?'on':''}" data-act="view" data-v="grid">${I.grid}</button><button class="${S.view==='list'?'on':''}" data-act="view" data-v="list">${I.rows}</button></div></div>
   <div id="items"></div>`;
 }
 function renderLibItems(){const el=$('#items');if(!el)return;
   if(!S.lib.length){el.innerHTML=`<div class="empty">${I.book}<h3>Rafların boş</h3><p>Barkodu tarat ya da kitap adıyla ara; kapak ve bilgiler otomatik gelir.</p><div class="row" style="justify-content:center;margin-top:10px"><button class="btn pri" data-act="scanOpen">Barkod tara</button><button class="btn" data-act="searchOpen">Kitap ara</button></div></div>`;return}
   const q=norm(S.q);const tr=(a,b)=>String(a||'').localeCompare(String(b||''),'tr');
-  let l=S.lib.filter(b=>S.filter==='hepsi'||(S.filter==='favori'?b.favori:b.durum===S.filter)).filter(b=>!q||norm(`${b.baslik} ${b.yazar} ${b.isbn||''}`).includes(q));
+  let l=S.lib.filter(b=>S.filter==='hepsi'||(S.filter==='favori'?b.favori:S.filter==='sahip'?OZ(b.id).sahibim:S.filter==='odunc'?!!OZ(b.id).odunc:b.durum===S.filter)).filter(b=>!S.tag||(OZ(b.id).etiketler||[]).includes(S.tag)).filter(b=>!q||norm(`${b.baslik} ${b.yazar} ${b.isbn||''}`).includes(q));
   l.sort({yeni:(a,b)=>tr(b.created_at,a.created_at),baslik:(a,b)=>tr(a.baslik,b.baslik),yazar:(a,b)=>tr(surname(a.yazar),surname(b.yazar)),puan:(a,b)=>(b.puan||0)-(a.puan||0),bitis:(a,b)=>tr(b.bitis,a.bitis)}[S.sort]);
   if(!l.length){el.innerHTML=`<div class="empty">Eşleşen kitap yok.</div>`;return}
   el.innerHTML=S.view==='grid'?`<div class="grid">${l.map(b=>`<button class="gi" data-act="openLib" data-id="${b.id}">${cover(b,110)}<div class="t">${esc(b.baslik)}</div><div class="a">${esc(b.yazar||'')}</div><div class="m">${b.puan>0?stars(b.puan,11):`<span class="dot d-${b.durum}"></span>${DURUM[b.durum]}`}</div></button>`).join('')}</div>`
@@ -1091,7 +1302,7 @@ function vOkur(){
     const pf=ids.length?sb.from('kitaplik').select('*, profiller(id,ad,avatar)').in('user_id',ids).order('updated_at',{ascending:false}).limit(40):Promise.resolve({data:[]});
     Promise.all([pf,sb.from('profiller').select('id,ad,avatar,bio,kullanici_adi').order('created_at',{ascending:false}).limit(20)]).then(([f,n])=>{S.feed={items:f.data||[],newU:(n.data||[]).filter(p=>p.id!==S.me.id)};if(R.name==='kesfet')render()});
     return h+`<div class="loading"><span class="spin"></span></div>`}
-  const verb={okudum:'okudu',okuyorum:'okumaya başladı',okuyacagim:'okuma listesine ekledi'};
+  const verb={okudum:'okudu',okuyorum:'okumaya başladı',okuyacagim:'okuma listesine ekledi',birakti:'yarım bıraktı'};
   h+=`<h2 class="sec">Takip akışı</h2>`+(S.feed.items.length?`<div class="list">${S.feed.items.map(b=>{const p=b.profiller||{};return `<div class="feed">${`<a href="#/kullanici/${p.id}">${av(p,34)}</a>`}<div class="bd"><a class="ulink" style="text-decoration:none" href="#/kullanici/${p.id}">${esc(p.ad||'Okur')}</a> <span class="muted">${b.yorum&&b.yorum_acik!==false?'yorum yaptı':verb[b.durum]}</span> · <span class="muted small">${ago(b.updated_at)}</span>
       <div class="row" style="margin-top:8px;align-items:flex-start;cursor:pointer" data-act="openRow" data-u="${p.id}" data-id="${b.id}">${cover(b,40)}<div style="min-width:0"><b>${esc(b.baslik)}</b><div class="small muted">${esc(b.yazar||'')}</div>${b.puan>0?`<div>${stars(b.puan,12)}<span class="rnum">${rate1(b.puan)}</span></div>`:''}</div></div>${b.yorum&&b.yorum_acik!==false?`<p>${esc(b.yorum)}</p>`:''}</div></div>`}).join('')}</div>`
       :`<div class="empty small">${S.following.size?'Takip ettiklerin henüz bir şey paylaşmadı.':'Henüz kimseyi takip etmiyorsun. Aşağıdan okurları keşfet.'}</div>`);
@@ -1115,17 +1326,19 @@ function vProf(){
   const avg=rated.length?rate1(rated.reduce((s,b)=>s+ +b.puan,0)/rated.length):'–';
   const M=['O','Ş','M','N','M','H','T','A','E','E','K','A'],mc=M.map((_,i)=>yr.filter(b=>+String(b.bitis).slice(5,7)===i+1).length),mx=Math.max(1,...mc);
   const au={};read.forEach(b=>{const k=(b.yazar||'').split(',')[0].trim();if(k)au[k]=(au[k]||0)+1});const ta=Object.entries(au).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  const p=S.profile||{};
+  const p=S.profile||{};if(S.myQuotes===undefined)myQuotesHtml();const dnf=S.lib.filter(b=>b.durum==='birakti').length;
   const U=S.USERS[S.me.id];if(!LOCAL&&!U)loadUser(S.me.id).then(()=>R.name==='profil'&&render());
   return `${errBand()}<div class="prof"><button class="ph-av" data-act="${LOCAL?'':'pickAvatar'}">${av(p,64)}${LOCAL?'':`<span class="cam"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>`}</button><div style="min-width:0"><h2>${esc(LOCAL?'Kitaplığım':p.ad||'')}${p.gizli?'<span class="lock">🔒 Gizli</span>':''}</h2><div class="handle">${LOCAL?'Bu cihazda':(p.kullanici_adi?esc(at(p)):`<button data-act="askKadi" style="color:var(--ac)">Kullanıcı adı seç</button>`)+(isAdmin()?' · Yönetici':'')}</div></div></div>
   ${p.bio?`<p class="bio">${esc(p.bio)}</p>`:''}
   ${LOCAL?'':`<div class="counts"><div><b>${S.lib.length}</b><span>kitap</span></div><button data-act="flist" data-id="${S.me.id}" data-k="takipci"><b>${U?U.takipci:'–'}</b><span>takipçi</span></button><button data-act="flist" data-id="${S.me.id}" data-k="takip"><b>${U?U.takip:'–'}</b><span>takip</span></button></div>
   <div class="row" style="gap:8px;margin-top:10px"><button class="btn sm" style="flex:1" data-act="editProfile">Profili düzenle</button><button class="btn sm out" data-act="logout">Çıkış yap</button></div>`}
-  ${isStandalone()?'':`<div class="group"><button class="opt" data-act="pwaHelp"><svg class="ic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 8v6M9 11h6"/></svg><span class="d">Ana ekrana ekle<small>Kitaplığım'ı uygulama gibi kullan</small></span>${I.chev}</button></div>`}<div class="group"><div class="gh">${y} okuma hedefi</div><div class="gb"><div class="row" style="justify-content:space-between"><span><b style="font:600 24px var(--serif)">${yr.length}</b> <span class="muted">/ ${goal} kitap</span></span><span class="row"><button class="btn sm" data-act="goal" data-d="-1">−</button><button class="btn sm" data-act="goal" data-d="1">+</button></span></div><div class="goalbar"><i style="width:${Math.min(100,yr.length/goal*100)}%"></i></div><div class="small muted">${yr.length>=goal?'Hedefini tamamladın.':`Hedefe ${goal-yr.length} kitap kaldı.`}</div></div></div>
-  <div class="kp"><div><b>${S.lib.length}</b><span>Kitaplıktaki kitap</span></div><div><b>${read.length}</b><span>Okunan</span></div><div><b>${pages.toLocaleString('tr-TR')}</b><span>Okunan sayfa</span></div><div><b>${avg}</b><span>Ortalama puanım</span></div></div>
+  ${isStandalone()?'':`<div class="group"><button class="opt" data-act="pwaHelp"><svg class="ic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 8v6M9 11h6"/></svg><span class="d">Ana ekrana ekle<small>Kitaplığım'ı uygulama gibi kullan</small></span>${I.chev}</button></div>`}${streakCard()}<div class="group"><div class="gh">${y} okuma hedefi</div><div class="gb"><div class="row" style="justify-content:space-between"><span><b style="font:600 24px var(--serif)">${yr.length}</b> <span class="muted">/ ${goal} kitap</span></span><span class="row"><button class="btn sm" data-act="goal" data-d="-1">−</button><button class="btn sm" data-act="goal" data-d="1">+</button></span></div><div class="goalbar"><i style="width:${Math.min(100,yr.length/goal*100)}%"></i></div><div class="small muted">${yr.length>=goal?'Hedefini tamamladın.':`Hedefe ${goal-yr.length} kitap kaldı.`}</div></div></div>
+  <div class="kp"><div><b>${S.lib.length}</b><span>Kitaplıktaki kitap</span></div><div><b>${read.length}</b><span>Okunan</span></div><div><b>${pages.toLocaleString('tr-TR')}</b><span>Okunan sayfa</span></div><div><b>${avg}</b><span>Ortalama puanım</span></div>${dnf?`<div><b>${dnf}</b><span>Yarım bırakılan</span></div><div><b>${S.lib.filter(b=>OZ(b.id).sahibim).length}</b><span>Bende olan</span></div>`:''}</div>
+  <button class="wrapbtn" data-act="wrap"><span><b>${y} özetim</b><small>Okuma yılını paylaşılabilir bir görsele dönüştür</small></span><em>✨</em></button>
   <div class="group"><div class="gh">${y} · aylara göre</div><div class="gb"><div class="mbars">${mc.map((n,i)=>`<div><em>${n||''}</em><i style="height:${n/mx*78}%"></i><span>${M[i]}</span></div>`).join('')}</div></div></div>
   ${ta.length?`<div class="group"><div class="gh">En çok okuduğun yazarlar</div><div class="gb">${ta.map(([a,n])=>`<div class="row" style="justify-content:space-between;padding:6px 0"><span>${esc(a)}</span><span class="muted">${n}</span></div>`).join('')}</div></div>`:''}
-  <div class="group"><button class="opt" data-act="bulk">${I.list}<span class="d">Listeden toplu ekle<small>Başka uygulamadaki kitaplarını taşı</small></span>${I.chev}</button>${isAdmin()?`<button class="opt" data-act="audioNew">${I.upload}<span class="d">Sesli kitap yükle<small>Herkese açık olarak yayınlanır</small></span>${I.chev}</button>`:''}</div>
+  ${S.myQuotes&&S.myQuotes.length?`<div class="group"><div class="gh">Alıntılarım <span class="lockt">${S.myQuotes.length}</span></div><div class="gb">${S.myQuotes.slice(0,10).map(q=>quoteHtml(q,true)).join('')}</div></div>`:''}
+  <div class="group"><button class="opt" data-act="impOpen">${I.upload}<span class="d">Goodreads / StoryGraph'tan aktar<small>Puanların, yorumların ve tarihlerinle birlikte</small></span>${I.chev}</button><button class="opt" data-act="bulk">${I.list}<span class="d">Listeden toplu ekle<small>Başka uygulamadaki kitaplarını taşı</small></span>${I.chev}</button>${isAdmin()?`<button class="opt" data-act="audioNew">${I.upload}<span class="d">Sesli kitap yükle<small>Herkese açık olarak yayınlanır</small></span>${I.chev}</button>`:''}</div>
   ${LOCAL?`<div class="group"><div class="gh">Yerel mod</div><div class="gb small muted">Supabase bağlı olmadığı için kitapların, puanların ve sesli kitaplar sadece bu tarayıcıda saklanıyor. Dosyanın başındaki <b>AYAR</b> kısmına Supabase bilgilerini girince hesaplar, herkese açık sesli kitaplar ve okur yorumları devreye girer.</div></div>`:''}`;
 }
 
@@ -1167,20 +1380,24 @@ function vBook(k){
   const d=x;$('#ttl').textContent=d.baslik||'';
   const facts=[d.sayfa?[d.sayfa,'sayfa']:null,d.yil?[d.yil,'yıl']:null,d.yayinevi?[d.yayinevi,'yayınevi']:null].filter(Boolean);
   const more=d.yazar?`<div class="group"><div class="gh">Yazarın diğer kitapları</div><div class="gb" style="padding:12px 0 6px"><div class="shelf" id="byAuthor" style="margin:0;padding:2px 16px 8px"><div class="loading" style="padding:10px"><span class="spin"></span></div></div></div></div>`:'';
-  v.innerHTML=`<div class="dh">${cover(d,140)}<h2>${esc(d.baslik)}</h2><div class="au">${esc(d.yazar||'')}</div><div id="comStat" class="small muted" style="margin-top:6px;min-height:18px"></div></div>
+  v.innerHTML=`<div class="dh">${cover(d,140)}<h2>${esc(d.baslik)}</h2><div class="au">${esc(d.yazar||'')}</div><div id="comStat" class="small muted" style="margin-top:6px;min-height:18px"></div><div id="moodBox"></div></div>
   ${facts.length?`<div class="facts">${facts.map(([v,l])=>`<div><b>${esc(v)}</b><span>${l}</span></div>`).join('')}</div>`:''}
   ${b?`<div class="group"><div class="gh">Durum</div><div class="gb"><div class="status3">${Object.entries(DURUM).map(([k2,t])=>`<button class="${k2} ${b.durum===k2?'on':''}" data-act="setDurum" data-s="${k2}">${t}</button>`).join('')}</div>
-    ${b.durum==='okuyorum'&&b.sayfa?`<div style="margin-top:14px"><div class="row small" style="justify-content:space-between"><span>Sayfa ${b.mevcut_sayfa||0} / ${b.sayfa}</span><span class="muted">%${Math.round((b.mevcut_sayfa||0)/b.sayfa*100)}</span></div><input type="range" min="0" max="${b.sayfa}" value="${b.mevcut_sayfa||0}" data-chg="sayfaIlerleme"></div>`:''}</div></div>
+    ${b.durum==='okuyorum'&&b.sayfa?`<div style="margin-top:14px"><div class="row small" style="justify-content:space-between"><span>Sayfa ${b.mevcut_sayfa||0} / ${b.sayfa}${b.tekrar?` · ${b.tekrar+1}. okuman`:''}</span><span class="muted">%${Math.round((b.mevcut_sayfa||0)/b.sayfa*100)}</span></div><input type="range" min="0" max="${b.sayfa}" value="${b.mevcut_sayfa||0}" data-chg="sayfaIlerleme"></div>`:''}
+    ${b.durum==='birakti'?`<div class="row" style="margin-top:14px;gap:8px"><span class="small">Kaçıncı sayfada bıraktın?</span><input class="inp" type="number" inputmode="numeric" min="0" ${b.sayfa?`max="${b.sayfa}"`:''} value="${b.mevcut_sayfa||''}" data-chg="birakSayfa" style="width:84px;padding:7px 10px"><span class="small muted">${b.sayfa?'/ '+b.sayfa:''}</span></div><div class="small muted" style="margin-top:6px">Yarım bıraktığın kitaplar okunan sayısına girmez ama kitaplığında kalır.</div>`:''}
+    ${b.durum==='okudum'?`<div class="row" style="margin-top:12px;justify-content:space-between"><span class="small muted">${b.tekrar?`${b.tekrar+1} kez okudun`:''}</span><button class="lnk small" data-act="reread">↻ Yeniden okuyorum</button></div>`:''}</div></div>
     <div class="group"><div class="gh">Puanım</div><div class="gb"><div class="rater"><span class="stars" id="rater" style="font-size:38px">★★★★★<span class="on" style="width:${(b.puan||0)/5*100}%">★★★★★</span></span><span class="val" id="raterV">${b.puan>0?rate1(b.puan):''}</span></div><div class="small muted" style="margin-top:4px">${b.puan>0?`<button data-act="clearRate" style="color:var(--ac)">Puanı kaldır</button>`:'Yıldızın sol yarısına dokunursan yarım puan verirsin.'}</div></div></div>
-    <div class="group"><div class="gh">Yorumum</div><div class="gb"><textarea class="inp" id="revIn" placeholder="Bu kitap hakkında düşüncelerin…">${esc(b.yorum||'')}</textarea><div class="row" style="justify-content:space-between;margin-top:10px"><label class="row small" style="gap:10px"><span class="sw2"><input type="checkbox" id="revPub" ${(b.yorum?b.yorum_acik!==false:(S.profile||{}).yorumlar_acik!==false)?'checked':''}><span></span></span>Diğer okurlar görsün</label><button class="btn pri sm" data-act="saveRev">Kaydet</button></div></div></div>`
+    <div class="group"><div class="gh">Yorumum</div><div class="gb"><textarea class="inp" id="revIn" placeholder="Bu kitap hakkında düşüncelerin…">${esc(b.yorum||'')}</textarea><div class="row" style="justify-content:space-between;margin-top:10px"><label class="row small" style="gap:10px"><span class="sw2"><input type="checkbox" id="revPub" ${(b.yorum?b.yorum_acik!==false:(S.profile||{}).yorumlar_acik!==false)?'checked':''}><span></span></span>Diğer okurlar görsün</label><button class="btn pri sm" data-act="saveRev">Kaydet</button></div></div></div>
+    ${b.durum!=='okuyacagim'?bookMood(b):''}${bookJournal(b)}`
   :`<div class="group"><div class="gh">Kitaplığına ekle</div><div class="gb"><div class="status3">${Object.entries(DURUM).map(([k2,t])=>`<button class="${k2}" data-act="addCand" data-s="${k2}">${t}</button>`).join('')}</div></div></div>`}
   ${d.aciklama?`<div class="group"><div class="gh">Konusu</div><div class="gb"><div class="desc ${d.aciklama.length>380?'cl':''}" id="desc">${esc(d.aciklama)}</div>${d.aciklama.length>380?`<button class="small" style="color:var(--ac);margin-top:6px" data-act="more">Devamını oku</button>`:''}</div></div>`:''}
+  <div class="group"><div class="gh row" style="justify-content:space-between;padding-right:12px"><span>Alıntılar</span>${S.me?`<button class="lnk small" style="text-transform:none;letter-spacing:0" data-act="qAdd">+ Alıntı ekle</button>`:''}</div><div class="gb" id="quotes"><div class="loading" style="padding:14px"><span class="spin"></span></div></div></div>
   <div class="group"><div class="gh">Okur yorumları</div><div class="gb" id="revs"><div class="loading" style="padding:14px"><span class="spin"></span></div></div></div>
-  ${b?`<div class="group"><div class="gh">Tarihler</div><div class="gb g2"><div><label class="f" style="margin-top:0">Başladım</label><input type="date" class="inp" value="${b.baslama||''}" data-chg="baslama"></div><div><label class="f" style="margin-top:0">Bitirdim</label><input type="date" class="inp" value="${b.bitis||''}" data-chg="bitis"></div></div></div>
+  ${b?`${bookPrivate(b)}<div class="group"><div class="gh">Tarihler</div><div class="gb"><div class="g2"><div><label class="f" style="margin-top:0">Başladım</label><input type="date" class="inp" value="${b.baslama||''}" data-chg="baslama"></div><div><label class="f" style="margin-top:0">Bitirdim</label><input type="date" class="inp" value="${b.bitis||''}" data-chg="bitis"></div></div><div class="row small muted" style="justify-content:space-between;margin-top:8px"><span>Hatırlamıyorsan boş bırakabilirsin.</span>${b.baslama||b.bitis?`<button class="lnk small" data-act="clearDates">Temizle</button>`:''}</div></div></div>
     <div class="row" style="gap:8px;margin-top:4px"><button class="btn out sm" data-act="fav" style="${b.favori?'color:var(--red)':''}">${b.favori?I.heart:I.heartO} ${b.favori?'Favori':'Favorilere ekle'}</button><button class="btn out sm" data-act="editBook">Düzenle</button><span style="flex:1"></span><button class="btn red sm" data-act="askDel" style="background:none">Sil</button></div><div id="delBox"></div>`:''}`+more;
   window._cand=x;
   if(b){const r=$('#rater');if(r)r.addEventListener('pointerdown',rateHandler)}
-  loadCommunity(k);if(d.yazar)loadByAuthor(d.yazar,k);
+  loadCommunity(k);loadQuotes(k);if(b)renderJournal(b);if(d.yazar)loadByAuthor(d.yazar,k);
 }
 const AUTH={};
 async function loadByAuthor(a,k){const key=surname(a);let L=AUTH[key];
@@ -1195,6 +1412,7 @@ function rateHandler(e){const r=e.currentTarget,box=r.getBoundingClientRect();co
     const p={puan:val};if(b.durum==='okuyacagim'){p.durum='okudum';p.bitis=b.bitis||today()}await saveRow(b,p);S.stats=null;toast(`${rate1(val)} puan verdin`);render()};
   r.addEventListener('pointermove',mv);r.addEventListener('pointerup',up)}
 async function loadCommunity(k){
+  sb.from('kitaplik').select('ruh_hali,uyarilar').eq('anahtar',k).limit(500).then(r=>{const el=$('#moodBox');if(el&&S.openKey===k&&!r.error)el.innerHTML=moodSummary(r.data||[])});
   const[st,rv]=await Promise.all([sb.from('kitap_istatistik').select('*').eq('anahtar',k).maybeSingle(),
     sb.from('kitaplik').select('puan,yorum,updated_at,user_id,yorum_acik,profiller(id,ad,avatar)').eq('anahtar',k).not('yorum','is',null).neq('yorum','').order('updated_at',{ascending:false}).limit(60)]);
   if(S.openKey!==k)return;const s=st.data;
@@ -1210,7 +1428,7 @@ async function loadCommunity(k){
 
 /* ---------- ekleme ---------- */
 function openAdd(){if(!S.me){openLogin('Kitap eklemek için giriş yap');return}
-  sheet(`<div class="group" style="margin-top:4px"><button class="opt" data-act="scanOpen">${I.barcode}<span class="d">Barkod tara<small>Kamerayı barkoda tut, kitap kendiliğinden bulunsun</small></span>${I.chev}</button><button class="opt" data-act="searchOpen">${I.search.replace('<svg','<svg class="ic"')}<span class="d">Kitap ara<small>Ad, yazar veya ISBN ile</small></span>${I.chev}</button><button class="opt" data-act="manual">${I.pen}<span class="d">Elle ekle<small>Bulunamayan kitaplar için</small></span>${I.chev}</button><button class="opt" data-act="bulk">${I.list}<span class="d">Toplu ekle<small>Listeyi yapıştır, kapaklar otomatik gelsin</small></span>${I.chev}</button></div>`,'add','Kitap ekle')}
+  sheet(`<div class="group" style="margin-top:4px"><button class="opt" data-act="scanOpen">${I.barcode}<span class="d">Barkod tara<small>Kamerayı barkoda tut, kitap kendiliğinden bulunsun</small></span>${I.chev}</button><button class="opt" data-act="searchOpen">${I.search.replace('<svg','<svg class="ic"')}<span class="d">Kitap ara<small>Ad, yazar veya ISBN ile</small></span>${I.chev}</button><button class="opt" data-act="manual">${I.pen}<span class="d">Elle ekle<small>Bulunamayan kitaplar için</small></span>${I.chev}</button><button class="opt" data-act="bulk">${I.list}<span class="d">Toplu ekle<small>Listeyi yapıştır, kapaklar otomatik gelsin</small></span>${I.chev}</button><button class="opt" data-act="impOpen">${I.upload}<span class="d">Goodreads / StoryGraph'tan aktar<small>CSV dosyanla bütün kitaplığını taşı</small></span>${I.chev}</button></div>`,'add','Kitap ekle')}
 function openSearch(q){go('#/ara/'+encodeURIComponent(q||''))}
 function vSearch(q){$('#view').innerHTML=`<form class="search" id="sForm">${I.search}<input id="sIn" placeholder="Kitap adı, yazar veya ISBN" value="${esc(q||'')}" autocomplete="off" enterkeyhint="search"></form><div id="sRes">${q?'':`<div class="empty small">Aradığın kitabın adını, yazarını ya da barkodun altındaki ISBN numarasını yaz.</div>`}</div>`;
   if(S.pendIsbn)$('#view').insertAdjacentHTML('afterbegin',`<div class="group" style="margin-top:0;border-color:var(--ac)"><div class="gb small">Barkod <b>${esc(S.pendIsbn)}</b> için kitabın adını yaz ve doğru baskıyı seç. Eklediğinde bu barkodla eşleşecek. <button data-act="pendCancel" style="color:var(--ac)">Vazgeç</button></div></div>`);
@@ -1467,7 +1685,7 @@ function refreshPlayer(light){if(S.sheet!=='player')return;const a=S.audio.find(
 
 /* ==================== olaylar ==================== */
 const A={
-  ...KA,
+  ...KA,...OA,
   pwaHelp:()=>pwaHelp(),
   pwaOS:el=>pwaHelp(el.dataset.os),
   pwaHide:()=>{try{localStorage.setItem('kv.pwaGizle','1')}catch(e){}render();toast('Profil sayfasından istediğin zaman açabilirsin')},
@@ -1526,7 +1744,7 @@ const A={
   fSave:async el=>{const x=readForm();if(!x.baslik){toast('Kitap adı gerekli');return}el.disabled=true;
     if(el.dataset.id){const b=S.lib.find(z=>z.id===el.dataset.id);x.anahtar=keyOf(x.baslik,x.yazar);await saveRow(b,x);openBook(b)}
     else{const r=await addRow(x,FORM.durum);if(r){toast('Eklendi');openBook(r)}else el.disabled=false}},
-  setDurum:async el=>{const b=inLib(S.openKey);const s=el.dataset.s;const p={durum:s};if(s==='okudum'){p.bitis=b.bitis||today();if(b.sayfa)p.mevcut_sayfa=b.sayfa}if(s==='okuyorum')p.baslama=b.baslama||today();await saveRow(b,p);S.stats=null;render()},
+  setDurum:async el=>{const b=inLib(S.openKey);const s=el.dataset.s;const p={durum:s};if(s==='okudum'){p.bitis=b.bitis||today();if(b.sayfa)p.mevcut_sayfa=b.sayfa}if(s==='okuyorum')p.baslama=b.baslama||today();await saveRow(b,p);if(s==='okudum')logRead(b,b.sayfa||null,null);S.stats=null;render()},
   clearRate:async()=>{const b=inLib(S.openKey);await saveRow(b,{puan:0});S.stats=null;render()},
   saveRev:async()=>{const b=inLib(S.openKey);await saveRow(b,{yorum:$('#revIn').value.trim()||null,yorum_acik:$('#revPub').checked});toast('Yorumun kaydedildi');render();loadCommunity(b.anahtar)},
   more:el=>{$('#desc').classList.remove('cl');el.remove()},
@@ -1569,9 +1787,12 @@ document.addEventListener('input',e=>{const k=e.target.dataset.inp;if(k==='kadi'
 document.addEventListener('change',async e=>{const k=e.target.dataset.chg;if(!k)return;const v=e.target.value;
   if(k==='sort'){S.sort=v;renderLibItems();return}
   const b=inLib(S.openKey);if(!b)return;
-  if(k==='sayfaIlerleme'){const n=+v;const p={mevcut_sayfa:n};if(b.sayfa&&n>=b.sayfa){p.durum='okudum';p.bitis=b.bitis||today();toast('Kitabı bitirdin')}await saveRow(b,p);render()}
+  if(k==='sayfaIlerleme'){const n=+v;const p={mevcut_sayfa:n};if(b.sayfa&&n>=b.sayfa){p.durum='okudum';p.bitis=b.bitis||today();toast('Kitabı bitirdin')}await saveRow(b,p);await logRead(b,n,null);render()}
+  else if(k==='birakSayfa'){let n=Math.max(0,parseInt(v)||0);if(b.sayfa)n=Math.min(n,b.sayfa);await saveRow(b,{mevcut_sayfa:n});toast('Kaydedildi')}
   else{await saveRow(b,{[k]:v||null});render()}});
+document.addEventListener('change',async e=>{const k=e.target.dataset.chg2;if(!k)return;const b=inLib(S.openKey);if(!b)return;if(k==='sahibim'){if(!await ozelSave(b,{sahibim:e.target.checked}))e.target.checked=!e.target.checked;else toast(e.target.checked?'Bende var olarak işaretlendi':'İşaret kaldırıldı')}});
 document.addEventListener('submit',async e=>{e.preventDefault();const id=e.target.id;
+  if(id==='tagForm'){const t=($('#tagIn').value||'').trim().toLocaleLowerCase('tr').replace(/^#/,'').replace(/\s+/g,'-').slice(0,24);if(!t)return;const b=inLib(S.openKey);const cur=OZ(b.id).etiketler||[];if(!cur.includes(t)&&await ozelSave(b,{etiketler:[...cur,t]}))render();return}
   if(id==='sForm'){const q=$('#sIn').value.trim();if(q){$('#sIn').blur();S.sres=null;if(R.name==='ara'&&R.arg===q)render();else{closeSheet();NAV++;location.hash='#/ara/'+encodeURIComponent(q)}}}
   if(id==='klKodForm'){const k=$('#klKod').value.trim();if(k){$('#klKod').blur();klJoinCode(k)}}
   if(id==='klSForm'){const q=$('#klSIn').value.trim();if(q){$('#klSIn').blur();klSearch(q)}}
@@ -1584,6 +1805,7 @@ addEventListener('scroll',()=>$('#hdr').classList.toggle('sc',scrollY>4),{passiv
 
 $('#photoFile').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;$('#scanMsg').textContent='Fotoğraf inceleniyor…';
   const c=await decodePhoto(f).catch(()=>null);if(c){BATCH.cool=0;onCode(c)}else scanMsg('Fotoğrafta barkod bulunamadı. Daha yakından ve net çekmeyi dene.','warn')});
+$('#csvFile').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{const t=await f.text();const m=importMap(csvParse(t));if(!m||!m.L.length){const el=$('#impRes');if(el)el.innerHTML=`<div class="small" style="color:var(--red)">Bu dosya Goodreads ya da StoryGraph dışa aktarma dosyasına benzemiyor.</div>`;return}IMP=m;importPreview()}catch(x){toast('Dosya okunamadı')}});
 $('#avatarFile').addEventListener('change',e=>{const f=e.target.files[0];e.target.value='';if(f)uploadAvatar(f).catch(()=>toast('Fotoğraf açılamadı'))});
 $('#coverFile').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
   if(S.sheet==='aform'){FORM.coverFile=f;const u=URL.createObjectURL(f);$('#fCv').innerHTML=`<div class="cv" style="width:80px;height:120px"><img src="${u}"></div>`;return}
@@ -1634,11 +1856,12 @@ function localClient(){
     function run(){
       if(t==='kitap_istatistik'){let a=stats().filter(match);a=sortLim(a);return{data:single?(a[0]||null):a,error:null}}
       let a=load(t);
+      if(op==='insert'&&Array.isArray(pay)){const out=pay.map(p=>({id:uid(),created_at:now(),updated_at:now(),...(t==='kitaplik'?{user_id:'yerel',yorum_acik:true,favori:false,mevcut_sayfa:0}:{}),...p}));a.push(...out);save(t,a);return{data:out,error:null}}
       if(op==='insert'){const row={id:uid(),created_at:now(),updated_at:now(),...(t==='kitaplik'?{user_id:'yerel',yorum_acik:true,favori:false,mevcut_sayfa:0}:{}),...pay};if(t==='profiller')row.id=pay.id;a.push(row);save(t,a);return{data:single?row:[row],error:null}}
       if(op==='update'){a.forEach(r=>{if(match(r))Object.assign(r,pay)});save(t,a);return{data:null,error:null}}
       if(op==='delete'){const gone=a.filter(match).map(r=>r.id);save(t,a.filter(r=>!match(r)));
         if(t==='sesli_kitaplar'){save('sesli_bolumler',load('sesli_bolumler').filter(b=>!gone.includes(b.kitap_id)));save('dinleme',load('dinleme').filter(b=>!gone.includes(b.kitap_id)))}return{data:null,error:null}}
-      if(op==='upsert'){const kf=t==='dinleme'||t==='kulup_ilerleme'?(r=>r.user_id===pay.user_id&&r.kitap_id===pay.kitap_id):t==='kulup_katilim'?(r=>r.user_id===pay.user_id&&r.kulup_id===pay.kulup_id):(r=>r.id===pay.id);const ex=a.find(kf);if(ex)Object.assign(ex,pay);else a.push({...pay});save(t,a);return{data:null,error:null}}
+      if(op==='upsert'){const kf=t==='dinleme'||t==='kulup_ilerleme'?(r=>r.user_id===pay.user_id&&r.kitap_id===pay.kitap_id):t==='kulup_katilim'?(r=>r.user_id===pay.user_id&&r.kulup_id===pay.kulup_id):t==='kitap_ozel'?(r=>r.kitap_id===pay.kitap_id):(r=>r.id===pay.id);const ex=a.find(kf);if(ex)Object.assign(ex,pay);else a.push({...pay});save(t,a);return{data:null,error:null}}
       a=sortLim(a.filter(match)).map(r=>({...r}));
       if(sel.includes('sesli_bolumler')){const B=load('sesli_bolumler');a.forEach(r=>r.sesli_bolumler=B.filter(b=>b.kitap_id===r.id))}
       if(sel.includes('profiller')){const P=load('profiller');a.forEach(r=>r.profiller=P.find(p=>p.id===r.user_id)||null)}
@@ -1655,7 +1878,7 @@ function localClient(){
 async function onUser(u){S.me=u?{id:u.id,email:u.email}:null;S.libLoaded=false;klReset();render();
   await healthCheck();
   if(u&&!S.dbErr){await ensureProfile(u);if(S.sheet==='login')closeSheet()}else if(!u)S.profile=null;
-  S.USERS={};S.feed=null;await Promise.all([loadLib(),loadProg(),loadFollowing()]);render();
+  S.USERS={};S.feed=null;await Promise.all([loadLib(),loadProg(),loadFollowing(),loadOzel()]);render();
   let later=false;try{later=!!sessionStorage.getItem('kv.kadiSonra')}catch(e){}
   if(u&&!LOCAL&&!S.dbErr&&S.profile&&('kullanici_adi' in S.profile)&&!S.profile.kullanici_adi&&!later&&!S.sheet)askKadi()
   if(window.__tara&&!S.sheet){window.__tara=false;scanOpen()}}
