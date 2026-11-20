@@ -157,6 +157,13 @@ textarea.inp{min-height:110px;resize:vertical;line-height:1.5}
 .shd .x{color:var(--ac);font-weight:500;font-size:16px;padding:6px 2px}
 @keyframes up{from{transform:translateY(100%)}}
 @keyframes fd{from{opacity:0}}
+.pwa-strip{display:flex;align-items:center;gap:4px;margin:6px 0 14px;padding:8px 6px 8px 10px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+.pwa-go{flex:1;min-width:0;display:flex;align-items:center;gap:12px;text-align:left;color:var(--ink)}
+.pwa-go img{width:40px;height:40px;border-radius:10px;flex:none}
+.pwa-go b{display:block;font-size:14.5px}.pwa-go small{display:block;color:var(--mu);font-size:12.5px}
+.pwa-x{width:36px;height:36px;border-radius:50%;color:var(--mu);font-size:22px;line-height:1;flex:none}
+.pwa-vid{display:block;width:100%;max-height:60vh;aspect-ratio:9/16;object-fit:contain;border-radius:14px;background:#0d1110}
+.pwa-steps{margin:14px 0 4px;padding-left:22px;color:var(--ink2);font-size:14.5px;line-height:1.75}
 .group{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:14px 0;overflow:hidden}
 .group .gh{font-size:12.5px;color:var(--mu);text-transform:uppercase;letter-spacing:.04em;padding:12px 16px 0}
 .group .gb{padding:10px 16px 14px}
@@ -711,7 +718,7 @@ function vLib(){
   if(!S.libLoaded)return `<div class="loading"><span class="spin"></span> Yükleniyor</div>`;
   const c={hepsi:S.lib.length,okudum:0,okuyorum:0,okuyacagim:0,favori:0};S.lib.forEach(b=>{c[b.durum]++;if(b.favori)c.favori++});
   const reading=S.lib.filter(b=>b.durum==='okuyorum');
-  return `${reading.length&&S.filter==='hepsi'&&!S.q?`<h2 class="sec" style="margin-top:6px">Şu an okuyorum <small>${reading.length}</small></h2><div class="shelf">${reading.map(b=>`<button class="gi" data-act="openLib" data-id="${b.id}">${cover(b,104)}<div class="t">${esc(b.baslik)}</div>${b.sayfa?`<div class="bar"><i style="width:${Math.min(100,Math.round((b.mevcut_sayfa||0)/b.sayfa*100))}%"></i></div>`:''}</button>`).join('')}</div>`:''}
+  return `${S.filter==='hepsi'&&!S.q?pwaStrip():''}${reading.length&&S.filter==='hepsi'&&!S.q?`<h2 class="sec" style="margin-top:6px">Şu an okuyorum <small>${reading.length}</small></h2><div class="shelf">${reading.map(b=>`<button class="gi" data-act="openLib" data-id="${b.id}">${cover(b,104)}<div class="t">${esc(b.baslik)}</div>${b.sayfa?`<div class="bar"><i style="width:${Math.min(100,Math.round((b.mevcut_sayfa||0)/b.sayfa*100))}%"></i></div>`:''}</button>`).join('')}</div>`:''}
   <div class="search">${I.search}<input id="q" data-inp="q" placeholder="Kitaplığında ara" value="${esc(S.q)}" autocomplete="off"></div>
   <div class="filters">${[['hepsi','Tümü'],['okudum','Okudum'],['okuyorum','Okuyorum'],['okuyacagim','Okuyacağım'],['favori','Favoriler']].map(([k,t])=>`<button class="${S.filter===k?'on':''}" data-act="filter" data-f="${k}">${t}<span>${c[k]}</span></button>`).join('')}</div>
   <div class="toolbar"><select data-chg="sort">${[['yeni','Son eklenen'],['baslik','Başlık'],['yazar','Yazar'],['puan','Puanım'],['bitis','Bitirme tarihi']].map(([k,t])=>`<option value="${k}" ${S.sort===k?'selected':''}>${t}</option>`).join('')}</select><div class="tgl"><button class="${S.view==='grid'?'on':''}" data-act="view" data-v="grid">${I.grid}</button><button class="${S.view==='list'?'on':''}" data-act="view" data-v="list">${I.rows}</button></div></div>
@@ -785,7 +792,7 @@ function vProf(){
   ${p.bio?`<p class="bio">${esc(p.bio)}</p>`:''}
   ${LOCAL?'':`<div class="counts"><div><b>${S.lib.length}</b><span>kitap</span></div><button data-act="flist" data-id="${S.me.id}" data-k="takipci"><b>${U?U.takipci:'–'}</b><span>takipçi</span></button><button data-act="flist" data-id="${S.me.id}" data-k="takip"><b>${U?U.takip:'–'}</b><span>takip</span></button></div>
   <div class="row" style="gap:8px;margin-top:10px"><button class="btn sm" style="flex:1" data-act="editProfile">Profili düzenle</button><button class="btn sm out" data-act="logout">Çıkış yap</button></div>`}
-  <div class="group"><div class="gh">${y} okuma hedefi</div><div class="gb"><div class="row" style="justify-content:space-between"><span><b style="font:600 24px var(--serif)">${yr.length}</b> <span class="muted">/ ${goal} kitap</span></span><span class="row"><button class="btn sm" data-act="goal" data-d="-1">−</button><button class="btn sm" data-act="goal" data-d="1">+</button></span></div><div class="goalbar"><i style="width:${Math.min(100,yr.length/goal*100)}%"></i></div><div class="small muted">${yr.length>=goal?'Hedefini tamamladın.':`Hedefe ${goal-yr.length} kitap kaldı.`}</div></div></div>
+  ${isStandalone()?'':`<div class="group"><button class="opt" data-act="pwaHelp"><svg class="ic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 8v6M9 11h6"/></svg><span class="d">Ana ekrana ekle<small>Kitaplığım'ı uygulama gibi kullan</small></span>${I.chev}</button></div>`}<div class="group"><div class="gh">${y} okuma hedefi</div><div class="gb"><div class="row" style="justify-content:space-between"><span><b style="font:600 24px var(--serif)">${yr.length}</b> <span class="muted">/ ${goal} kitap</span></span><span class="row"><button class="btn sm" data-act="goal" data-d="-1">−</button><button class="btn sm" data-act="goal" data-d="1">+</button></span></div><div class="goalbar"><i style="width:${Math.min(100,yr.length/goal*100)}%"></i></div><div class="small muted">${yr.length>=goal?'Hedefini tamamladın.':`Hedefe ${goal-yr.length} kitap kaldı.`}</div></div></div>
   <div class="kp"><div><b>${S.lib.length}</b><span>Kitaplıktaki kitap</span></div><div><b>${read.length}</b><span>Okunan</span></div><div><b>${pages.toLocaleString('tr-TR')}</b><span>Okunan sayfa</span></div><div><b>${avg}</b><span>Ortalama puanım</span></div></div>
   <div class="group"><div class="gh">${y} · aylara göre</div><div class="gb"><div class="mbars">${mc.map((n,i)=>`<div><em>${n||''}</em><i style="height:${n/mx*78}%"></i><span>${M[i]}</span></div>`).join('')}</div></div></div>
   ${ta.length?`<div class="group"><div class="gh">En çok okuduğun yazarlar</div><div class="gb">${ta.map(([a,n])=>`<div class="row" style="justify-content:space-between;padding:6px 0"><span>${esc(a)}</span><span class="muted">${n}</span></div>`).join('')}</div></div>`:''}
@@ -795,7 +802,21 @@ function vProf(){
 
 /* ==================== alt sayfa ==================== */
 function sheet(html,kind,title,right){S.sheet=kind;$('#sheet').innerHTML=`<div class="grab"></div><div class="shd"><button class="x" data-act="close">${right||'Kapat'}</button><h3>${esc(title||'')}</h3><span style="width:44px"></span></div>`+html;$('#sw').hidden=false;document.body.style.overflow='hidden';lazyCovers()}
-function closeSheet(){S.sheet=null;$('#sw').hidden=true;document.body.style.overflow=''}
+const PWA={ev:null};
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();PWA.ev=e;if(S.sheet==='pwa')pwaHelp(S.pwaOS)});
+addEventListener('appinstalled',()=>{PWA.ev=null;try{localStorage.setItem('kv.pwaGizle','1')}catch(e){}if(S.sheet==='pwa')closeSheet();render()});
+function isStandalone(){try{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){return false}}
+function pwaOS(){const u=navigator.userAgent||'';if(/iPhone|iPad|iPod/.test(u)||(/Macintosh/.test(u)&&navigator.maxTouchPoints>1))return'ios';if(/Android/.test(u))return'android';return''}
+function pwaStrip(){if(isStandalone()||!pwaOS())return'';let h=null;try{h=localStorage.getItem('kv.pwaGizle')}catch(e){}if(h)return'';
+  return `<div class="pwa-strip"><button class="pwa-go" data-act="pwaHelp"><img src="/ikon-192.png" alt=""><span><b>Uygulama gibi kullan</b><small>Ana ekrana ekle · 20 saniyelik video</small></span></button><button class="pwa-x" data-act="pwaHide" aria-label="Kapat">×</button></div>`}
+function pwaHelp(os){os=os||S.pwaOS||pwaOS()||'android';S.pwaOS=os;const ios=os==='ios',v=ios?'iphone':'android';
+  const st=ios?["Safari'de <b>kitapsay.vercel.app</b> adresini aç","Alttaki <b>•••</b> butonuna dokun (eski iOS'ta doğrudan paylaş butonu)","<b>Paylaş</b>'ı seç","Listeyi kaydırıp <b>Ana Ekrana Ekle</b>'ye dokun","Sağ üstteki <b>Ekle</b>'ye bas"]
+    :["Chrome'da <b>kitapsay.vercel.app</b> adresini aç","Sağ üstteki <b>⋮</b> menüsüne dokun","<b>Ana ekrana ekle</b> ya da <b>Uygulamayı yükle</b>'yi seç","Açılan pencerede <b>Yükle</b>'ye bas"];
+  sheet(`<div class="seg" style="margin:2px 0 12px"><button class="${ios?'on':''}" data-act="pwaOS" data-os="ios">iPhone</button><button class="${ios?'':'on'}" data-act="pwaOS" data-os="android">Android</button></div>
+  ${!ios&&PWA.ev?`<button class="btn pri" style="width:100%;margin-bottom:12px" data-act="pwaInstall">Hemen yükle</button>`:''}
+  <video class="pwa-vid" src="/ana-ekran-${v}.mp4" poster="/ana-ekran-${v}.jpg" controls playsinline preload="metadata"></video>
+  <ol class="pwa-steps">${st.map(x=>`<li>${x}</li>`).join('')}</ol>`,'pwa','Ana ekrana ekle')}
+function closeSheet(){const vd=document.querySelector('.pwa-vid');if(vd)try{vd.pause()}catch(e){}S.sheet=null;$('#sw').hidden=true;document.body.style.overflow=''}
 
 function openLogin(msg){sheet(`<div style="text-align:center;padding:10px 0 6px">${I.book.replace('<svg','<svg width="48" height="48" style="color:var(--ac)"')}<h2 style="font:600 22px var(--serif);margin:10px 0 4px">${esc(msg||'Giriş yap')}</h2><p class="muted small">Kitaplığın tüm cihazlarında senkron kalır.</p></div>
   <button class="btn full" style="background:var(--card);border:1px solid var(--line);margin-top:10px" data-act="google"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.7 1.2 9.2 3.6l6.9-6.9C35.9 2.4 30.4 0 24 0 14.6 0 6.6 5.4 2.6 13.3l8 6.2C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.4 5.7c4.3-4 6.9-9.9 6.9-17.1z"/><path fill="#FBBC05" d="M10.6 28.5c-.5-1.4-.8-2.9-.8-4.5s.3-3.1.8-4.5l-8-6.2C.9 16.6 0 20.2 0 24s.9 7.4 2.6 10.7l8-6.2z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.4-5.7c-2.1 1.4-4.8 2.3-8.5 2.3-6.2 0-11.5-4.1-13.4-9.9l-8 6.2C6.6 42.6 14.6 48 24 48z"/></svg> Google ile devam et</button>
@@ -1117,6 +1138,10 @@ function refreshPlayer(light){if(S.sheet!=='player')return;const a=S.audio.find(
 
 /* ==================== olaylar ==================== */
 const A={
+  pwaHelp:()=>pwaHelp(),
+  pwaOS:el=>pwaHelp(el.dataset.os),
+  pwaHide:()=>{try{localStorage.setItem('kv.pwaGizle','1')}catch(e){}render();toast('Profil sayfasından istediğin zaman açabilirsin')},
+  pwaInstall:async()=>{const e=PWA.ev;if(!e)return;PWA.ev=null;e.prompt();try{const r=await e.userChoice;if(r&&r.outcome==='accepted'){closeSheet();toast('Kitaplığım ana ekrana ekleniyor')}else pwaHelp('android')}catch(x){}},
   tab:el=>{const t=el.dataset.t;go(t==='kesfet'?'#/kesfet/'+(S.disc||'top'):'#/'+t)},
   back:()=>{if(NAV>0){NAV--;history.back()}else go(S.tab==='kesfet'?'#/kesfet/'+S.disc:'#/'+(S.tab||'kitaplik'))},
   hAct:()=>S.tab==='kesfet'?scanOpen():S.tab==='sesli'?openAudioForm():openAdd(),
