@@ -194,6 +194,9 @@ textarea.inp{min-height:110px;resize:vertical;line-height:1.5}
 .kswatch{display:flex;gap:10px;flex-wrap:wrap}.kswatch label{width:36px;height:36px;border-radius:50%;cursor:pointer;position:relative}
 .kswatch input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}.kswatch input:checked+i{position:absolute;inset:-5px;border:2.5px solid var(--ink);border-radius:50%}
 .kcode{font:700 34px/1.2 ui-monospace,Menlo,monospace;letter-spacing:.14em;margin:4px 0;color:var(--ac)}
+.lcnt{display:inline-block;margin-top:10px;padding:5px 12px;border-radius:99px;background:var(--ac-soft);color:var(--ac);font-size:13.5px}.lcnt b{font-weight:700}
+.lsum{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:6px}.lsum div{background:var(--fill);border-radius:10px;padding:10px 6px;text-align:center}.lsum b{display:block;font-size:17px}.lsum span{font-size:11.5px;color:var(--mu)}
+.lrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line)}.lrow .bd{flex:1;min-width:0}.lrow .t{font-weight:600;font-size:14.5px}
 .wrapbtn{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:16px 18px;border-radius:14px;margin:0 0 14px;color:#fff;background:linear-gradient(120deg,#1f5f4e,#123a30 60%,#3e3560)}
 .wrapbtn span{flex:1}.wrapbtn b{display:block;font:600 19px var(--serif)}.wrapbtn small{opacity:.85;font-size:13px}.wrapbtn em{font-style:normal;font-size:26px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
@@ -660,7 +663,7 @@ async function addRow(x,durum){
 async function delRow(b){const{error}=await sb.from('kitaplik').delete().eq('id',b.id);if(error){toast('Silinemedi');return}S.lib=S.lib.filter(x=>x.id!==b.id);S.stats=null}
 
 async function loadAudio(){const{data,error}=await sb.from('sesli_kitaplar').select('*, sesli_bolumler(*)').order('created_at',{ascending:false});
-  if(error)console.error(error);S.audio=(data||[]).map(a=>({...a,bolumler:(a.sesli_bolumler||[]).sort((x,y)=>x.sira-y.sira)}));S.audioLoaded=true}
+  if(error)console.error(error);S.audio=(data||[]).map(a=>({...a,bolumler:(a.sesli_bolumler||[]).sort((x,y)=>x.sira-y.sira)}));await loadLcount();S.audioLoaded=true}
 async function loadProg(){try{S.prog=JSON.parse(localStorage.getItem('kv.prog')||'{}')}catch(e){S.prog={}}
   if(!S.me)return;const{data}=await sb.from('dinleme').select('*').eq('user_id',S.me.id);(data||[]).forEach(d=>S.prog[d.kitap_id]={bolum:d.bolum,saniye:d.saniye,bitti:d.bitti,t:+new Date(d.updated_at)})}
 let progT=null;
@@ -671,6 +674,32 @@ async function loadStats(){const[a,b]=await Promise.all([
   sb.from('kitap_istatistik').select('*').gt('okuyan',0).order('okuyan',{ascending:false}).limit(50),
   sb.from('kitap_istatistik').select('*').gt('puan_sayisi',0).order('ort_puan',{ascending:false}).order('puan_sayisi',{ascending:false}).limit(50)]);
   S.stats={pop:a.data||[],top:b.data||[]}}
+
+/* ---------- sesli kitap dinleyicileri ---------- */
+S.lcount={};
+const cihazId=()=>{let c='';try{c=localStorage.getItem('kv.cihaz')||'';if(!c){c=Array.from(crypto.getRandomValues(new Uint8Array(12)),b=>b.toString(16).padStart(2,'0')).join('');localStorage.setItem('kv.cihaz',c)}}catch(e){}return c||'x'};
+const LT={id:null,acc:0,last:0};
+async function dinlemeKaydet(id,ek){ek=Math.max(0,Math.min(600,Math.round(ek||0)));
+  try{if(LOCAL){const kim=S.me?S.me.id:'c:'+cihazId(),now=new Date().toISOString();const{data}=await sb.from('dinleyiciler').select('*').eq('kitap_id',id).eq('kim',kim).maybeSingle();
+      if(data)await sb.from('dinleyiciler').update({son:now,sure:(data.sure||0)+ek}).eq('id',data.id);
+      else await sb.from('dinleyiciler').insert({kitap_id:id,kim,user_id:S.me?S.me.id:null,ilk:now,son:now,sure:ek})}
+    else{const{error}=await sb.rpc('dinleme_kaydet',{kitap:id,cihaz:cihazId(),ek});if(error)console.warn(error)}}catch(e){}}
+function dinlemeBasla(id){if(LT.id&&LT.id!==id)dinlemeAkit();if(LT.id!==id){LT.id=id;LT.acc=0;LT.last=0;dinlemeKaydet(id,0).then(()=>{loadLcount().then(()=>{if(R.name==='sesli'||R.name==='sesliKitap')render()})})}}
+function dinlemeAkit(){if(LT.id&&LT.acc>=3){dinlemeKaydet(LT.id,LT.acc);LT.acc=0}LT.last=0}
+function dinlemeTik(){const n=Date.now();if(!audio.paused&&LT.id){const d=(n-LT.last)/1000;if(LT.last&&d>0&&d<3)LT.acc+=d;LT.last=n;if(LT.acc>=60){const e=LT.acc;LT.acc=0;dinlemeKaydet(LT.id,e)}}}
+async function loadLcount(){try{if(LOCAL){const{data}=await sb.from('dinleyiciler').select('*');const m={};(data||[]).forEach(r=>m[r.kitap_id]=(m[r.kitap_id]||0)+1);S.lcount=m;return}
+  const{data,error}=await sb.rpc('dinleyici_sayilari');if(error)return;const m={};(data||[]).forEach(r=>m[r.kitap_id]=r.sayi);S.lcount=m}catch(e){}}
+async function loadListeners(a){const el=$('#lsn');if(!el)return;
+  const[l,d]=await Promise.all([sb.from('dinleyiciler').select('*, profiller(id,ad,avatar,kullanici_adi)').eq('kitap_id',a.id).order('son',{ascending:false}).limit(500),sb.from('dinleme').select('*').eq('kitap_id',a.id)]);
+  const el2=$('#lsn');if(!el2||R.arg!==a.id)return;
+  if(l.error){el2.innerHTML=`<div class="small muted">Dinleyici listesi için guncelleme-6.sql çalıştırılmalı.</div>`;return}
+  const L=l.data||[],pr={};(d.data||[]).forEach(x=>pr[x.user_id]=x);const uye=L.filter(x=>x.user_id).length,top=L.reduce((s,x)=>s+(x.sure||0),0);
+  const n=a.bolumler.length;
+  el2.innerHTML=`<div class="lsum"><div><b>${L.length}</b><span>kişi</span></div><div><b>${uye}</b><span>üye</span></div><div><b>${L.length-uye}</b><span>misafir</span></div><div><b>${top>=3600?(top/3600).toFixed(1).replace('.',',')+' sa':Math.round(top/60)+' dk'}</b><span>toplam süre</span></div></div>
+   ${L.length?L.map(x=>{const p=x.profiller||{},g=x.user_id&&pr[x.user_id];const ad=x.user_id?(p.ad||(p.kullanici_adi?'@'+p.kullanici_adi:'Üye')):'Misafir dinleyici';
+     const ilerleme=g?(g.bitti?'✓ Bitirdi':`Bölüm ${Math.min(n,(g.bolum||0)+1)}/${n}`):'';const dk=Math.round((x.sure||0)/60);
+     return `<div class="lrow">${x.user_id?`<a href="#/kullanici/${x.user_id}" style="display:contents">${av(p,36)}</a>`:`<div class="avatar" style="width:36px;height:36px;background:var(--fill);color:var(--mu)">?</div>`}<div class="bd"><div class="t">${esc(ad)}${!x.user_id?` <span class="small muted">· cihaz ${esc(String(x.kim).slice(2,6))}</span>`:''}</div><div class="small muted">${ilerleme?ilerleme+' · ':''}${dk?dk+' dk dinledi · ':''}son ${ago(x.son)}</div></div></div>`}).join('')
+   :`<div class="small muted" style="padding-top:8px">Henüz kimse dinlemedi.</div>`}`}
 
 /* ==================== okuma araçları: alıntı, günlük, seri, kitabım, ruh hali, içe aktarma, yıl özeti ==================== */
 const MOODS=['Duygusal','Düşündürücü','Karanlık','Eğlenceli','Umut verici','Gerilimli','Romantik','Macera dolu','Hüzünlü','Rahatlatıcı','İlham verici','Gizemli'];
@@ -707,7 +736,7 @@ function bookPrivate(b){const o=OZ(b.id),tags=o.etiketler||[],all=tumEtiketler()
   return `<div class="group"><div class="gh">Kitabım <span class="lockt">🔒 sadece sen görürsün</span></div><div class="gb">
     <label class="row" style="justify-content:space-between;cursor:pointer"><span>Bu kitap bende var</span><span class="sw2"><input type="checkbox" data-chg2="sahibim" ${o.sahibim?'checked':''}><span></span></span></label>
     <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line)">${o.odunc?`<div class="row" style="justify-content:space-between"><span>📤 <b>${esc(o.odunc)}</b> adlı kişide${o.odunc_tarih?` <span class="muted small">· ${fmtGun(o.odunc_tarih)}</span>`:''}</span><button class="btn sm" style="white-space:nowrap;flex:none" data-act="oduncGeri">Geri aldım</button></div>`
-      :`<div class="row" style="gap:8px"><input class="inp" id="oduncIn" placeholder="Ödünç verdiğin kişi" maxlength="40" style="padding:8px 10px"><button class="btn sm" data-act="oduncVer">Ödünç verdim</button></div>`}</div>
+      :`<div class="row" style="gap:8px"><input class="inp" id="oduncIn" placeholder="Ödünç verdiğin kişi" maxlength="40" style="padding:8px 10px"><button class="btn sm" style="white-space:nowrap;flex:none" data-act="oduncVer">Ödünç verdim</button></div>`}</div>
     <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line)"><div class="small muted" style="margin-bottom:8px">Etiketlerim</div>
       <div class="chips">${tags.map(t=>`<button class="chip on" data-act="tagDel" data-t="${esc(t)}">#${esc(t)} ×</button>`).join('')}${all.map(t=>`<button class="chip" data-act="tagAdd" data-t="${esc(t)}">+ ${esc(t)}</button>`).join('')}</div>
       <form class="row" id="tagForm" style="gap:8px;margin-top:8px"><input class="inp" id="tagIn" placeholder="Yeni etiket: yaz-tatili, hediye…" maxlength="24" style="padding:8px 10px" autocomplete="off"><button class="btn sm">Ekle</button></form></div>
@@ -1314,7 +1343,7 @@ function vAudio(){
   const cont=S.audio.filter(a=>{const p=S.prog[a.id];return p&&!p.bitti&&(p.saniye>5||p.bolum>0)}).sort((a,b)=>S.prog[b.id].t-S.prog[a.id].t);
   return `${cont.length?`<h2 class="sec" style="margin-top:6px">Dinlemeye devam et</h2><div class="shelf">${cont.map(a=>`<button class="gi" data-act="playA" data-id="${a.id}">${cover(a,104)}<div class="t">${esc(a.baslik)}</div><div class="bar"><i style="width:${aPct(a)}%"></i></div></button>`).join('')}</div>`:''}
   <h2 class="sec">Tümü <small>${S.audio.length} kitap</small></h2>
-  <div class="grid">${S.audio.map(a=>`<button class="gi" data-act="openA" data-id="${a.id}" ${a.kapak?'':`data-lazy data-t="${esc(a.baslik)}" data-a="${esc(a.yazar||'')}"`}>${cover(a,110)}<div class="t">${esc(a.baslik)}</div><div class="a">${esc(a.yazar||'')}</div><div class="m">${a.bolumler.length} bölüm${aTotal(a)?' · '+fmtDur(aTotal(a)):''}</div></button>`).join('')}</div>`;
+  <div class="grid">${S.audio.map(a=>`<button class="gi" data-act="openA" data-id="${a.id}" ${a.kapak?'':`data-lazy data-t="${esc(a.baslik)}" data-a="${esc(a.yazar||'')}"`}>${cover(a,110)}<div class="t">${esc(a.baslik)}</div><div class="a">${esc(a.yazar||'')}</div><div class="m">${a.bolumler.length} bölüm${aTotal(a)?' · '+fmtDur(aTotal(a)):''}</div>${S.lcount[a.id]?`<div class="m">🎧 ${S.lcount[a.id]} kişi dinledi</div>`:''}</button>`).join('')}</div>`;
 }
 const aTotal=a=>a.bolumler.reduce((s,b)=>s+(b.sure||0),0);
 function aPct(a){const p=S.prog[a.id];const tot=aTotal(a);if(!p||!tot)return 0;if(p.bitti)return 100;let d=0;for(let i=0;i<p.bolum&&i<a.bolumler.length;i++)d+=a.bolumler[i].sure||0;return Math.min(100,Math.round((d+p.saniye)/tot*100))}
@@ -1586,14 +1615,16 @@ function vAudioPage(id){const v=$('#view');
   if(!S.audioLoaded){v.innerHTML=`<div class="loading" style="padding:60px 0"><span class="spin"></span></div>`;loadAudio().then(()=>R.name==='sesliKitap'&&render());return}
   const a=S.audio.find(x=>x.id===id);if(!a){v.innerHTML=`<div class="empty">Bu sesli kitap bulunamadı.</div>`;return}const p=S.prog[id];
   $('#ttl').textContent=a.baslik;
-  v.innerHTML=`<div class="dh">${cover(a,150)}<h2>${esc(a.baslik)}</h2><div class="au">${esc(a.yazar||'')}</div><div class="small muted" style="margin-top:4px">${a.seslendiren?'Seslendiren: '+esc(a.seslendiren)+' · ':''}${a.bolumler.length} bölüm${aTotal(a)?' · '+fmtDur(aTotal(a)):''}</div></div>
+  v.innerHTML=`<div class="dh">${cover(a,150)}<h2>${esc(a.baslik)}</h2><div class="au">${esc(a.yazar||'')}</div><div class="small muted" style="margin-top:4px">${a.seslendiren?'Seslendiren: '+esc(a.seslendiren)+' · ':''}${a.bolumler.length} bölüm${aTotal(a)?' · '+fmtDur(aTotal(a)):''}</div>${S.lcount[a.id]?`<div class="lcnt">🎧 <b>${S.lcount[a.id]}</b> kişi dinledi</div>`:''}</div>
   <button class="btn pri full" style="margin:16px 0 4px" data-act="playA" data-id="${a.id}">${I.play.replace('<svg','<svg width="18" height="18"')} ${p&&!p.bitti&&(p.saniye>5||p.bolum)?`Devam et · Bölüm ${p.bolum+1}`:'Dinle'}</button>
   ${aPct(a)?`<div class="bar"><i style="width:${aPct(a)}%"></i></div>`:''}
   ${a.aciklama?`<div class="group"><div class="gh">Hakkında</div><div class="gb"><div class="desc">${esc(a.aciklama)}</div></div></div>`:''}
   <div class="group ${S.chBusy?'busy':''}"><div class="gh row" style="justify-content:space-between;padding-right:12px"><span>Bölümler</span>${isAdmin()&&a.bolumler.length?`<button class="btn sm ${S.chEdit===a.id?'pri':''}" style="height:30px;text-transform:none;letter-spacing:0" data-act="chEdit" data-id="${a.id}">${S.chEdit===a.id?'Bitti':'Düzenle'}</button>`:''}</div><div class="gb" style="padding-top:4px">
   ${S.chEdit===a.id?chEditList(a):a.bolumler.map((b,i)=>`<button class="ch ${p&&p.bolum===i&&!p.bitti?'on':''}" data-act="playCh" data-id="${a.id}" data-i="${i}"><span class="n">${i+1}</span><span>${esc(b.baslik||'Bölüm '+(i+1))}</span><small>${b.sure?fmtT(b.sure):''}</small></button>`).join('')||'<div class="small muted">Bölüm yok.</div>'}
   ${S.chBusy?`<div class="loading" style="padding:10px"><span class="spin"></span> ${esc(S.chBusy)}</div>`:''}</div></div>
-  ${isAdmin()?`<div class="group"><div class="gh">Yönetici</div><div class="gb row" style="flex-wrap:wrap;gap:8px"><button class="btn sm" data-act="audioAddCh" data-id="${a.id}">Bölüm ekle</button><button class="btn sm" data-act="audioEdit" data-id="${a.id}">Düzenle</button><button class="btn sm red" data-act="audioDelAsk" data-id="${a.id}">Sil</button></div><div id="aDel" class="gb" style="padding-top:0"></div></div>`:''}`}
+  ${isAdmin()?`<div class="group"><div class="gh">Yönetici</div><div class="gb row" style="flex-wrap:wrap;gap:8px"><button class="btn sm" data-act="audioAddCh" data-id="${a.id}">Bölüm ekle</button><button class="btn sm" data-act="audioEdit" data-id="${a.id}">Düzenle</button><button class="btn sm red" data-act="audioDelAsk" data-id="${a.id}">Sil</button></div><div id="aDel" class="gb" style="padding-top:0"></div></div>
+  <div class="group"><div class="gh">Dinleyenler <span class="lockt">🔒 sadece sen görürsün</span></div><div class="gb" id="lsn"><div class="loading" style="padding:10px"><span class="spin"></span></div></div></div>`:''}`;
+  if(isAdmin())loadListeners(a)}
 function openAudioForm(a){if(!isAdmin())return;const isNew=!a;a=a||{};FORM={kapak:a.kapak||'',files:[],coverFile:null};
   sheet(`<div class="row" style="gap:16px;align-items:flex-end"><span id="fCv">${cover(a,80)}</span><div><button class="btn sm" data-act="fCoverFind">Kapağı bul</button> <button class="btn sm" data-act="fCoverUp">Görsel yükle</button></div></div>
   <label class="f">Kitap adı</label><input class="inp" id="a_baslik" value="${esc(a.baslik||'')}">
@@ -1655,7 +1686,7 @@ function playA(id,ch,fromStart){const a=S.audio.find(x=>x.id===id);if(!a||!a.bol
   const same=P.id===id&&P.ch===ch&&audio.src;P.id=id;P.ch=ch;
   if(!same){audio.src=safeUrl(a.bolumler[ch].dosya_url)||a.bolumler[ch].dosya_url;const st=fromStart?0:(p&&!p.bitti&&p.bolum===ch?p.saniye:0);
     audio.addEventListener('loadedmetadata',function f(){audio.removeEventListener('loadedmetadata',f);if(st&&st<audio.duration-3)audio.currentTime=st},{once:true})}
-  audio.playbackRate=P.rate;audio.play().catch(()=>toast('Oynatmak için tekrar dokun'));
+  audio.playbackRate=P.rate;audio.play().catch(()=>toast('Oynatmak için tekrar dokun'));dinlemeBasla(id);
   try{if('mediaSession' in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:a.bolumler[ch].baslik||a.baslik,artist:a.yazar||'',album:a.baslik,artwork:safeUrl(a.kapak)?[{src:safeUrl(a.kapak),sizes:'480x720'}]:[]});
     navigator.mediaSession.setActionHandler('play',()=>audio.play());navigator.mediaSession.setActionHandler('pause',()=>audio.pause());
     navigator.mediaSession.setActionHandler('seekbackward',()=>skip(-15));navigator.mediaSession.setActionHandler('seekforward',()=>skip(30));
@@ -1663,11 +1694,11 @@ function playA(id,ch,fromStart){const a=S.audio.find(x=>x.id===id);if(!a||!a.bol
   updateMini();refreshPlayer()}
 function persistPos(){if(P.id&&audio.src)saveProg(P.id,P.ch,audio.currentTime||0,false)}
 function skip(s){if(audio.duration)audio.currentTime=Math.max(0,Math.min(audio.duration-.5,audio.currentTime+s))}
-audio.addEventListener('pause',()=>{persistPos();updateMini();refreshPlayer()});
+audio.addEventListener('pause',()=>{persistPos();dinlemeAkit();updateMini();refreshPlayer()});
 audio.addEventListener('play',()=>{updateMini();refreshPlayer()});
 audio.addEventListener('ended',()=>{const a=S.audio.find(x=>x.id===P.id);if(!a)return;if(P.ch<a.bolumler.length-1)playA(a.id,P.ch+1,true);else{saveProg(a.id,0,0,true);toast('Kitabı bitirdin');updateMini();refreshPlayer()}});
-let lastTick=0,lastSave=0;audio.addEventListener('timeupdate',()=>{const n=Date.now();if(n-lastTick>400){lastTick=n;updateMini(true);refreshPlayer(true)}if(n-lastSave>20000&&!audio.paused){lastSave=n;persistPos()}});
-document.addEventListener('visibilitychange',()=>{if(document.hidden)persistPos()});
+let lastTick=0,lastSave=0;audio.addEventListener('timeupdate',()=>{dinlemeTik();const n=Date.now();if(n-lastTick>400){lastTick=n;updateMini(true);refreshPlayer(true)}if(n-lastSave>20000&&!audio.paused){lastSave=n;persistPos()}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){persistPos();dinlemeAkit()}});
 function updateMini(light){const m=$('#mini');const a=P.id&&S.audio.find(x=>x.id===P.id);if(!a){m.hidden=true;return}m.hidden=false;
   $('#miniPg').style.width=(audio.duration?audio.currentTime/audio.duration*100:0)+'%';$('#miniS').textContent=`${a.bolumler[P.ch]?.baslik||''} · ${fmtT(audio.currentTime)}`;
   if(light)return;$('#miniCv').innerHTML=cover(a,32);$('#miniT').textContent=a.baslik;$('#miniBtn').innerHTML=audio.paused?I.play:I.pause}
